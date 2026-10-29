@@ -78,6 +78,7 @@
     <string name="local_playlist_empty">Aggiungi brani dai File locali con il loro pulsante +.</string>
     <string name="playlist_change_refused">Spotify ha rifiutato la modifica a questa playlist</string>
     <string name="download_kept_by_list">Ancora scaricato: una playlist scaricata lo contiene</string>
+    <string name="download_kept_by_named">Ancora scaricato: «%1$s» è scaricato e lo contiene</string>
     <string name="support_title">Sostieni Myspoti</string>
     <string name="support_body">Myspoti è gratuito, senza pubblicità, e fatto nel mio tempo libero. Se ti piace, una piccola donazione aiuta a farlo andare avanti.</string>
     <string name="support_action">Sostieni su Ko-fi</string>
@@ -524,6 +525,8 @@
     <string name="duplicate_dont_add">Non aggiungere</string>
     <string name="settings_music_video_title">Video musicali</string>
     <string name="settings_music_video_detail">Il pulsante video nel player e le clip che partono da sole. Disattivato: solo audio e Canvas.</string>
+    <string name="settings_hide_dj_title">Nascondi il DJ</string>
+    <string name="settings_hide_dj_detail">Toglie il DJ di Spotify dalla Home</string>
     <string name="downloads_need_source">I download richiedono un\'estensione sorgente. Installane una in Impostazioni, Estensioni.</string>
     <string name="downloads_source_row_title">Sorgente dei download</string>
     <string name="downloads_source_row_on">Un\'estensione fornisce i file. Tocca per gestire le estensioni.</string>

@@ -400,6 +400,8 @@ object LocalPlayer {
         if (p.playbackState == Player.STATE_IDLE && p.mediaItemCount > 0) { log("resume after an error: preparing again"); p.prepare() }
         p.play()
     }
+    /** The sleep timer's fade: the player's volume (a crossfade owns it while it runs, the fade then goes on after it). */
+    fun setGain(gain: Float) { if (outgoing == null) exo?.volume = gain }
     fun pause() { if (CastPlayback.active) CastPlayback.pause() else exo?.pause() }
     fun next() {
         // In the first half of a crossfade the main player is on the next song already, while the

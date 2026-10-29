@@ -86,6 +86,9 @@ import java.util.concurrent.ConcurrentHashMap
  * the sandbox does not expect), never the app.
  */
 object Extensions {
+    /** No download source had the song and one could not answer now: the song is worth trying again. */
+    class NotAnswering(message: String) : java.io.IOException(message)
+
     // Every hook's time is in [HookBudgets], shared with the desktop runner (`myspoti-ext`).
     /** A lyrics hook call. */
     const val LYRICS_MS = HookBudgets.LYRICS
@@ -670,7 +673,8 @@ object Extensions {
     /**
      * The files [track] can be downloaded from in [quality] (`hi-res`, `cd`, `small`), best first,
      * from the first extension (priority order) that has any, with that extension's id and name.
-     * A source set aside for a while ([SourceCooldown]) is not asked.
+     * A source set aside for a while ([SourceCooldown]) is not asked. Null when no source has the song;
+     * [NotAnswering] when none had it and one could not answer (busy, a timeout, set aside).
      */
     suspend fun downloadFiles(track: TrackInfo, quality: String): Triple<String, String, List<DownloadFile>>? {
         if (!isReady) return null
@@ -683,9 +687,21 @@ object Extensions {
         }
         val input = DownloadQuery.toJson(track, quality)
         probeStale(Hook.DOWNLOAD_SOURCE)
-        return HookDispatch.firstInOrder(available(Hook.DOWNLOAD_SOURCE)) { (id, rt) ->
-            ask(id, rt, Hook.DOWNLOAD_SOURCE, input, DOWNLOAD_MS) { DownloadFile.parseList(it).takeIf { l -> l.isNotEmpty() } }.value
-        }?.let { (c, files) ->
+        val answers = ConcurrentHashMap<String, Outcome>()
+        val found = HookDispatch.firstInOrder(available(Hook.DOWNLOAD_SOURCE)) { (id, rt) ->
+            val a = ask(id, rt, Hook.DOWNLOAD_SOURCE, input, DOWNLOAD_MS) { DownloadFile.parseList(it).takeIf { l -> l.isNotEmpty() } }
+            answers[id] = a.outcome
+            a.value
+        }
+        if (found == null) {
+            // A source that could not answer (busy, a timeout, a rate limit, set aside) has not said the song is not
+            // there: told apart from "no source has it", so the song is retried instead of marked unavailable.
+            val silent = providing(Hook.DOWNLOAD_SOURCE).map { it.first }.mapNotNull { id ->
+                cooldown.reason(id)?.let { "$id set aside: $it" } ?: answers[id]?.takeIf { it.silent }?.let { "$id ${it.describe()}" }
+            }
+            if (silent.isNotEmpty()) throw NotAnswering(silent.joinToString("; "))
+        }
+        return found?.let { (c, files) ->
             log(c.first, "download files for ${track.title}: ${files.joinToString { "${it.format}/${it.bitDepth ?: "-"}" }}")
             did(Area.AUDIO, c.first, "Download of ${track.title} from ${c.second.manifest.name}")
             Triple(c.first, c.second.manifest.name, files)

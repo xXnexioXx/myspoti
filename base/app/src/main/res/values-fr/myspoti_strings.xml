@@ -91,6 +91,7 @@
     <string name="local_playlist_empty">Ajoutez des titres depuis Fichiers locaux avec leur bouton +.</string>
     <string name="playlist_change_refused">Spotify a refusé la modification de cette playlist</string>
     <string name="download_kept_by_list">Reste téléchargé : une playlist téléchargée le contient</string>
+    <string name="download_kept_by_named">Reste téléchargé : « %1$s » est téléchargé et le contient</string>
     <string name="support_title">Soutenir Myspoti</string>
     <string name="support_body">Myspoti est gratuit, sans publicité, et développé sur mon temps libre. Si vous l\'appréciez, un petit don aide à le faire avancer.</string>
     <string name="support_action">Soutenir sur Ko-fi</string>
@@ -529,6 +530,8 @@
     <string name="duplicate_dont_add">Ne pas ajouter</string>
     <string name="settings_music_video_title">Clips vidéo</string>
     <string name="settings_music_video_detail">Le bouton vidéo du lecteur et les clips qui démarrent seuls. Désactivé : audio et Canvas uniquement.</string>
+    <string name="settings_hide_dj_title">Masquer le DJ</string>
+    <string name="settings_hide_dj_detail">Retire le DJ de Spotify de l\'accueil</string>
     <string name="downloads_need_source">Les téléchargements ont besoin d\'une extension source. Installez-en une dans Réglages, Extensions.</string>
     <string name="downloads_source_row_title">Source des téléchargements</string>
     <string name="downloads_source_row_on">Une extension fournit les fichiers. Touchez pour gérer les extensions.</string>

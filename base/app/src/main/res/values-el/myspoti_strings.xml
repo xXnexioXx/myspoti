@@ -78,6 +78,7 @@
     <string name="local_playlist_empty">Πρόσθεσε τραγούδια από τα Τοπικά αρχεία με το κουμπί + τους.</string>
     <string name="playlist_change_refused">Το Spotify απέρριψε την αλλαγή σε αυτή την playlist</string>
     <string name="download_kept_by_list">Εξακολουθεί να έχει ληφθεί: τη διατηρεί μια playlist που έχει ληφθεί</string>
+    <string name="download_kept_by_named">Εξακολουθεί να έχει ληφθεί: το «%1$s» έχει ληφθεί και το περιέχει</string>
     <string name="support_title">Στήριξε το Myspoti</string>
     <string name="support_body">Το Myspoti είναι δωρεάν, χωρίς διαφημίσεις, και φτιάχνεται στον ελεύθερο χρόνο μου. Αν σου αρέσει, μια μικρή δωρεά βοηθά να συνεχίσει.</string>
     <string name="support_action">Στήριξε στο Ko-fi</string>
@@ -524,6 +525,8 @@
     <string name="duplicate_dont_add">Να μην προστεθούν</string>
     <string name="settings_music_video_title">Μουσικά βίντεο</string>
     <string name="settings_music_video_detail">Το κουμπί βίντεο στο πρόγραμμα αναπαραγωγής και τα κλιπ που ξεκινούν μόνα τους. Ανενεργό: μόνο ήχος και Canvas.</string>
+    <string name="settings_hide_dj_title">Απόκρυψη του DJ</string>
+    <string name="settings_hide_dj_detail">Αφαιρεί το DJ του Spotify από την αρχική</string>
     <string name="downloads_need_source">Οι λήψεις χρειάζονται μια επέκταση πηγής. Εγκαταστήστε μία στις Ρυθμίσεις, Επεκτάσεις.</string>
     <string name="downloads_source_row_title">Πηγή λήψεων</string>
     <string name="downloads_source_row_on">Μια επέκταση παρέχει τα αρχεία. Πατήστε για διαχείριση των επεκτάσεων.</string>

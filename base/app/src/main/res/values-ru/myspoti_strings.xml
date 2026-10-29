@@ -88,6 +88,7 @@
     <string name="local_playlist_empty">Добавляйте треки из локальных файлов кнопкой +.</string>
     <string name="playlist_change_refused">Spotify отклонил изменение этого плейлиста</string>
     <string name="download_kept_by_list">Остаётся скачанным: его держит скачанный плейлист</string>
+    <string name="download_kept_by_named">Остаётся скачанным: «%1$s» скачан и содержит его</string>
     <string name="support_title">Поддержать Myspoti</string>
     <string name="support_body">Myspoti бесплатен, без рекламы и создан в моё свободное время. Если он вам нравится, небольшое пожертвование поможет проекту жить дальше.</string>
     <string name="support_action">Поддержать на Ko-fi</string>
@@ -546,6 +547,8 @@
     <string name="duplicate_dont_add">Не добавлять</string>
     <string name="settings_music_video_title">Музыкальные клипы</string>
     <string name="settings_music_video_detail">Кнопка видео в плеере и клипы, которые запускаются сами. Выкл.: только аудио и Canvas.</string>
+    <string name="settings_hide_dj_title">Скрыть DJ</string>
+    <string name="settings_hide_dj_detail">Убирает DJ Spotify с главной</string>
     <string name="downloads_need_source">Для загрузок нужно расширение-источник. Установите его в разделе «Настройки», «Расширения».</string>
     <string name="downloads_source_row_title">Источник загрузок</string>
     <string name="downloads_source_row_on">Файлы предоставляет расширение. Нажмите, чтобы управлять расширениями.</string>

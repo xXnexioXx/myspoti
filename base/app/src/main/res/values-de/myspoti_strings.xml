@@ -78,6 +78,7 @@
     <string name="local_playlist_empty">Füge Songs aus Lokale Dateien mit ihrem +-Button hinzu.</string>
     <string name="playlist_change_refused">Spotify hat die Änderung an dieser Playlist abgelehnt</string>
     <string name="download_kept_by_list">Bleibt heruntergeladen: Eine heruntergeladene Playlist enthält ihn</string>
+    <string name="download_kept_by_named">Bleibt heruntergeladen: „%1$s“ ist heruntergeladen und enthält ihn</string>
     <string name="support_title">Myspoti unterstützen</string>
     <string name="support_body">Myspoti ist kostenlos, werbefrei und wird in meiner Freizeit entwickelt. Wenn es dir gefällt, hilft eine kleine Spende, es am Laufen zu halten.</string>
     <string name="support_action">Auf Ko-fi unterstützen</string>
@@ -524,6 +525,8 @@
     <string name="duplicate_dont_add">Nicht hinzufügen</string>
     <string name="settings_music_video_title">Musikvideos</string>
     <string name="settings_music_video_detail">Die Videotaste im Player und Clips, die von selbst starten. Aus: nur Audio und Canvas.</string>
+    <string name="settings_hide_dj_title">DJ ausblenden</string>
+    <string name="settings_hide_dj_detail">Entfernt den Spotify-DJ von der Startseite</string>
     <string name="downloads_need_source">Downloads brauchen eine Quell-Erweiterung. Installiere eine unter Einstellungen, Erweiterungen.</string>
     <string name="downloads_source_row_title">Download-Quelle</string>
     <string name="downloads_source_row_on">Eine Erweiterung liefert die Dateien. Tippen, um Erweiterungen zu verwalten.</string>

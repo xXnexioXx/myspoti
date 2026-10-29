@@ -273,6 +273,10 @@ object OfflineDownloader {
             } catch (e: Unavailable) {
                 Log.i(TAG, "${r.title}: ${e.message}")
                 OfflineStatus.Unavailable
+            } catch (e: com.music.spotui.extensions.Extensions.NotAnswering) {
+                // Failed, not unavailable: the source could not answer, so a tap on the song tries it again.
+                Log.i(TAG, "${r.title}: download source not answering: ${e.message}")
+                OfflineStatus.Failed
             } catch (t: Throwable) {
                 Log.w(TAG, "${r.title} failed", t)
                 OfflineStatus.Failed
@@ -371,6 +375,9 @@ object OfflineDownloader {
             .copy(isrc = meta.isrc)
         val (extensionId, extension, files) = com.music.spotui.extensions.Extensions.downloadFiles(track, queryQuality(quality))
             ?: throw Unavailable("no download source has this song")
+        // The last error of a file that could not be fetched (not refused or failed a check): the song is then
+        // a download that failed and can be tried again, not a recording that was not found.
+        var fetchError: Exception? = null
         for (file in files) {
             currentCoroutineContext().ensureActive()
             setStatus(r.trackId, OfflineStatus.Downloading(-1f))
@@ -386,6 +393,7 @@ object OfflineDownloader {
                 throw e
             } catch (e: Exception) {
                 Log.w(TAG, "${meta.title}: $label ${file.format}: ${e.message}")
+                if (e !is app.myspoti.extensions.ExtensionMediaHttp.Refused && !app.myspoti.extensions.SafeNet.isRefusal(e)) fetchError = e
                 false
             }
             if (!ok) continue
@@ -400,6 +408,7 @@ object OfflineDownloader {
             Log.i(TAG, "${meta.title}: saved FLAC from $label")
             return Fetched(label, file.isrcMatched, extensionId)
         }
+        fetchError?.let { throw IOException("none of the ${files.size} files from $extension could be fetched: ${it.message}", it) }
         throw Unavailable("none of the ${files.size} files from $extension could be used")
     }
 

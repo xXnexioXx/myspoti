@@ -6,8 +6,9 @@
  * Changes: LyricsPanel's list, PanelVoice, the gap dots, the loading skeleton and the
  * scroll lead / stagger, fed by Myspoti's LyricsViewModel. Myspoti's lyrics are mostly
  * line-synced, so a line lights whole (BitChord's line-level path) and the word sweep runs
- * only where a line has words. Translation, romanization, particles, duets, backing vocals,
- * line picking and the player-controls hand-off are left out for now.
+ * only where a line has words. Romanization, particles, duets, backing vocals,
+ * line picking and the player-controls hand-off are left out for now. A translation (the
+ * Classic look's, from the same LyricsViewModel) is shown as a smaller, dimmer line under each line.
  */
 package com.music.spotui.ui.immersive.lyrics
 
@@ -171,7 +172,11 @@ fun ImmersiveLyricsPanel(modifier: Modifier = Modifier, contentPadding: PaddingV
             // A new track, or new lyrics for it, starts the list over: its scroll position and
             // handover state belong to the lines they were made for.
             key(trackKey, System.identityHashCode(current.lyrics)) {
-                LyricsList(current.lyrics, trackKey, modifier, contentPadding)
+                // The translation the song options sheet turned on, line for line with the source's.
+                LyricsList(
+                    current.lyrics, trackKey, modifier, contentPadding,
+                    translations = current.translations.takeIf { current.showTranslation },
+                )
             }
         }
     }
@@ -190,6 +195,8 @@ private class PanelLine(
     /** Where a break ends; unused for a sung line. */
     val untilMs: Long,
     val swept: SweptLine,
+    /** The line's place in the source's lines (the translation's), or -1 for a break of the panel's own. */
+    val sourceIndex: Int = -1,
 ) {
     val isWordSynced: Boolean get() = !isGap && swept.isWordSynced
 
@@ -218,9 +225,9 @@ private fun panelLines(lyrics: Lyrics, synced: Boolean): List<PanelLine> {
     source.forEachIndexed { index, line ->
         val next = source.getOrNull(index + 1)?.timeMs
         if (synced && isGapText(line.text)) {
-            out += PanelLine(line.timeMs, "", true, next ?: (line.timeMs + TRAILING_GAP_MS), SweptLine(line.timeMs, ""))
+            out += PanelLine(line.timeMs, "", true, next ?: (line.timeMs + TRAILING_GAP_MS), SweptLine(line.timeMs, ""), index)
         } else {
-            out += PanelLine(line.timeMs, line.text, false, 0L, line.toSwept(next))
+            out += PanelLine(line.timeMs, line.text, false, 0L, line.toSwept(next), index)
         }
     }
     return out
@@ -288,6 +295,8 @@ private fun LyricsList(
     trackKey: String,
     modifier: Modifier,
     contentPadding: PaddingValues,
+    /** The lines translated, in the source's order; null while no translation is shown. */
+    translations: List<String>? = null,
 ) {
     val isSynced = remember(lyrics) { lyrics.synced && lyrics.lines.any { it.timeMs > 0L } }
     val rows = remember(lyrics, isSynced) { panelLines(lyrics, isSynced) }
@@ -455,6 +464,7 @@ private fun LyricsList(
                 glowing = blurOk,
                 clock = clock,
                 noteMeasurer = noteMeasurer,
+                translation = translations?.getOrNull(row.sourceIndex)?.trim()?.takeIf { it.isNotEmpty() && !it.equals(row.text.trim(), ignoreCase = true) },
                 onNote = notes[index]?.let { n -> { noteOpen = n } },
                 onHold = notes[index]?.let { n ->
                     {
@@ -490,6 +500,8 @@ private fun PanelRow(
     glowing: Boolean,
     clock: MutableLongState,
     noteMeasurer: TextMeasurer,
+    /** The line in the reader's language, shown small under it; null when there is none. */
+    translation: String?,
     /** Opens the Genius note on this line; null when Genius has none. */
     onNote: (() -> Unit)?,
     onHold: (() -> Unit)?,
@@ -629,28 +641,41 @@ private fun PanelRow(
         )
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        NoteLayout(
-            text = row.text,
-            style = lineStyle,
-            measurer = noteMeasurer,
-            onNote = onNote,
-            modifier = shape,
-        ) {
-            PanelVoice(
-                row = row,
-                clock = clock,
+        Column(shape) {
+            NoteLayout(
+                text = row.text,
                 style = lineStyle,
-                isActive = isActive,
-                sung = sung,
-                synced = synced,
-                browsing = browsing,
-                glowAlpha = glow,
-                room = GLOW_ROOM,
-                modifier = Modifier.fillMaxWidth(),
-            )
+                measurer = noteMeasurer,
+                onNote = onNote,
+            ) {
+                PanelVoice(
+                    row = row,
+                    clock = clock,
+                    style = lineStyle,
+                    isActive = isActive,
+                    sung = sung,
+                    synced = synced,
+                    browsing = browsing,
+                    glowAlpha = glow,
+                    room = GLOW_ROOM,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            // Smaller and dimmer than the words, and it takes the row's blur and brightness with it.
+            if (translation != null) {
+                Text(
+                    text = translation,
+                    style = TRANSLATION_STYLE,
+                    color = Immersive.TextSecondary,
+                    modifier = Modifier.padding(start = GLOW_ROOM, end = GLOW_ROOM, bottom = GLOW_ROOM),
+                )
+            }
         }
     }
 }
+
+/** A translated line: well below the lyric's 30 sp, so the sung words stay the focus. */
+private val TRANSLATION_STYLE = Immersive.Lyric.copy(fontSize = 18.sp, lineHeight = 24.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
 
 // ─── Genius notes on the lines ───────────────────────────────────────────────────────────
 

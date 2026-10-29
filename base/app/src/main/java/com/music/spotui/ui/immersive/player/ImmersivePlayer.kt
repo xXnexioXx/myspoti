@@ -457,6 +457,7 @@ fun ImmersivePlayer(
             onDismiss = { showMenu = false },
             nowPlaying = true,
             onOpenQueue = { panel = Panel.QUEUE },
+            lyricsOpen = lyricsOpen,
         )
     }
 }

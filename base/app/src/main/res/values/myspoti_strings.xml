@@ -91,6 +91,7 @@
     <string name="local_playlist_empty">Add songs from Local Files with their + button.</string>
     <string name="playlist_change_refused">Spotify refused the change to this playlist</string>
     <string name="download_kept_by_list">Still downloaded: a downloaded playlist holds it</string>
+    <string name="download_kept_by_named">Still downloaded: “%1$s” is downloaded and holds it</string>
     <string name="support_title">Support Myspoti</string>
     <string name="support_body">Myspoti is free, without ads, and made in my spare time. If you enjoy it, a small donation helps keep it going.</string>
     <string name="support_action">Support on Ko-fi</string>
@@ -549,6 +550,8 @@
     <string name="duplicate_dont_add">Don\'t add</string>
     <string name="settings_music_video_title">Music videos</string>
     <string name="settings_music_video_detail">The video button in the player, and clips that start by themselves. Off: audio and Canvas only.</string>
+    <string name="settings_hide_dj_title">Hide the DJ</string>
+    <string name="settings_hide_dj_detail">Removes Spotify\'s DJ from Home</string>
     <string name="downloads_need_source">Downloads need a source extension. Install one in Settings, Extensions.</string>
     <string name="downloads_source_row_title">Download source</string>
     <string name="downloads_source_row_on">An extension gives the files. Tap to manage extensions.</string>

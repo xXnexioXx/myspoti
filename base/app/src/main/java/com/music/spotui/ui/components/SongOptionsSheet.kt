@@ -212,7 +212,7 @@ fun SongOptionsSheet(
                         com.music.spotui.data.offline.PodcastDownloader.remove(downloadKey)
                         true
                     } else com.music.spotui.data.offline.OfflineCollections.removeSong(downloadKey)
-                    toast(context.getString(if (gone) R.string.toast_undownload else R.string.download_kept_by_list))
+                    toast(if (gone) context.getString(R.string.toast_undownload) else com.music.spotui.data.offline.OfflineCollections.keptMessage(context, downloadKey))
                     onDismiss()
                 }
                 offline == com.music.spotui.data.offline.OfflineStatus.Queued ||

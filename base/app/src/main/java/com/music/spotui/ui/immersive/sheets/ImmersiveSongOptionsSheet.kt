@@ -22,11 +22,13 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -70,6 +72,8 @@ fun ImmersiveSongOptionsSheet(
     onOpenQueue: (() -> Unit)? = null,
     onRemoveFromPlaylist: (() -> Unit)? = null,
     currentPlaylistId: String? = null,
+    /** The player's lyrics panel is open: the translation row works on the lyrics it shows. */
+    lyricsOpen: Boolean = false,
 ) {
     val playerViewModel: com.music.spotui.ui.viewmodel.PlayerViewModel =
         androidx.lifecycle.viewmodel.compose.viewModel()
@@ -149,7 +153,7 @@ fun ImmersiveSongOptionsSheet(
                     com.music.spotui.data.offline.PodcastDownloader.remove(downloadKey)
                     true
                 } else com.music.spotui.data.offline.OfflineCollections.removeSong(downloadKey)
-                toast(context.getString(if (gone) R.string.toast_undownload else R.string.download_kept_by_list))
+                toast(if (gone) context.getString(R.string.toast_undownload) else com.music.spotui.data.offline.OfflineCollections.keptMessage(context, downloadKey))
                 onDismiss()
             }
             offline == com.music.spotui.data.offline.OfflineStatus.Queued ||
@@ -193,6 +197,24 @@ fun ImmersiveSongOptionsSheet(
         ImmersiveSheetRow(Icons.Rounded.Info, stringResource(R.string.track_credits), enabled = hasId) { showCredits = true }
         if (nowPlaying && hasId && !song.url.startsWith("episode:")) {
             ImmersiveSheetRow(Icons.Rounded.Lightbulb, stringResource(R.string.lyrics_meaning_title)) { showMeaning = true }
+        }
+        if (nowPlaying && lyricsOpen) {
+            // The lyrics panel's translation, the Classic look's: same model, shown under each line.
+            val lyricsVm: com.music.spotui.ui.viewmodel.LyricsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+            val lyrics = lyricsVm.state.collectAsState().value as? com.music.spotui.ui.viewmodel.LyricsViewModel.State.Loaded
+            val target = com.music.spotui.data.preferences.getLyricTranslateLang(context)
+                .ifBlank { java.util.Locale.getDefault().language.ifBlank { "en" } }
+            val sameLanguage = lyrics?.sourceLanguage?.substringBefore('-')
+                ?.equals(target.substringBefore('-'), ignoreCase = true) == true
+            if (lyrics != null && !sameLanguage) {
+                ImmersiveSheetRow(
+                    Icons.Rounded.Translate,
+                    stringResource(if (lyrics.showTranslation) R.string.lyrics_fullscreen_translate_button_enabled_readout_value else R.string.lyrics_fullscreen_context_menu_main_page_translate_lyrics_action),
+                ) {
+                    lyricsVm.toggleTranslation(target)
+                    onDismiss()
+                }
+            }
         }
 
         val trackUri = "spotify:track:${song.spotifyTrackId}"

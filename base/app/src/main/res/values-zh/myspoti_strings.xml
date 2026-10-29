@@ -85,6 +85,7 @@
     <string name="local_playlist_empty">点按“本地文件”中的 + 按钮来添加歌曲。</string>
     <string name="playlist_change_refused">Spotify 拒绝了对此播放列表的更改</string>
     <string name="download_kept_by_list">仍保留下载：已下载的播放列表包含它</string>
+    <string name="download_kept_by_named">仍保留下载：已下载的“%1$s”包含它</string>
     <string name="support_title">支持 Myspoti</string>
     <string name="support_body">Myspoti 免费、无广告，由我在业余时间制作。如果你喜欢它，一点小小的捐助能帮助它继续下去。</string>
     <string name="support_action">在 Ko-fi 上支持</string>
@@ -537,6 +538,8 @@
     <string name="duplicate_dont_add">不添加</string>
     <string name="settings_music_video_title">音乐视频</string>
     <string name="settings_music_video_detail">播放器中的视频按钮，以及自动开始的片段。关闭后：仅音频和 Canvas。</string>
+    <string name="settings_hide_dj_title">隐藏 DJ</string>
+    <string name="settings_hide_dj_detail">从首页移除 Spotify 的 DJ</string>
     <string name="downloads_need_source">下载需要一个来源扩展。请在“设置”&gt;“扩展”中安装一个。</string>
     <string name="downloads_source_row_title">下载来源</string>
     <string name="downloads_source_row_on">由扩展提供文件。点按以管理扩展。</string>

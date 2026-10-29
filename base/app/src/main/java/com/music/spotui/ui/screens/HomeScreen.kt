@@ -83,6 +83,7 @@ import com.music.spotui.data.entity.AlbumsModel
 import com.music.spotui.data.entity.ArtistsModel
 import com.music.spotui.data.entity.HomeFeedModel
 import com.music.spotui.data.entity.HomeItem
+import com.music.spotui.data.entity.withoutDj
 import com.music.spotui.data.entity.HomeSection
 import com.music.spotui.ui.components.Loader
 import com.music.spotui.ui.navigation.Routes
@@ -174,9 +175,11 @@ fun HomeFeedContent(navController: NavController, feed: HomeFeedModel, facet: St
     // not force-squeezed into the grid.
     // Podcasts are off for now: their shows and episodes leave the feed.
     // Kept between recompositions: a new list for every one of them would restart the rows below.
-    val sections = remember(feed) {
-        if (com.music.spotui.data.api.Features.PODCASTS) feed.sections
+    val hideDj = com.music.spotui.data.preferences.HideDjPref.on
+    val sections = remember(feed, hideDj) {
+        val all = if (com.music.spotui.data.api.Features.PODCASTS) feed.sections
         else feed.sections.map { s -> s.copy(items = s.items.filterNot { it is HomeItem.Show }) }.filter { it.items.isNotEmpty() }
+        if (hideDj) all.withoutDj() else all
     }
     val gridSection = remember(sections) { sections.firstOrNull()?.takeIf { it.title.isBlank() } }
     val carousels = remember(sections, gridSection) { if (gridSection != null) sections.drop(1) else sections }

@@ -88,6 +88,7 @@
     <string name="local_playlist_empty">Dodawaj utwory z plików lokalnych przyciskiem +.</string>
     <string name="playlist_change_refused">Spotify odrzuciło zmianę w tej playliście</string>
     <string name="download_kept_by_list">Nadal pobrane: trzyma je pobrana playlista</string>
+    <string name="download_kept_by_named">Nadal pobrane: «%1$s» jest pobrane i zawiera ten utwór</string>
     <string name="support_title">Wesprzyj Myspoti</string>
     <string name="support_body">Myspoti jest darmowe, bez reklam i powstaje w moim wolnym czasie. Jeśli Ci się podoba, niewielka darowizna pomoże je rozwijać.</string>
     <string name="support_action">Wesprzyj na Ko-fi</string>
@@ -546,6 +547,8 @@
     <string name="duplicate_dont_add">Nie dodawaj</string>
     <string name="settings_music_video_title">Teledyski</string>
     <string name="settings_music_video_detail">Przycisk wideo w odtwarzaczu i klipy, które włączają się same. Wyłączone: tylko dźwięk i Canvas.</string>
+    <string name="settings_hide_dj_title">Ukryj DJ-a</string>
+    <string name="settings_hide_dj_detail">Usuwa DJ-a Spotify ze strony głównej</string>
     <string name="downloads_need_source">Pobieranie wymaga rozszerzenia źródłowego. Zainstaluj je w Ustawieniach, Rozszerzenia.</string>
     <string name="downloads_source_row_title">Źródło pobierania</string>
     <string name="downloads_source_row_on">Pliki dostarcza rozszerzenie. Dotknij, aby zarządzać rozszerzeniami.</string>

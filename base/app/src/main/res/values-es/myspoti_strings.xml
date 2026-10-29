@@ -78,6 +78,7 @@
     <string name="local_playlist_empty">Añade canciones desde Archivos locales con su botón +.</string>
     <string name="playlist_change_refused">Spotify ha rechazado el cambio en esta playlist</string>
     <string name="download_kept_by_list">Sigue descargada: una playlist descargada la incluye</string>
+    <string name="download_kept_by_named">Sigue descargada: «%1$s» está descargado y la incluye</string>
     <string name="support_title">Apoya Myspoti</string>
     <string name="support_body">Myspoti es gratis, sin anuncios, y lo desarrollo en mi tiempo libre. Si te gusta, una pequeña donación ayuda a que siga adelante.</string>
     <string name="support_action">Apoyar en Ko-fi</string>
@@ -524,6 +525,8 @@
     <string name="duplicate_dont_add">No añadir</string>
     <string name="settings_music_video_title">Vídeos musicales</string>
     <string name="settings_music_video_detail">El botón de vídeo del reproductor y los clips que se inician solos. Desactivado: solo audio y Canvas.</string>
+    <string name="settings_hide_dj_title">Ocultar el DJ</string>
+    <string name="settings_hide_dj_detail">Quita el DJ de Spotify de Inicio</string>
     <string name="downloads_need_source">Las descargas necesitan una extensión de origen. Instala una en Ajustes, Extensiones.</string>
     <string name="downloads_source_row_title">Origen de descargas</string>
     <string name="downloads_source_row_on">Una extensión proporciona los archivos. Toca para gestionar las extensiones.</string>
