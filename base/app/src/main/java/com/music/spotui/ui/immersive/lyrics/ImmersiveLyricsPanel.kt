@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -50,6 +52,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.FloatState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
@@ -119,6 +122,7 @@ import kotlin.math.abs
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FormatQuote
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Icon
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
@@ -126,7 +130,10 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
+import com.music.spotui.ui.immersive.components.ImmersiveButton
 import com.music.spotui.ui.immersive.components.immersiveClickable
+import com.music.spotui.ui.immersive.glass
+import com.music.spotui.ui.components.shareLyricLines
 
 /**
  * The lyrics of the playing track, inside the player: big tight type, the playing line crisp
@@ -134,13 +141,16 @@ import com.music.spotui.ui.immersive.components.immersiveClickable
  * alpha carries the same hierarchy on older devices.
  *
  * Scrolling by hand clears the blur and suspends the auto-follow, so you can read ahead; a
- * moment after you stop it snaps back to the song. Tapping a line seeks to it; holding one that Genius explains opens the note.
+ * moment after you stop it snaps back to the song. Tapping a line seeks to it; holding one that Genius explains opens the note,
+ * holding any other (or "Share lyrics" in the song options) picks lines to share as text: taps then
+ * select instead of seeking, and the follow waits.
  *
  * The list brings its own side gutter and top margin; [contentPadding] is the extra room the
  * list keeps clear of whatever the player draws over it.
  */
 @Composable
 fun ImmersiveLyricsPanel(modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues()) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val vm: LyricsViewModel = viewModel()
     val song = Graph.currentSongState
     val title = song.title.value
@@ -153,6 +163,11 @@ fun ImmersiveLyricsPanel(modifier: Modifier = Modifier, contentPadding: PaddingV
     }
     val state by vm.state.collectAsState()
     val trackKey = "$playingUri|${SongPlayer.currentTrackId}|$title|$artist"
+    val selecting by vm.selecting.collectAsState()
+    val picked by vm.picked.collectAsState()
+    // Back and closing the panel end the picking before anything else.
+    androidx.activity.compose.BackHandler(enabled = selecting) { vm.stopSelecting() }
+    DisposableEffect(vm) { onDispose { vm.stopSelecting() } }
 
     when (val current = state) {
         is LyricsViewModel.State.Loading -> LyricsSkeleton(
@@ -172,11 +187,19 @@ fun ImmersiveLyricsPanel(modifier: Modifier = Modifier, contentPadding: PaddingV
             // A new track, or new lyrics for it, starts the list over: its scroll position and
             // handover state belong to the lines they were made for.
             key(trackKey, System.identityHashCode(current.lyrics)) {
-                // The translation the song options sheet turned on, line for line with the source's.
-                LyricsList(
-                    current.lyrics, trackKey, modifier, contentPadding,
-                    translations = current.translations.takeIf { current.showTranslation },
-                )
+                Box(modifier) {
+                    // The translation the song options sheet turned on, line for line with the source's.
+                    LyricsList(
+                        current.lyrics, trackKey, Modifier.fillMaxSize(), contentPadding, vm,
+                        translations = current.translations.takeIf { current.showTranslation },
+                    )
+                    if (selecting) ShareBar(
+                        canShare = picked != null,
+                        onCancel = { vm.stopSelecting() },
+                        onShare = { picked?.let { shareLyricLines(context, current.lyrics, it, title, artist); vm.stopSelecting() } },
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(contentPadding).padding(horizontal = Immersive.Gutter),
+                    )
+                }
             }
         }
     }
@@ -295,9 +318,14 @@ private fun LyricsList(
     trackKey: String,
     modifier: Modifier,
     contentPadding: PaddingValues,
+    vm: LyricsViewModel,
     /** The lines translated, in the source's order; null while no translation is shown. */
     translations: List<String>? = null,
 ) {
+    // Lines picked to share (see ImmersiveLyricsPanel): taps select, the follow waits.
+    val selecting by vm.selecting.collectAsState()
+    val picked by vm.picked.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
     val isSynced = remember(lyrics) { lyrics.synced && lyrics.lines.any { it.timeMs > 0L } }
     val rows = remember(lyrics, isSynced) { panelLines(lyrics, isSynced) }
     val playing = Graph.currentSongState.playingState.value
@@ -404,8 +432,8 @@ private fun LyricsList(
     var placed by remember { mutableStateOf(false) }
     // A newer line replaces an unfinished automatic scroll. Only a user's browsing gesture
     // should suspend following, not our own animation.
-    LaunchedEffect(focusLine, browsing) {
-        if (isSynced && !browsing && focusLine >= 0 && focusLine in rows.indices) {
+    LaunchedEffect(focusLine, browsing, selecting) {
+        if (isSynced && !browsing && !selecting && focusLine >= 0 && focusLine in rows.indices) {
             snapshotFlow { listState.layoutInfo.viewportSize.height }.first { it > 0 }
             val visible = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == focusLine }
             when {
@@ -459,20 +487,32 @@ private fun LyricsList(
                 focusLine = focusLine,
                 run = run,
                 since = since,
-                browsing = browsing,
+                // Reading to pick lines flattens the stack the way reading by hand does.
+                browsing = browsing || selecting,
                 blurOk = blurOk,
                 glowing = blurOk,
                 clock = clock,
                 noteMeasurer = noteMeasurer,
                 translation = translations?.getOrNull(row.sourceIndex)?.trim()?.takeIf { it.isNotEmpty() && !it.equals(row.text.trim(), ignoreCase = true) },
                 onNote = notes[index]?.let { n -> { noteOpen = n } },
-                onHold = notes[index]?.let { n ->
+                // A line Genius explains opens its note; any other starts picking lines to share.
+                onHold = if (selecting) null else notes[index]?.let { n ->
                     {
                         haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
                         noteOpen = n
                     }
+                } ?: row.sourceIndex.takeIf { it >= 0 && !row.isGap }?.let { line ->
+                    {
+                        haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                        vm.startSelecting(line)
+                    }
                 },
+                selected = picked?.let { row.sourceIndex in it } == true,
+                onPick = if (selecting && !row.isGap && row.sourceIndex >= 0) ({
+                    if (!vm.pick(row.sourceIndex)) android.widget.Toast.makeText(context, context.getString(R.string.lyrics_select_max, LyricsViewModel.MAX_SHARED_LINES), android.widget.Toast.LENGTH_SHORT).show()
+                }) else null,
                 onSeek = { timeMs ->
+                    if (selecting) return@PanelRow
                     SongPlayer.logLyricJump(timeMs)
                     head.announceJump()
                     SongPlayer.seekTo(timeMs)
@@ -505,6 +545,10 @@ private fun PanelRow(
     /** Opens the Genius note on this line; null when Genius has none. */
     onNote: (() -> Unit)?,
     onHold: (() -> Unit)?,
+    /** Picked to be shared: the row sits on a soft pill. */
+    selected: Boolean,
+    /** Set while lines are being picked: a tap selects this row instead of seeking. */
+    onPick: (() -> Unit)?,
     onSeek: (Long) -> Unit,
 ) {
     if (!synced && row.isGap) {
@@ -534,7 +578,7 @@ private fun PanelRow(
     val lineAlpha by animateFloatAsState(
         targetValue = when {
             !synced -> 0.95f
-            isActive -> 1f
+            isActive || selected -> 1f
             // Reading by hand is not following along: the stack flattens to one brightness.
             browsing -> BROWSING_ALPHA
             else -> LINE_FALLOFF_ALPHA[step]
@@ -584,6 +628,10 @@ private fun PanelRow(
         animationSpec = tween(durationMillis = 420),
         label = "lyricGlow",
     )
+    val pickedFill by animateColorAsState(
+        if (selected) Color.White.copy(alpha = 0.16f) else Color.Transparent,
+        tween(180), label = "lyricPicked",
+    )
     val shape = Modifier
         .fillMaxWidth()
         .graphicsLayer {
@@ -607,6 +655,7 @@ private fun PanelRow(
         }
         .blur(blur, BlurredEdgeTreatment.Unbounded)
         .clip(RoundedCornerShape(10.dp))
+        .background(pickedFill)
         .then(if (onNote != null) Modifier.drawWithCache {
             // Genius explains this line: each row of its words sits on a faint pill, as Genius
             // marks the lines it explains. Drawn behind the words, inside the row, so the sweep
@@ -629,10 +678,11 @@ private fun PanelRow(
         .secondaryClick(onHold)
         .lastPress { at, size -> pressAt = at; pressWidth = size.width }
         .combinedClickable(
-            enabled = synced || onHold != null, interactionSource = interaction, indication = null,
+            enabled = synced || onHold != null || onPick != null, interactionSource = interaction, indication = null,
             onLongClick = onHold,
             onClick = {
-                if (synced) {
+                if (onPick != null) onPick()
+                else if (synced) {
                     val room = with(density) { GLOW_ROOM.roundToPx() }
                     val laid = measureNoteLine(noteMeasurer, row.text, lineStyle, pressWidth, room)
                     onSeek(tapTime(row.swept, laid, pressAt - Offset(room.toFloat(), room.toFloat())))
@@ -670,6 +720,26 @@ private fun PanelRow(
                     modifier = Modifier.padding(start = GLOW_ROOM, end = GLOW_ROOM, bottom = GLOW_ROOM),
                 )
             }
+        }
+    }
+}
+
+/** Over the foot of the panel while lines are picked: what to do, then Cancel and Share. */
+@Composable
+private fun ShareBar(canShare: Boolean, onCancel: () -> Unit, onShare: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxWidth().glass(RoundedCornerShape(26.dp)).padding(12.dp)) {
+        Text(
+            text = stringResource(R.string.lyrics_select_hint),
+            style = Immersive.Caption,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            ImmersiveButton(stringResource(R.string.cancel), onCancel, Modifier.weight(1f))
+            ImmersiveButton(
+                stringResource(R.string.lyrics_fullscreen_chip_label_share), onShare, Modifier.weight(1f),
+                icon = Icons.Rounded.Share, filled = true, enabled = canShare,
+            )
         }
     }
 }

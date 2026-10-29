@@ -33,6 +33,8 @@
     <string name="lyrics_extra_title">Więcej źródeł tekstów</string>
     <string name="lyrics_extra_summary">NetEase i Genius, gdy Spotify nie ma tekstu</string>
     <string name="lyrics_reload">Wczytaj tekst ponownie</string>
+    <string name="lyrics_select_hint">Stuknij wersy, aby wybrać, co udostępnić</string>
+    <string name="lyrics_select_max">Możesz udostępnić maksymalnie %d wersów</string>
     <string name="lyrics_fullscreen">Otwórz tekst na pełnym ekranie</string>
     <string name="browse_all">Przeglądaj wszystko</string>
     <string name="home_error">Nie udało się wczytać strony głównej.\nSprawdź połączenie i spróbuj ponownie.</string>
@@ -549,6 +551,8 @@
     <string name="settings_music_video_detail">Przycisk wideo w odtwarzaczu i klipy, które włączają się same. Wyłączone: tylko dźwięk i Canvas.</string>
     <string name="settings_hide_dj_title">Ukryj DJ-a</string>
     <string name="settings_hide_dj_detail">Usuwa DJ-a Spotify ze strony głównej</string>
+    <string name="settings_player_modes_title">Losowo i powtarzanie w odtwarzaczu</string>
+    <string name="settings_player_modes_detail">Wyłączone, kapsuła odtwarzacza ma tylko przycisk urządzeń, jak w 2.1.0</string>
     <string name="downloads_need_source">Pobieranie wymaga rozszerzenia źródłowego. Zainstaluj je w Ustawieniach, Rozszerzenia.</string>
     <string name="downloads_source_row_title">Źródło pobierania</string>
     <string name="downloads_source_row_on">Pliki dostarcza rozszerzenie. Dotknij, aby zarządzać rozszerzeniami.</string>
@@ -596,4 +600,10 @@
     <string name="show_filter_all_played">Wszystkie odcinki zostały odsłuchane.</string>
     <string name="show_filter_hide_played">Ukryj odsłuchane</string>
     <string name="show_filter_unplayed_first">Najpierw nieodsłuchane</string>
+    <string name="hide_song">Nie interesuje mnie</string>
+    <string name="show_song_again">Pokaż ponownie</string>
+    <string name="hidden_song_toast">Ukryto: %1$s. Nie zagra już samo.</string>
+    <string name="hidden_songs_title">Ukryte utwory</string>
+    <string name="hidden_songs_detail">Utwory oznaczone jako Nie interesuje mnie są pomijane na listach i w radiach</string>
+    <string name="hidden_songs_empty">Brak ukrytych utworów. Wybierz Nie interesuje mnie w menu utworu.</string>
 </resources>

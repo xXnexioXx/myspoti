@@ -33,6 +33,8 @@
     <string name="lyrics_extra_title">Другие источники текстов</string>
     <string name="lyrics_extra_summary">NetEase и Genius, когда в Spotify нет текста</string>
     <string name="lyrics_reload">Загрузить текст заново</string>
+    <string name="lyrics_select_hint">Нажимайте на строки, чтобы выбрать, чем поделиться</string>
+    <string name="lyrics_select_max">Можно поделиться не более чем %d строками</string>
     <string name="lyrics_fullscreen">Открыть текст на весь экран</string>
     <string name="browse_all">Смотреть все</string>
     <string name="home_error">Не удалось загрузить главную.\nПроверьте соединение и повторите попытку.</string>
@@ -549,6 +551,8 @@
     <string name="settings_music_video_detail">Кнопка видео в плеере и клипы, которые запускаются сами. Выкл.: только аудио и Canvas.</string>
     <string name="settings_hide_dj_title">Скрыть DJ</string>
     <string name="settings_hide_dj_detail">Убирает DJ Spotify с главной</string>
+    <string name="settings_player_modes_title">Перемешивание и повтор в плеере</string>
+    <string name="settings_player_modes_detail">Выкл. — в капсуле плеера только кнопка устройств, как в 2.1.0</string>
     <string name="downloads_need_source">Для загрузок нужно расширение-источник. Установите его в разделе «Настройки», «Расширения».</string>
     <string name="downloads_source_row_title">Источник загрузок</string>
     <string name="downloads_source_row_on">Файлы предоставляет расширение. Нажмите, чтобы управлять расширениями.</string>
@@ -596,4 +600,10 @@
     <string name="show_filter_all_played">Все выпуски прослушаны.</string>
     <string name="show_filter_hide_played">Скрыть прослушанные</string>
     <string name="show_filter_unplayed_first">Сначала непрослушанные</string>
+    <string name="hide_song">Не интересует</string>
+    <string name="show_song_again">Показать снова</string>
+    <string name="hidden_song_toast">«%1$s» скрыт. Он больше не будет играть сам.</string>
+    <string name="hidden_songs_title">Скрытые треки</string>
+    <string name="hidden_songs_detail">Треки с отметкой «Не интересует» пропускаются в списках и радио</string>
+    <string name="hidden_songs_empty">Скрытых треков пока нет. Выберите «Не интересует» в меню трека.</string>
 </resources>

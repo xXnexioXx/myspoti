@@ -144,6 +144,14 @@ fun MyNavHost(
             if (isImmersive()) com.music.spotui.ui.immersive.pages.ImmersiveDownloadsScreen(navHostController) else com.music.spotui.ui.screens.DownloadsScreen(navHostController)
         }
 
+        page(Routes.HiddenSongs.route) {
+            LaunchedEffect(playerState) {
+                bottomBarState.value = true
+                bottomBarPlayerState.value = playerState != ""
+            }
+            if (isImmersive()) com.music.spotui.ui.immersive.pages.ImmersiveHiddenSongsScreen(navHostController) else com.music.spotui.ui.screens.HiddenSongsScreen(navHostController)
+        }
+
         page(Routes.NewReleases.route) {
             LaunchedEffect(playerState) {
                 bottomBarState.value = true

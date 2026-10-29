@@ -192,3 +192,19 @@ object LiquidGlassPref {
         prefs(c).edit().putBoolean(KEY, value).apply()
     }
 }
+
+/**
+ * "Shuffle and repeat in the player" (Settings > Display, Immersive look): on, the player's
+ * bottom capsule holds shuffle, repeat and devices (2.2); off, only devices, as in 2.1.0 (the
+ * queue panel keeps shuffle and repeat). Off by default: the owner's call, and asked on Discord.
+ */
+object PlayerModesPref {
+    private const val KEY = "immersive_player_modes"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, false))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}

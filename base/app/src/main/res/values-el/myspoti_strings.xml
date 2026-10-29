@@ -33,6 +33,8 @@
     <string name="lyrics_extra_title">Περισσότερες πηγές στίχων</string>
     <string name="lyrics_extra_summary">NetEase και Genius, όταν το Spotify δεν έχει στίχους</string>
     <string name="lyrics_reload">Επαναφόρτωση στίχων</string>
+    <string name="lyrics_select_hint">Πατήστε στίχους για να επιλέξετε τι θα μοιραστείτε</string>
+    <string name="lyrics_select_max">Μπορείτε να μοιραστείτε έως %d στίχους</string>
     <string name="lyrics_fullscreen">Άνοιγμα στίχων σε πλήρη οθόνη</string>
     <string name="browse_all">Εμφάνιση όλων</string>
     <string name="home_error">Δεν φορτώθηκε η Αρχική.\nΈλεγξε τη σύνδεσή σου και δοκίμασε ξανά.</string>
@@ -527,6 +529,8 @@
     <string name="settings_music_video_detail">Το κουμπί βίντεο στο πρόγραμμα αναπαραγωγής και τα κλιπ που ξεκινούν μόνα τους. Ανενεργό: μόνο ήχος και Canvas.</string>
     <string name="settings_hide_dj_title">Απόκρυψη του DJ</string>
     <string name="settings_hide_dj_detail">Αφαιρεί το DJ του Spotify από την αρχική</string>
+    <string name="settings_player_modes_title">Τυχαία σειρά και επανάληψη στο πρόγραμμα αναπαραγωγής</string>
+    <string name="settings_player_modes_detail">Απενεργοποιημένο, η κάψουλα του προγράμματος έχει μόνο το κουμπί συσκευών, όπως στην 2.1.0</string>
     <string name="downloads_need_source">Οι λήψεις χρειάζονται μια επέκταση πηγής. Εγκαταστήστε μία στις Ρυθμίσεις, Επεκτάσεις.</string>
     <string name="downloads_source_row_title">Πηγή λήψεων</string>
     <string name="downloads_source_row_on">Μια επέκταση παρέχει τα αρχεία. Πατήστε για διαχείριση των επεκτάσεων.</string>
@@ -581,4 +585,10 @@
     <string name="show_filter_all_played">Όλα τα επεισόδια έχουν ακουστεί.</string>
     <string name="show_filter_hide_played">Απόκρυψη όσων ακούστηκαν</string>
     <string name="show_filter_unplayed_first">Πρώτα όσα δεν ακούστηκαν</string>
+    <string name="hide_song">Δεν με ενδιαφέρει</string>
+    <string name="show_song_again">Εμφάνιση ξανά</string>
+    <string name="hidden_song_toast">Το «%1$s» αποκρύφθηκε. Δεν θα παίζει πια μόνο του.</string>
+    <string name="hidden_songs_title">Κρυφά τραγούδια</string>
+    <string name="hidden_songs_detail">Τα τραγούδια που σημειώνονται ως «Δεν με ενδιαφέρει» παραλείπονται σε λίστες και ραδιόφωνα</string>
+    <string name="hidden_songs_empty">Δεν υπάρχουν κρυφά τραγούδια. Επιλέξτε «Δεν με ενδιαφέρει» στο μενού ενός τραγουδιού.</string>
 </resources>

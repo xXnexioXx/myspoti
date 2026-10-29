@@ -33,6 +33,8 @@
     <string name="lyrics_extra_title">Weitere Songtext-Quellen</string>
     <string name="lyrics_extra_summary">NetEase und Genius, wenn Spotify keinen Songtext hat</string>
     <string name="lyrics_reload">Songtext neu laden</string>
+    <string name="lyrics_select_hint">Tippe auf Zeilen, um auszuwählen, was du teilen möchtest</string>
+    <string name="lyrics_select_max">Du kannst bis zu %d Zeilen teilen</string>
     <string name="lyrics_fullscreen">Songtext im Vollbild öffnen</string>
     <string name="browse_all">Alle ansehen</string>
     <string name="home_error">Start konnte nicht geladen werden.\nPrüfe deine Verbindung und versuche es erneut.</string>
@@ -527,6 +529,8 @@
     <string name="settings_music_video_detail">Die Videotaste im Player und Clips, die von selbst starten. Aus: nur Audio und Canvas.</string>
     <string name="settings_hide_dj_title">DJ ausblenden</string>
     <string name="settings_hide_dj_detail">Entfernt den Spotify-DJ von der Startseite</string>
+    <string name="settings_player_modes_title">Zufall und Wiederholen im Player</string>
+    <string name="settings_player_modes_detail">Aus, die Kapsel des Players enthält nur die Geräte-Taste, wie in 2.1.0</string>
     <string name="downloads_need_source">Downloads brauchen eine Quell-Erweiterung. Installiere eine unter Einstellungen, Erweiterungen.</string>
     <string name="downloads_source_row_title">Download-Quelle</string>
     <string name="downloads_source_row_on">Eine Erweiterung liefert die Dateien. Tippen, um Erweiterungen zu verwalten.</string>
@@ -581,4 +585,10 @@
     <string name="show_filter_all_played">Alle Folgen sind gehört.</string>
     <string name="show_filter_hide_played">Gehörte ausblenden</string>
     <string name="show_filter_unplayed_first">Ungehörte zuerst</string>
+    <string name="hide_song">Kein Interesse</string>
+    <string name="show_song_again">Wieder anzeigen</string>
+    <string name="hidden_song_toast">%1$s ausgeblendet. Der Song wird nicht mehr von selbst gespielt.</string>
+    <string name="hidden_songs_title">Ausgeblendete Songs</string>
+    <string name="hidden_songs_detail">Songs mit „Kein Interesse“ werden in Listen und Radios übersprungen</string>
+    <string name="hidden_songs_empty">Noch keine ausgeblendeten Songs. Wähle „Kein Interesse“ im Menü eines Songs.</string>
 </resources>

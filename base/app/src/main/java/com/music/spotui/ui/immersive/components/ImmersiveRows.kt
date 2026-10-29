@@ -100,7 +100,8 @@ fun ImmersiveSongRow(
         subtitle = subtitle,
         onClick = onClick,
         onLongClick = onMore,
-        modifier = modifier.alpha(if (song.playable) 1f else 0.45f),
+        // Dimmed too when marked "Not interested": lists skip it, a tap still plays it.
+        modifier = modifier.alpha(if (song.playable && !com.music.spotui.data.preferences.HiddenSongs.isHidden(song.spotifyTrackId)) 1f else 0.45f),
         titleColor = titleColor,
         explicit = song.explicit,
         leading = {

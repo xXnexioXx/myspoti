@@ -457,9 +457,10 @@ private fun BottomGlyph(
 /**
  * Lyrics, the capsule, and the queue: the row the player ends on.
  *
- * The capsule always holds shuffle, repeat and devices, so the playback modes are in reach
- * whatever is up. With the queue up the lyrics glyph steps aside and the capsule slides over
- * into its place, leaving the queue glyph, lit, as the way back.
+ * The capsule holds shuffle, repeat and devices, so the playback modes are in reach whatever is
+ * up; with "Shuffle and repeat in the player" off it holds devices alone, as in 2.1.0 (the
+ * queue panel keeps the modes). With the queue up the lyrics glyph steps aside and the capsule
+ * slides over into its place, leaving the queue glyph, lit, as the way back.
  */
 @Composable
 internal fun PlayerActionRow(
@@ -475,8 +476,9 @@ internal fun PlayerActionRow(
     onCycleRepeat: () -> Unit,
     onOpenDevices: () -> Unit,
 ) {
+    val modes = com.music.spotui.data.preferences.PlayerModesPref.on
     BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val widestRow = BOTTOM_ACTION_SIZE * 2 + pillWidth(3)
+        val widestRow = BOTTOM_ACTION_SIZE * 2 + pillWidth(if (modes) 3 else 2)
         val edgeInset = ((maxWidth - widestRow) / 4).coerceAtLeast(0.dp)
         // 0 with the capsule centred between lyrics and queue, 1 with it moved over to where the
         // lyrics glyph sits. Read only while placing, so the slide relays out the row and recomposes nothing.
@@ -517,35 +519,39 @@ internal fun PlayerActionRow(
                 },
             ) {
                 Pill {
-                    PillSegment(
-                        icon = if (smartEnabled) Icons.Rounded.AutoAwesome else Icons.Rounded.Shuffle,
-                        contentDescription = stringResource(
-                            when {
-                                smartEnabled -> R.string.smart_shuffle_title
-                                shuffleEnabled -> R.string.immersive_player_shuffle_on
-                                else -> R.string.immersive_player_shuffle_off
+                    if (modes) {
+                        PillSegment(
+                            icon = if (smartEnabled) Icons.Rounded.AutoAwesome else Icons.Rounded.Shuffle,
+                            contentDescription = stringResource(
+                                when {
+                                    smartEnabled -> R.string.smart_shuffle_title
+                                    shuffleEnabled -> R.string.immersive_player_shuffle_on
+                                    else -> R.string.immersive_player_shuffle_off
+                                },
+                            ),
+                            onClick = onToggleShuffle,
+                            highlighted = shuffleEnabled,
+                        )
+                        PillDivider()
+                        PillSegment(
+                            icon = if (repeatMode == ImmersiveRepeat.ONE) Icons.Rounded.RepeatOne else Icons.Rounded.Repeat,
+                            contentDescription = when (repeatMode) {
+                                ImmersiveRepeat.ONE -> stringResource(R.string.immersive_player_repeat_one)
+                                ImmersiveRepeat.ALL -> stringResource(R.string.immersive_player_repeat_all)
+                                else -> stringResource(R.string.immersive_player_repeat_off)
                             },
-                        ),
-                        onClick = onToggleShuffle,
-                        highlighted = shuffleEnabled,
-                    )
-                    PillDivider()
-                    PillSegment(
-                        icon = if (repeatMode == ImmersiveRepeat.ONE) Icons.Rounded.RepeatOne else Icons.Rounded.Repeat,
-                        contentDescription = when (repeatMode) {
-                            ImmersiveRepeat.ONE -> stringResource(R.string.immersive_player_repeat_one)
-                            ImmersiveRepeat.ALL -> stringResource(R.string.immersive_player_repeat_all)
-                            else -> stringResource(R.string.immersive_player_repeat_off)
-                        },
-                        onClick = onCycleRepeat,
-                        highlighted = repeatMode != ImmersiveRepeat.OFF,
-                    )
-                    PillDivider()
+                            onClick = onCycleRepeat,
+                            highlighted = repeatMode != ImmersiveRepeat.OFF,
+                        )
+                        PillDivider()
+                    }
                     PillSegment(
                         icon = Icons.Rounded.Devices,
                         contentDescription = stringResource(R.string.immersive_player_devices),
                         onClick = onOpenDevices,
                         highlighted = deviceActive,
+                        // Devices alone fills the width of two, as in 2.1.0.
+                        width = if (modes) PILL_SEGMENT_WIDTH else pillWidth(2),
                     )
                 }
             }

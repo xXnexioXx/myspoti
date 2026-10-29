@@ -27,6 +27,7 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.ThumbDownOffAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -206,6 +207,13 @@ fun ImmersiveSongOptionsSheet(
                 .ifBlank { java.util.Locale.getDefault().language.ifBlank { "en" } }
             val sameLanguage = lyrics?.sourceLanguage?.substringBefore('-')
                 ?.equals(target.substringBefore('-'), ignoreCase = true) == true
+            // Picks lines of the lyrics shown to send as text (a long press on a line does the same).
+            if (lyrics != null) {
+                ImmersiveSheetRow(Icons.Rounded.Share, stringResource(R.string.lyrics_share)) {
+                    lyricsVm.startSelecting()
+                    onDismiss()
+                }
+            }
             if (lyrics != null && !sameLanguage) {
                 ImmersiveSheetRow(
                     Icons.Rounded.Translate,
@@ -214,6 +222,15 @@ fun ImmersiveSongOptionsSheet(
                     lyricsVm.toggleTranslation(target)
                     onDismiss()
                 }
+            }
+        }
+
+        // "Not interested": kept on this phone only; the song leaves the queue and lists skip it.
+        if (hasId && episodeKey == null) {
+            val hidden = com.music.spotui.data.preferences.HiddenSongs.isHidden(song.spotifyTrackId)
+            ImmersiveSheetRow(Icons.Rounded.ThumbDownOffAlt, stringResource(if (hidden) R.string.show_song_again else R.string.hide_song)) {
+                if (hidden) com.music.spotui.data.preferences.HiddenSongs.show(context, song.spotifyTrackId) else SongPlayer.hideSong(song)
+                onDismiss()
             }
         }
 
