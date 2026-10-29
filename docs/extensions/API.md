@@ -216,14 +216,29 @@ Asked among the app's own lyrics sources. Return one of:
     { time: 1500,                   // ms from the start; missing = 0
       end: 4000,                    // optional ms
       text: 'line',                 // 500 characters at most
-      words: [ { time: 1500, end: 1900, text: 'word' } ]   // optional, `time` required, 200 at most
-    } ] }
+      words: [ { time: 1500, end: 1900, text: 'word' } ],  // optional, `time` required, 200 at most
+      translation: 'translated line',   // optional, in `translationLanguage`
+      romanization: 'line in latin letters',  // optional
+      voice: 2,                         // optional: who sings, 1 = first singer, 2 = second..., 0 = together
+      background: 'ooh'                 // optional: backing vocals sung over the line, 500 characters at most
+    } ],
+  translationLanguage: 'en'             // optional: the language of the `translation`s ('en', 'pt-BR')
+}
 ```
 
 or `{ provider?, plain: 'text\nof the song' }` for unsynced lyrics (one line per row; used only
 when `lines` is absent). At most 3000 lines (more is an error). Times are numbers or numeric
 strings, in milliseconds. Lyrics with no non-blank text count as no answer. Word-by-word display
 needs `synced` and at least one line with `words`.
+
+`translation`, `romanization`, `voice`, `background` and `translationLanguage` are optional and
+additive: leave them out and nothing changes, and one of the wrong type (a number for a text, a
+`voice` that is not a number, `"v2"` or `"2"`) is ignored, never an error. A `translation` is shown in
+place of Myspoti's machine translation only when `translationLanguage` is sent and is the language
+the reader asked for (the first part of the tag decides: `en` covers `en-US`); lines without one are
+machine translated. `voice` marks a duet when at least two different singers appear; `romanization`
+is for scripts that are not Latin (Japanese, Korean, Chinese, Cyrillic...). An older Myspoti
+simply does not read these fields.
 
 Action: `lyrics.provide` (normal). Usually you also need `network`.
 

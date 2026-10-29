@@ -35,6 +35,12 @@
     <string name="lyrics_reload">Загрузить текст заново</string>
     <string name="lyrics_select_hint">Нажимайте на строки, чтобы выбрать, чем поделиться</string>
     <string name="lyrics_select_max">Можно поделиться не более чем %d строками</string>
+    <string name="lyrics_romanization">Показать романизацию</string>
+    <string name="lyrics_other_source">Попробовать другой источник</string>
+    <string name="lyrics_source_shown">Показан сейчас</string>
+    <string name="lyrics_source_words">По словам</string>
+    <string name="lyrics_source_aside">Пока не отвечает</string>
+    <string name="lyrics_source_nothing">В источнике %1$s нет текста этой песни</string>
     <string name="lyrics_fullscreen">Открыть текст на весь экран</string>
     <string name="browse_all">Смотреть все</string>
     <string name="home_error">Не удалось загрузить главную.\nПроверьте соединение и повторите попытку.</string>

@@ -35,6 +35,12 @@
     <string name="lyrics_reload">Recharger les paroles</string>
     <string name="lyrics_select_hint">Touchez des lignes pour choisir ce que vous partagez</string>
     <string name="lyrics_select_max">Vous pouvez partager jusqu\'à %d lignes</string>
+    <string name="lyrics_romanization">Afficher la romanisation</string>
+    <string name="lyrics_other_source">Essayer une autre source</string>
+    <string name="lyrics_source_shown">Affichée</string>
+    <string name="lyrics_source_words">Mot par mot</string>
+    <string name="lyrics_source_aside">Ne répond pas pour le moment</string>
+    <string name="lyrics_source_nothing">%1$s n\'a pas les paroles de cette chanson</string>
     <string name="lyrics_fullscreen">Ouvrir les paroles en plein écran</string>
     <string name="browse_all">Parcourir tout</string>
     <string name="home_error">Impossible de charger l\'accueil.\nVérifiez votre connexion et réessayez.</string>

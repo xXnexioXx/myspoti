@@ -1422,6 +1422,19 @@ object Extensions {
         if (!hasLyrics()) null
         else withTimeoutOrNull(LYRICS_MS + 1_000) { lyrics(trackInfo(trackId, title, artist, album, durationMs, cover)) }
 
+    /** The running extensions giving lyrics, in their order: (id, name). For the "Try another source" list. */
+    fun lyricsSources(): List<Pair<String, String>> =
+        if (!isReady) emptyList() else providing(Hook.LYRICS).map { (id, rt) -> id to rt.manifest.name }
+
+    /** The lyrics of extension [id] alone (asked even when set aside: the user chose it), or null. */
+    suspend fun lyricsFromExtension(id: String, trackId: String, title: String, artist: String, album: String, durationMs: Long, cover: String?): Lyrics? {
+        val (_, rt) = providing(Hook.LYRICS).firstOrNull { it.first == id } ?: return null
+        val input = trackInfo(trackId, title, artist, album, durationMs, cover).toJson()
+        return withTimeoutOrNull(LYRICS_MS + 1_000) {
+            ask(id, rt, Hook.LYRICS, input, LYRICS_MS) { LyricsResult.parse(it, rt.manifest.name) }.value?.let(LyricsMerge::toLyrics)
+        }
+    }
+
     // ── Debug and beta command line (com.music.spotui.cli) ──
 
     /** [hook] of [id] alone, with [input]: its answer as JSON text, null when it has none. */

@@ -35,6 +35,12 @@
     <string name="lyrics_reload">Reload lyrics</string>
     <string name="lyrics_select_hint">Tap lines to pick what to share</string>
     <string name="lyrics_select_max">You can share up to %d lines</string>
+    <string name="lyrics_romanization">Show romanization</string>
+    <string name="lyrics_other_source">Try another source</string>
+    <string name="lyrics_source_shown">Shown now</string>
+    <string name="lyrics_source_words">Word by word</string>
+    <string name="lyrics_source_aside">Not answering for now</string>
+    <string name="lyrics_source_nothing">%1$s has no lyrics for this song</string>
     <string name="lyrics_fullscreen">Open lyrics full screen</string>
     <string name="browse_all">Browse all</string>
     <string name="home_error">Couldn\'t load Home.\nCheck your connection and try again.</string>

@@ -264,7 +264,7 @@ private fun runScript(rt: ExtensionRuntime, m: Manifest, hookName: String, track
             if (l == null) println("— empty lyrics ($ms ms)")
             else {
                 println("✓ ${l.lines.size} lines from ${l.provider}, synced=${l.synced}, word by word=${l.wordSynced} ($ms ms)")
-                l.lines.take(8).forEach { println("  [${it.startMs}] ${it.text}") }
+                l.lines.take(8).forEach { println("  [${it.startMs}] ${it.text}" + listOfNotNull(it.translation, it.romanization, it.voice?.let { v -> "voice $v" }, it.background?.let { b -> "bg: $b" }).joinToString("") { x -> "  | $x" }) }
             }
         }
         Hook.AUDIO_SOURCE -> AudioStream.parse(out).let { a ->

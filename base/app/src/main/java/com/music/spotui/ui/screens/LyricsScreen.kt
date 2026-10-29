@@ -102,6 +102,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
@@ -111,6 +112,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.music.spotui.data.api.LyricsApi
 import com.music.spotui.data.entity.LyricLine
 import com.music.spotui.data.entity.Lyrics
+import com.music.spotui.data.preferences.LyricsRomanizationPref
 import com.music.spotui.data.preferences.getLyricTranslateLang
 import com.music.spotui.data.preferences.isLyricsExtraSources
 import com.music.spotui.data.preferences.setLyricsExtraSources
@@ -272,6 +274,10 @@ private fun LyricLineText(
     /** Gets the time to play from: the start of the word tapped on a word-synced line. */
     onTap: ((Long) -> Unit)?,
     modifier: Modifier = Modifier,
+    /** The line in Latin letters, shown under it (and under its backing vocals); null when it is off or there is none. */
+    romanization: String? = null,
+    /** The song has two singers: the second one's lines sit at the end of the row. */
+    duet: Boolean = false,
     annotated: Boolean = false,
     onHold: (() -> Unit)? = null,
     /** Picked to be shared: the line sits on a soft pill. */
@@ -287,6 +293,9 @@ private fun LyricLineText(
     var pressAt by remember { mutableStateOf(androidx.compose.ui.geometry.Offset.Zero) }
     val swept = remember(line) { line.toSwept() }
     val picked by animateFloatAsState(if (selected) 1f else 0f, tween(180), label = "lyricPicked")
+    // Duet: the second voice at the end of the row (right in left-to-right), the first and the
+    // lines sung together at the start. The text fills the row so its wrapped rows align as one block.
+    val align = if (duet && line.voice == 2) TextAlign.End else TextAlign.Start
     val lineModifier = modifier
         .fillMaxWidth()
         .drawBehind {
@@ -333,8 +342,9 @@ private fun LyricLineText(
                     fontSize = fontSize,
                     lineHeight = fontSize * 1.25f,
                     fontWeight = FontWeight.Bold,
+                    textAlign = align,
                     onTextLayout = { layout = it },
-                    modifier = underline,
+                    modifier = Modifier.fillMaxWidth().then(underline),
                 )
                 Text(
                     text = shown,
@@ -342,8 +352,9 @@ private fun LyricLineText(
                     fontSize = fontSize,
                     lineHeight = fontSize * 1.25f,
                     fontWeight = FontWeight.Bold,
+                    textAlign = align,
                     onTextLayout = { fill = it },
-                    modifier = Modifier.drawWithContent {
+                    modifier = Modifier.fillMaxWidth().drawWithContent {
                         val l = fill ?: return@drawWithContent
                         val off = sungChars(words, starts, position()).coerceAtMost(shown.length.toFloat())
                         if (off <= 0f) return@drawWithContent
@@ -367,8 +378,39 @@ private fun LyricLineText(
                 fontSize = fontSize,
                 lineHeight = fontSize * 1.25f,
                 fontWeight = FontWeight.Bold,
+                textAlign = align,
                 onTextLayout = { layout = it },
-                modifier = underline,
+                modifier = Modifier.fillMaxWidth().then(underline),
+            )
+        }
+        // Under the line, smaller and dimmer: its backing vocals, the romanization, the translation.
+        // They take the line's colour, so they light with it.
+        AnimatedVisibility(
+            visible = !line.background.isNullOrBlank(),
+            enter = expandVertically(tween(260)) + fadeIn(tween(260)),
+            exit = shrinkVertically(tween(260)) + fadeOut(tween(260)),
+        ) {
+            Text(
+                text = line.background.orEmpty(),
+                color = color.copy(alpha = color.alpha * 0.6f),
+                fontSize = (fontSize.value * 0.7f).sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = align,
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+            )
+        }
+        AnimatedVisibility(
+            visible = !romanization.isNullOrBlank(),
+            enter = expandVertically(tween(260)) + fadeIn(tween(260)),
+            exit = shrinkVertically(tween(260)) + fadeOut(tween(260)),
+        ) {
+            Text(
+                text = romanization.orEmpty(),
+                color = color.copy(alpha = color.alpha * 0.7f),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = align,
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
             )
         }
         AnimatedVisibility(
@@ -381,7 +423,8 @@ private fun LyricLineText(
                 color = color.copy(alpha = color.alpha * 0.7f),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(top = 2.dp),
+                textAlign = align,
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
             )
         }
     }
@@ -425,6 +468,7 @@ fun LyricsScreen(
     val position = rememberPosition(playing)
     val targetLanguage = getLyricTranslateLang(context).ifBlank { Locale.getDefault().language.ifBlank { "en" } }
     var menu by remember { mutableStateOf(false) }
+    var sourcesOpen by remember { mutableStateOf(false) }
     // Lines picked to share: a long press on a line, or "Share lyrics" in the menu, starts it.
     val selecting by vm.selecting.collectAsState()
     val picked by vm.picked.collectAsState()
@@ -501,9 +545,16 @@ fun LyricsScreen(
                     onReload = { SongPlayer.currentLyricsTrack()?.let { vm.load(it, force = true) } },
                     canShare = state is LyricsViewModel.State.Loaded,
                     onShare = { vm.startSelecting() },
+                    canRomanize = lyrics?.hasRomanization == true,
+                    romanizing = LyricsRomanizationPref.on,
+                    onRomanize = { LyricsRomanizationPref.set(context, !LyricsRomanizationPref.on) },
+                    canPickSource = state !is LyricsViewModel.State.Loading,
+                    onPickSource = { sourcesOpen = true },
                 )
             }
         }
+
+        if (sourcesOpen) com.music.spotui.ui.components.LyricsSourceSheet(onDismiss = { sourcesOpen = false }, vm = vm)
 
         when (state) {
             is LyricsViewModel.State.Loading ->
@@ -532,6 +583,8 @@ fun LyricsScreen(
                 val active by remember(l) { derivedStateOf { activeIndexFor(l, position()) } }
                 val notes = remember(l, meaning) { meaning?.let { m -> com.music.spotui.ui.components.notesByLine(m, l.lines.map { it.text }) }.orEmpty() }
                 val listState = rememberLazyListState()
+                val duet = l.hasDuet
+                val romanizing = LyricsRomanizationPref.on && l.hasRomanization
                 // Lines near the current one rise in one after the other, the first just
                 // above it; the rest of the screen's lines have no visible entrance.
                 val staggerBase = remember(l) { (active - 4).coerceAtLeast(0) }
@@ -567,6 +620,8 @@ fun LyricsScreen(
                                 fontSize = 24.sp,
                                 position = position,
                                 translation = if (state.showTranslation) state.translations?.getOrNull(i) else null,
+                                romanization = if (romanizing) line.romanization?.trim()?.takeIf { it.isNotEmpty() && !it.equals(line.text.trim(), ignoreCase = true) } else null,
+                                duet = duet,
                                 // Picking lines: a tap selects instead of seeking.
                                 onTap = if (selecting) ({ _ ->
                                     if (!vm.pick(i)) android.widget.Toast.makeText(context, context.getString(R.string.lyrics_select_max, LyricsViewModel.MAX_SHARED_LINES), android.widget.Toast.LENGTH_SHORT).show()
@@ -630,6 +685,11 @@ private fun LyricsMenu(
     onReload: () -> Unit,
     canShare: Boolean,
     onShare: () -> Unit,
+    canRomanize: Boolean,
+    romanizing: Boolean,
+    onRomanize: () -> Unit,
+    canPickSource: Boolean,
+    onPickSource: () -> Unit,
 ) {
     val context = LocalContext.current
     var extra by remember { mutableStateOf(isLyricsExtraSources(context)) }
@@ -657,6 +717,12 @@ private fun LyricsMenu(
             text = { Text(stringResource(if (translating) R.string.lyrics_fullscreen_translate_button_enabled_readout_value else R.string.lyrics_fullscreen_context_menu_main_page_translate_lyrics_action)) },
             onClick = { onDismiss(); onTranslate() },
         )
+        // The lines in Latin letters, when the lyrics have them.
+        if (canRomanize) DropdownMenuItem(
+            text = { Text(stringResource(R.string.lyrics_romanization)) },
+            trailingIcon = { if (romanizing) Icon(Icons.Default.Check, contentDescription = null) },
+            onClick = { onDismiss(); onRomanize() },
+        )
         // Pick lines of the song and send them as text.
         if (canShare) DropdownMenuItem(
             text = { Text(stringResource(R.string.lyrics_share)) },
@@ -678,6 +744,7 @@ private fun LyricsMenu(
                 onReload()
             },
         )
+        if (canPickSource) DropdownMenuItem(text = { Text(stringResource(R.string.lyrics_other_source)) }, onClick = { onDismiss(); onPickSource() })
         DropdownMenuItem(text = { Text(stringResource(R.string.lyrics_reload)) }, onClick = { onDismiss(); onReload() })
     }
 }
@@ -865,6 +932,7 @@ fun InlineLyrics(
                     position = position,
                     translation = null,
                     onTap = null,
+                    duet = l.hasDuet,
                 )
             }
         }

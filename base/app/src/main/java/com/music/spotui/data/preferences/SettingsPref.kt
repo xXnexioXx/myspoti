@@ -23,6 +23,21 @@ fun setLyricsWordSync(c: Context, v: Boolean) = prefs(c).edit().putBoolean("lyri
 
 private fun prefs(c: Context) = c.getSharedPreferences(PREF, Context.MODE_PRIVATE)
 
+/**
+ * "Show romanization" under the lyrics' lines (the song in Latin letters), offered when the lyrics
+ * carry one. Off by default; read as state by both looks, so the menu and the lines agree.
+ */
+object LyricsRomanizationPref {
+    private const val KEY = "lyrics_romanization"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, false))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
 /** The bottom bar: fading into the list (the default), or solid black. Read by the bar as state. */
 object SolidNavBar {
     private const val KEY = "solid_nav_bar"

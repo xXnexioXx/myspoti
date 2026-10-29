@@ -27,9 +27,17 @@ data class TrackInfo(
     fun toJson(): String = ExtJson.encodeToString(serializer(), this)
 }
 
-/** An extension's lyrics, checked: at most [MAX_LINES] lines, times in milliseconds. */
-data class LyricsResult(val provider: String, val synced: Boolean, val lines: List<Line>) {
-    data class Line(val startMs: Long, val endMs: Long?, val text: String, val words: List<Word>?)
+/**
+ * An extension's lyrics, checked: at most [MAX_LINES] lines, times in milliseconds. A line may add
+ * a [Line.translation] (in [translationLanguage]), a [Line.romanization], who sings it
+ * ([Line.voice]) and backing vocals ([Line.background]); a wrong type for one of them is ignored,
+ * never an error.
+ */
+data class LyricsResult(val provider: String, val synced: Boolean, val lines: List<Line>, val translationLanguage: String? = null) {
+    data class Line(
+        val startMs: Long, val endMs: Long?, val text: String, val words: List<Word>?,
+        val translation: String? = null, val romanization: String? = null, val voice: Int? = null, val background: String? = null,
+    )
     data class Word(val startMs: Long, val endMs: Long?, val text: String)
 
     val wordSynced: Boolean get() = synced && lines.any { !it.words.isNullOrEmpty() }
@@ -38,8 +46,9 @@ data class LyricsResult(val provider: String, val synced: Boolean, val lines: Li
         const val MAX_LINES = 3_000
 
         /**
-         * `{ provider?, synced?, lines: [{ time?, end?, text, words?: [{ time, end?, text }] }] }`,
-         * or `{ provider?, plain: "text" }`. Null when there is nothing to show.
+         * `{ provider?, synced?, translationLanguage?, lines: [{ time?, end?, text, words?: [{ time, end?, text }],
+         * translation?, romanization?, voice?, background? }] }`, or `{ provider?, plain: "text" }`.
+         * Null when there is nothing to show.
          */
         fun parse(json: String, fallbackProvider: String): LyricsResult? {
             val o = runCatching { ExtJson.parseToJsonElement(json).jsonObject }.getOrNull() ?: throw ExtensionException("lyrics: not an object")
@@ -57,10 +66,28 @@ data class LyricsResult(val provider: String, val synced: Boolean, val lines: Li
                     val wo = w.jsonObject
                     Word(ms(wo["time"]) ?: throw ExtensionException("lyrics: a word without its time"), ms(wo["end"]), text(wo["text"]))
                 }
-                Line(ms(l["time"]) ?: 0, ms(l["end"]), text(l["text"]), words?.takeIf { it.isNotEmpty() })
+                Line(
+                    ms(l["time"]) ?: 0, ms(l["end"]), text(l["text"]), words?.takeIf { it.isNotEmpty() },
+                    translation = optText(l["translation"]), romanization = optText(l["romanization"]),
+                    voice = voice(l["voice"]), background = optText(l["background"]),
+                )
             }
             val synced = (o["synced"] as? JsonPrimitive)?.booleanOrNull ?: raw.any { (it as JsonObject)["time"] != null }
-            return LyricsResult(provider, synced, lines).takeIf { lines.any { it.text.isNotBlank() } }
+            val language = (o["translationLanguage"] as? JsonPrimitive)?.takeIf { it.isString }?.content?.trim()?.takeIf { LANGUAGE.matches(it) }
+            return LyricsResult(provider, synced, lines, language).takeIf { lines.any { it.text.isNotBlank() } }
+        }
+
+        private val LANGUAGE = Regex("[A-Za-z]{2,3}([-_][A-Za-z0-9]{2,8}){0,2}")
+
+        /** An optional text: a string, trimmed, 500 characters at most; anything else is none. */
+        private fun optText(e: kotlinx.serialization.json.JsonElement?): String? =
+            (e as? JsonPrimitive)?.takeIf { it.isString }?.content?.trim()?.take(500)?.ifBlank { null }
+
+        /** Who sings: 1, 2... (0: together) as a number, "2" or "v2"; anything else is unknown. */
+        private fun voice(e: kotlinx.serialization.json.JsonElement?): Int? {
+            val p = e as? JsonPrimitive ?: return null
+            val n = p.longOrNull ?: p.contentOrNull?.trim()?.removePrefix("v")?.toLongOrNull() ?: return null
+            return n.takeIf { it in 0..99 }?.toInt()
         }
 
         private fun ms(e: kotlinx.serialization.json.JsonElement?): Long? =

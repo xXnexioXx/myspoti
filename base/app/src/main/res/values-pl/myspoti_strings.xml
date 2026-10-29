@@ -35,6 +35,12 @@
     <string name="lyrics_reload">Wczytaj tekst ponownie</string>
     <string name="lyrics_select_hint">Stuknij wersy, aby wybrać, co udostępnić</string>
     <string name="lyrics_select_max">Możesz udostępnić maksymalnie %d wersów</string>
+    <string name="lyrics_romanization">Pokaż romanizację</string>
+    <string name="lyrics_other_source">Spróbuj innego źródła</string>
+    <string name="lyrics_source_shown">Wyświetlane teraz</string>
+    <string name="lyrics_source_words">Słowo po słowie</string>
+    <string name="lyrics_source_aside">Chwilowo nie odpowiada</string>
+    <string name="lyrics_source_nothing">%1$s nie ma tekstu tego utworu</string>
     <string name="lyrics_fullscreen">Otwórz tekst na pełnym ekranie</string>
     <string name="browse_all">Przeglądaj wszystko</string>
     <string name="home_error">Nie udało się wczytać strony głównej.\nSprawdź połączenie i spróbuj ponownie.</string>

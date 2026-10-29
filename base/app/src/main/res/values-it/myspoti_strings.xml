@@ -35,6 +35,12 @@
     <string name="lyrics_reload">Ricarica il testo</string>
     <string name="lyrics_select_hint">Tocca le righe per scegliere cosa condividere</string>
     <string name="lyrics_select_max">Puoi condividere fino a %d righe</string>
+    <string name="lyrics_romanization">Mostra la romanizzazione</string>
+    <string name="lyrics_other_source">Prova un\'altra fonte</string>
+    <string name="lyrics_source_shown">In uso</string>
+    <string name="lyrics_source_words">Parola per parola</string>
+    <string name="lyrics_source_aside">Non risponde per ora</string>
+    <string name="lyrics_source_nothing">%1$s non ha il testo di questo brano</string>
     <string name="lyrics_fullscreen">Apri il testo a schermo intero</string>
     <string name="browse_all">Sfoglia tutto</string>
     <string name="home_error">Impossibile caricare la Home.\nControlla la connessione e riprova.</string>

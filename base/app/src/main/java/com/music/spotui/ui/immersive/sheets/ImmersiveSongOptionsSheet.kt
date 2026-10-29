@@ -26,6 +26,8 @@ import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.SortByAlpha
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.ThumbDownOffAlt
 import androidx.compose.runtime.Composable
@@ -85,6 +87,8 @@ fun ImmersiveSongOptionsSheet(
     var showCredits by remember { mutableStateOf(false) }
     var showSpeed by remember { mutableStateOf(false) }
     var showMeaning by remember { mutableStateOf(false) }
+    var showSources by remember { mutableStateOf(false) }
+    if (showSources) { com.music.spotui.ui.components.LyricsSourceSheet(onDismiss = { showSources = false; onDismiss() }); return }
     if (showCredits) { CreditsSheet(song = song, onDismiss = { showCredits = false; onDismiss() }); return }
     if (showMeaning) {
         ImmersiveMeaningSheet(song.spotifyTrackId, song.title, song.singer, null, coverUrl = song.coverUri) { showMeaning = false; onDismiss() }
@@ -202,7 +206,8 @@ fun ImmersiveSongOptionsSheet(
         if (nowPlaying && lyricsOpen) {
             // The lyrics panel's translation, the Classic look's: same model, shown under each line.
             val lyricsVm: com.music.spotui.ui.viewmodel.LyricsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-            val lyrics = lyricsVm.state.collectAsState().value as? com.music.spotui.ui.viewmodel.LyricsViewModel.State.Loaded
+            val lyricsState = lyricsVm.state.collectAsState().value
+            val lyrics = lyricsState as? com.music.spotui.ui.viewmodel.LyricsViewModel.State.Loaded
             val target = com.music.spotui.data.preferences.getLyricTranslateLang(context)
                 .ifBlank { java.util.Locale.getDefault().language.ifBlank { "en" } }
             val sameLanguage = lyrics?.sourceLanguage?.substringBefore('-')
@@ -222,6 +227,21 @@ fun ImmersiveSongOptionsSheet(
                     lyricsVm.toggleTranslation(target)
                     onDismiss()
                 }
+            }
+            // The lines in Latin letters under them, when the lyrics carry them; lit while it is on.
+            if (lyrics != null && lyrics.lyrics.hasRomanization) {
+                val on = com.music.spotui.data.preferences.LyricsRomanizationPref.on
+                ImmersiveSheetRow(
+                    Icons.Rounded.SortByAlpha, stringResource(R.string.lyrics_romanization),
+                    tint = if (on) LocalImmersiveSheetTint.current.accent else null,
+                ) {
+                    com.music.spotui.data.preferences.LyricsRomanizationPref.set(context, !on)
+                    onDismiss()
+                }
+            }
+            // Ask another provider for the lyrics (also when none were found).
+            if (lyricsState !is com.music.spotui.ui.viewmodel.LyricsViewModel.State.Loading) {
+                ImmersiveSheetRow(Icons.Rounded.SwapHoriz, stringResource(R.string.lyrics_other_source)) { showSources = true }
             }
         }
 

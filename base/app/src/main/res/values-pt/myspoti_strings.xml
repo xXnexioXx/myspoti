@@ -35,6 +35,12 @@
     <string name="lyrics_reload">Recarregar as letras</string>
     <string name="lyrics_select_hint">Toque nas linhas para escolher o que compartilhar</string>
     <string name="lyrics_select_max">Você pode compartilhar até %d linhas</string>
+    <string name="lyrics_romanization">Mostrar romanização</string>
+    <string name="lyrics_other_source">Tentar outra fonte</string>
+    <string name="lyrics_source_shown">Mostrada agora</string>
+    <string name="lyrics_source_words">Palavra por palavra</string>
+    <string name="lyrics_source_aside">Sem resposta por enquanto</string>
+    <string name="lyrics_source_nothing">%1$s não tem a letra desta música</string>
     <string name="lyrics_fullscreen">Abrir as letras em tela cheia</string>
     <string name="browse_all">Ver tudo</string>
     <string name="home_error">Não foi possível carregar o Início.\nVerifique sua conexão e tente novamente.</string>
