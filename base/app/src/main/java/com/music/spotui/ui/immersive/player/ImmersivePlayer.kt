@@ -317,15 +317,19 @@ fun ImmersivePlayer(
                     val left = (maxWidth - contentWidth) / 2
                     val fullArt = minOf(contentWidth, maxHeight - ART_BOX_TOP_PAD - ART_TITLE_GAP - HEADER_HEIGHT - 16.dp)
                         .coerceAtLeast(THUMB_SIZE)
-                    // The cover and the credits sit centred as a pair while the player is whole.
-                    val groupTop = (maxHeight - ART_BOX_TOP_PAD - fullArt - ART_TITLE_GAP - HEADER_HEIGHT - 16.dp)
-                        .coerceAtLeast(0.dp) / 2
+                    // While the player is whole the credits sit just above the scrubber and the cover is
+                    // centred in the room above them (centred as a pair, the spare height of a tall
+                    // phone all went between the credits and the scrubber: reported as the like and
+                    // more glyphs sitting far too high).
+                    val spare = (maxHeight - ART_BOX_TOP_PAD - fullArt - ART_TITLE_GAP - HEADER_HEIGHT - 16.dp)
+                        .coerceAtLeast(0.dp)
+                    val groupTop = spare / 2
                     // Functions of the collapse, called at placement and measure: composition never reads them.
                     fun p() = collapse.value
                     fun artSize(): Dp = lerp(fullArt, THUMB_SIZE, p())
                     fun artTop(): Dp = ART_BOX_TOP_PAD + lerp(groupTop, 0.dp, p())
                     fun artStart(): Dp = left + lerp((contentWidth - fullArt) / 2, 0.dp, p())
-                    fun titleTop(): Dp = ART_BOX_TOP_PAD + lerp(groupTop + fullArt + ART_TITLE_GAP, 0.dp, p())
+                    fun titleTop(): Dp = ART_BOX_TOP_PAD + lerp(spare + fullArt + ART_TITLE_GAP, 0.dp, p())
                     fun titleStart(): Dp = lerp(0.dp, THUMB_SIZE + 12.dp, p())
                     // The credits only crawl while they are the screen: over a list they would pull the eye.
                     val scrolls by remember { derivedStateOf { collapse.value < 0.01f } }
