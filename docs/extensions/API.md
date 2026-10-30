@@ -11,6 +11,10 @@ API it unlocks; the user sees them as icons, each with your reason, before insta
 This page documents what the build ships (API version 1). Nothing here is a promise about
 anything else.
 
+Feature-gated media transforms and concurrent source resolution are described in
+[SOURCE-PIPELINES.md](SOURCE-PIPELINES.md). Providers and recording matching remain
+extension responsibilities; the host keeps its existing safe media transport.
+
 ## 1. A minimal extension
 
 `manifest.json`:
