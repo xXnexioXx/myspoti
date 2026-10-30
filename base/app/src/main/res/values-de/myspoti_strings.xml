@@ -597,4 +597,6 @@
     <string name="hidden_songs_title">Ausgeblendete Songs</string>
     <string name="hidden_songs_detail">Songs mit „Kein Interesse“ werden in Listen und Radios übersprungen</string>
     <string name="hidden_songs_empty">Noch keine ausgeblendeten Songs. Wähle „Kein Interesse“ im Menü eines Songs.</string>
+    <string name="login_failed_title">Anmeldung nicht abgeschlossen</string>
+    <string name="login_failed_detail">Die Seite von Spotify wurde nicht geladen oder nicht gestartet. Prüfe deine Verbindung und versuche es erneut. Wenn es weiter scheitert, probiere ein anderes Netzwerk.</string>
 </resources>

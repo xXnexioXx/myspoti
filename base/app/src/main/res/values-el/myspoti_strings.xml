@@ -597,4 +597,6 @@
     <string name="hidden_songs_title">Κρυφά τραγούδια</string>
     <string name="hidden_songs_detail">Τα τραγούδια που σημειώνονται ως «Δεν με ενδιαφέρει» παραλείπονται σε λίστες και ραδιόφωνα</string>
     <string name="hidden_songs_empty">Δεν υπάρχουν κρυφά τραγούδια. Επιλέξτε «Δεν με ενδιαφέρει» στο μενού ενός τραγουδιού.</string>
+    <string name="login_failed_title">Η σύνδεση δεν ολοκληρώθηκε</string>
+    <string name="login_failed_detail">Η σελίδα του Spotify δεν φόρτωσε ή δεν ξεκίνησε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά. Αν εξακολουθεί να αποτυγχάνει, δοκιμάστε άλλο δίκτυο.</string>
 </resources>

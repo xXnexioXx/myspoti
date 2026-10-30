@@ -602,4 +602,6 @@
     <string name="hidden_songs_title">Titres masqués</string>
     <string name="hidden_songs_detail">Les titres marqués « Pas intéressé » sont passés dans les listes et les radios</string>
     <string name="hidden_songs_empty">Aucun titre masqué. Choisissez « Pas intéressé » dans le menu d\'un titre.</string>
+    <string name="login_failed_title">La connexion n\'a pas abouti</string>
+    <string name="login_failed_detail">La page de Spotify ne s\'est pas chargée ou n\'a pas démarré. Vérifiez votre connexion et réessayez. Si cela échoue encore, essayez un autre réseau.</string>
 </resources>

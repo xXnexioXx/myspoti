@@ -603,4 +603,6 @@
     <string name="hidden_songs_title">Hidden songs</string>
     <string name="hidden_songs_detail">Songs marked Not interested are skipped in lists and radios</string>
     <string name="hidden_songs_empty">No hidden songs yet. Choose Not interested in a song\'s menu.</string>
+    <string name="login_failed_title">Sign-in did not finish</string>
+    <string name="login_failed_detail">Spotify\'s page did not load or did not start. Check your connection and try again. If it keeps failing, try another network.</string>
 </resources>

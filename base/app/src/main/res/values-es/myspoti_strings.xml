@@ -597,4 +597,6 @@
     <string name="hidden_songs_title">Canciones ocultas</string>
     <string name="hidden_songs_detail">Las canciones marcadas como No me interesa se saltan en listas y radios</string>
     <string name="hidden_songs_empty">Aún no hay canciones ocultas. Elige No me interesa en el menú de una canción.</string>
+    <string name="login_failed_title">No se pudo completar el inicio de sesión</string>
+    <string name="login_failed_detail">La página de Spotify no se cargó o no arrancó. Comprueba tu conexión e inténtalo de nuevo. Si sigue fallando, prueba con otra red.</string>
 </resources>

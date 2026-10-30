@@ -597,4 +597,6 @@
     <string name="hidden_songs_title">已隐藏的歌曲</string>
     <string name="hidden_songs_detail">标记为“不感兴趣”的歌曲会在列表和电台中被跳过</string>
     <string name="hidden_songs_empty">还没有已隐藏的歌曲。请在歌曲菜单中选择“不感兴趣”。</string>
+    <string name="login_failed_title">登录未完成</string>
+    <string name="login_failed_detail">Spotify 页面未能加载或启动。请检查网络连接后重试；如果仍然失败，请换一个网络试试。</string>
 </resources>

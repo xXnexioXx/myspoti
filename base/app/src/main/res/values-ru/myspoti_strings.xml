@@ -612,4 +612,6 @@
     <string name="hidden_songs_title">Скрытые треки</string>
     <string name="hidden_songs_detail">Треки с отметкой «Не интересует» пропускаются в списках и радио</string>
     <string name="hidden_songs_empty">Скрытых треков пока нет. Выберите «Не интересует» в меню трека.</string>
+    <string name="login_failed_title">Не удалось войти</string>
+    <string name="login_failed_detail">Страница Spotify не загрузилась или не запустилась. Проверьте подключение и повторите попытку. Если не получается, попробуйте другую сеть.</string>
 </resources>

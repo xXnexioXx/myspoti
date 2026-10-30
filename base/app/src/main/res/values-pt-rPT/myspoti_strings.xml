@@ -597,4 +597,6 @@
     <string name="hidden_songs_title">Músicas ocultas</string>
     <string name="hidden_songs_detail">As músicas marcadas como Sem interesse são ignoradas em listas e rádios</string>
     <string name="hidden_songs_empty">Nenhuma música oculta. Escolha Sem interesse no menu de uma música.</string>
+    <string name="login_failed_title">O início de sessão não foi concluído</string>
+    <string name="login_failed_detail">A página do Spotify não carregou ou não arrancou. Verifique a ligação e tente novamente. Se continuar a falhar, experimente outra rede.</string>
 </resources>

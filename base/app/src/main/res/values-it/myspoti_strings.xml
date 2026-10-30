@@ -597,4 +597,6 @@
     <string name="hidden_songs_title">Brani nascosti</string>
     <string name="hidden_songs_detail">I brani segnati come Non mi interessa vengono saltati nelle liste e nelle radio</string>
     <string name="hidden_songs_empty">Nessun brano nascosto. Scegli Non mi interessa nel menu di un brano.</string>
+    <string name="login_failed_title">Accesso non completato</string>
+    <string name="login_failed_detail">La pagina di Spotify non si è caricata o non è partita. Controlla la connessione e riprova. Se continua a fallire, prova un\'altra rete.</string>
 </resources>

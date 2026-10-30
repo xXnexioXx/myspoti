@@ -612,4 +612,6 @@
     <string name="hidden_songs_title">Ukryte utwory</string>
     <string name="hidden_songs_detail">Utwory oznaczone jako Nie interesuje mnie są pomijane na listach i w radiach</string>
     <string name="hidden_songs_empty">Brak ukrytych utworów. Wybierz Nie interesuje mnie w menu utworu.</string>
+    <string name="login_failed_title">Logowanie nie zostało dokończone</string>
+    <string name="login_failed_detail">Strona Spotify nie załadowała się lub nie wystartowała. Sprawdź połączenie i spróbuj ponownie. Jeśli nadal się nie udaje, spróbuj innej sieci.</string>
 </resources>
