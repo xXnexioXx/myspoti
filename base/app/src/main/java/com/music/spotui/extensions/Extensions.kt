@@ -253,7 +253,7 @@ object Extensions {
     private fun deliverOnline(id: String) {
         val rt = runtimes[id] ?: return
         if (!onlineMarker(id).delete()) return
-        scope.launch { runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_ONLINE, "{}", ONLINE_MS) } }.onFailure { failed(id, it.toString()) } }
+        scope.launch { runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_ONLINE, "{}", ONLINE_MS) } }.onSuccess { recheckAfterEvent(id, rt) }.onFailure { failed(id, it.toString()) } }
     }
 
     /** The network went (and the extensions' sources are asked again once it is back). */
@@ -431,7 +431,7 @@ object Extensions {
             put("key", kotlinx.serialization.json.JsonPrimitive(key))
             if (pressed) put("pressed", kotlinx.serialization.json.JsonPrimitive(true))
         }.toString()
-        runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_SETTING, json, SETTING_MS) } }.onFailure { failed(id, it.toString()) }
+        runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_SETTING, json, SETTING_MS) } }.onSuccess { recheckAfterEvent(id, rt) }.onFailure { failed(id, it.toString()) }
     }
 
     fun logLines(id: String): List<String> = logOf(id).lines()
@@ -1256,7 +1256,17 @@ object Extensions {
         log(id, "sign-in ${result.id}: ${if (result.url != null) "reached the callback" else result.error}")
         if (result.url != null) dismissSignIn(id)
         val json = kotlinx.serialization.json.Json.encodeToString(app.myspoti.extensions.AuthResult.serializer(), result)
-        scope.launch { runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_AUTH, json, AUTH_MS) } }.onFailure { failed(id, it.toString()) } }
+        scope.launch { runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_AUTH, json, AUTH_MS) } }.onSuccess { recheckAfterEvent(id, rt) }.onFailure { failed(id, it.toString()) } }
+    }
+
+    /** Auth, settings and online events can change credentials; do not retain an old inactive probe. */
+    private suspend fun recheckAfterEvent(id: String, rt: ExtensionRuntime) {
+        // An earlier launch probe may still be publishing its pre-auth result.
+        probing[id]?.join()
+        if (runtimes[id] !== rt) return
+        health.forget(id)
+        _statuses.value = health.inactiveNow()
+        probe(id, rt)
     }
 
     private fun failed(id: String, message: String) {
