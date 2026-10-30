@@ -582,7 +582,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Nie udało się odtworzyć na %1$s</string>
     <string name="cast_lost">Utracono %1$s: z powrotem na tym telefonie</string>
-    <string name="cast_spotify_via_connect">Utwory Spotify grają na urządzeniach Cast przez Spotify Connect</string>
+    <string name="cast_spotify_detail">Google Cast · odtwarza Spotify na urządzeniu</string>
+    <string name="cast_spotify_failed">Nie udało się uruchomić Spotify na %1$s</string>
     <string name="downloads_need_source_detail">Utwory pobierają rozszerzenia. Żadne nie jest jeszcze zainstalowane: otwórz sklep z rozszerzeniami i zainstaluj Mornye, aby pobierać.</string>
     <string name="downloads_need_source_title">Pobieranie wymaga rozszerzenia</string>
     <string name="episode_new">Nowy</string>
@@ -614,4 +615,8 @@
     <string name="hidden_songs_empty">Brak ukrytych utworów. Wybierz Nie interesuje mnie w menu utworu.</string>
     <string name="login_failed_title">Logowanie nie zostało dokończone</string>
     <string name="login_failed_detail">Strona Spotify nie załadowała się lub nie wystartowała. Sprawdź połączenie i spróbuj ponownie. Jeśli nadal się nie udaje, spróbuj innej sieci.</string>
+    <string name="lan_device_detail">W tej sieci</string>
+    <string name="lan_logging_in">Logowanie…</string>
+    <string name="lan_failed">%1$s nie przyjął logowania. Otwórz go raz w aplikacji Spotify i spróbuj ponownie.</string>
+    <string name="lan_others">Jeszcze %1$d urządzeń w tej sieci musi najpierw zostać zalogowanych przez aplikację Spotify</string>
 </resources>

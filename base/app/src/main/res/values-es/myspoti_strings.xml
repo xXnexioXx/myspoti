@@ -571,7 +571,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">No se pudo reproducir en %1$s</string>
     <string name="cast_lost">Se perdió %1$s: de vuelta en este teléfono</string>
-    <string name="cast_spotify_via_connect">Las canciones de Spotify suenan en los dispositivos Cast a través de Spotify Connect</string>
+    <string name="cast_spotify_detail">Google Cast · reproduce Spotify en él</string>
+    <string name="cast_spotify_failed">No se pudo iniciar Spotify en %1$s</string>
     <string name="downloads_need_source_detail">Las canciones se descargan con extensiones. Aún no hay ninguna instalada: abre la tienda de extensiones e instala Mornye para descargar.</string>
     <string name="downloads_need_source_title">Las descargas necesitan una extensión</string>
     <string name="episode_new">Nuevo</string>
@@ -599,4 +600,8 @@
     <string name="hidden_songs_empty">Aún no hay canciones ocultas. Elige No me interesa en el menú de una canción.</string>
     <string name="login_failed_title">No se pudo completar el inicio de sesión</string>
     <string name="login_failed_detail">La página de Spotify no se cargó o no arrancó. Comprueba tu conexión e inténtalo de nuevo. Si sigue fallando, prueba con otra red.</string>
+    <string name="lan_device_detail">En esta red</string>
+    <string name="lan_logging_in">Iniciando sesión…</string>
+    <string name="lan_failed">%1$s no aceptó el inicio de sesión. Ábrelo una vez con la app de Spotify y vuelve a intentarlo.</string>
+    <string name="lan_others">%1$d dispositivos más de esta red necesitan que la app de Spotify los conecte primero</string>
 </resources>

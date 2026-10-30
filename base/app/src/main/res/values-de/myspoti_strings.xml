@@ -571,7 +571,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Wiedergabe auf %1$s nicht möglich</string>
     <string name="cast_lost">Verbindung zu %1$s verloren: zurück auf diesem Handy</string>
-    <string name="cast_spotify_via_connect">Spotify-Songs laufen auf Cast-Geräten über Spotify Connect</string>
+    <string name="cast_spotify_detail">Google Cast · spielt Spotify darauf ab</string>
+    <string name="cast_spotify_failed">Spotify konnte auf %1$s nicht gestartet werden</string>
     <string name="downloads_need_source_detail">Songs werden von Erweiterungen heruntergeladen. Noch ist keine installiert: Öffne den Erweiterungs-Store und installiere Mornye, um herunterzuladen.</string>
     <string name="downloads_need_source_title">Downloads brauchen eine Erweiterung</string>
     <string name="episode_new">Neu</string>
@@ -599,4 +600,8 @@
     <string name="hidden_songs_empty">Noch keine ausgeblendeten Songs. Wähle „Kein Interesse“ im Menü eines Songs.</string>
     <string name="login_failed_title">Anmeldung nicht abgeschlossen</string>
     <string name="login_failed_detail">Die Seite von Spotify wurde nicht geladen oder nicht gestartet. Prüfe deine Verbindung und versuche es erneut. Wenn es weiter scheitert, probiere ein anderes Netzwerk.</string>
+    <string name="lan_device_detail">In diesem Netzwerk</string>
+    <string name="lan_logging_in">Anmeldung…</string>
+    <string name="lan_failed">%1$s hat die Anmeldung nicht akzeptiert. Öffne es einmal mit der Spotify-App und versuche es erneut.</string>
+    <string name="lan_others">%1$d weitere Geräte in diesem Netzwerk müssen zuerst über die Spotify-App angemeldet werden</string>
 </resources>

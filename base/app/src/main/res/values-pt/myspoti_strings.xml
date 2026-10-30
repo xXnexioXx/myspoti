@@ -571,7 +571,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Não foi possível tocar em %1$s</string>
     <string name="cast_lost">%1$s perdido: de volta neste celular</string>
-    <string name="cast_spotify_via_connect">As músicas do Spotify tocam em dispositivos Cast pelo Spotify Connect</string>
+    <string name="cast_spotify_detail">Google Cast · toca o Spotify no dispositivo</string>
+    <string name="cast_spotify_failed">Não foi possível iniciar o Spotify em %1$s</string>
     <string name="downloads_need_source_detail">As músicas são baixadas por extensões. Nenhuma está instalada ainda: abra a loja de extensões e instale o Mornye para baixar.</string>
     <string name="downloads_need_source_title">Os downloads precisam de uma extensão</string>
     <string name="episode_new">Novo</string>
@@ -599,4 +600,8 @@
     <string name="hidden_songs_empty">Nenhuma música oculta. Escolha Sem interesse no menu de uma música.</string>
     <string name="login_failed_title">O login não foi concluído</string>
     <string name="login_failed_detail">A página do Spotify não carregou ou não iniciou. Verifique sua conexão e tente novamente. Se continuar falhando, tente outra rede.</string>
+    <string name="lan_device_detail">Nesta rede</string>
+    <string name="lan_logging_in">Conectando…</string>
+    <string name="lan_failed">%1$s não aceitou o login. Abra-o uma vez com o app do Spotify e tente de novo.</string>
+    <string name="lan_others">Mais %1$d dispositivos nesta rede precisam primeiro do login pelo app do Spotify</string>
 </resources>

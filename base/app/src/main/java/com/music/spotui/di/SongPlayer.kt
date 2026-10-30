@@ -838,9 +838,9 @@ object SongPlayer {
     // ── Commands ──
 
     /** Runs an API call off the caller, logging failures instead of crashing the UI. */
-    private fun command(block: suspend () -> Unit) {
+    private fun command(onFailure: (Throwable) -> Unit = {}, block: suspend () -> Unit) {
         scope.launch {
-            runCatching { block() }.onFailure { Log.w(TAG, "command failed: ${it.message}") }
+            runCatching { block() }.onFailure { Log.w(TAG, "command failed: ${it.message}"); onFailure(it) }
         }
     }
 
@@ -1617,6 +1617,7 @@ object SongPlayer {
     private const val PULL_BACK_SETTLE_MS = 600L
     private const val PULL_BACK_WAIT_MS = 6_000L
     private const val DEVICES_WAIT_MS = 2_000L
+    private const val DISCOVERY_WAIT_MS = 800L
 
     /**
      * How long the device list read by [takeBackPlayback] is trusted. Long enough that a burst of
@@ -2098,17 +2099,23 @@ object SongPlayer {
             runCatching { api.devices.refresh() }
             val active = api.devices.devices.value.firstOrNull { it.active }
             _activeDevice.value = active?.takeIf { !it.local }?.let { ConnectDevice(it.id, it.name, it.type, false, true) }
-            active?.volume?.let { if (SystemClock.elapsedRealtime() > volumeHoldUntil) _remoteVolume.intValue = (it * 100).toInt().coerceIn(0, 100) }
+            // A negative volume is a device with a fixed one (Web Player: disable_volume): not 0 %.
+            active?.volume?.takeIf { it >= 0 }?.let { if (SystemClock.elapsedRealtime() > volumeHoldUntil) _remoteVolume.intValue = (it * 100).toInt().coerceIn(0, 100) }
             PlaybackService.setPlaybackDevice(_activeDevice.value != null, remoteVolume)
         }
     }
 
     /** Devices of the account, this phone first. */
     suspend fun devices(): List<ConnectDevice> {
+        // What the Web Player's own picker does when it opens: it asks Spotify to look for devices
+        // again. The answer is not known (no device test yet); bounded, and a page without it is fine.
+        kotlinx.coroutines.withTimeoutOrNull(DISCOVERY_WAIT_MS) { runCatching { MyspotiRuntime.spotify.raw.service("ConnectDiscoveryAPI", "startActiveDiscovery") } }
         runCatching { api.devices.refresh() }
         val list = api.devices.devices.value.map { ConnectDevice(it.id, it.name, it.type, it.local, it.active) }
             .sortedWith(compareByDescending<ConnectDevice> { it.isSelf }.thenBy { it.name })
         _activeDevice.value = list.firstOrNull { it.isActive && !it.isSelf }
+        // Kinds only (no names or ids): a report that says "no speaker" shows whether Spotify listed one.
+        app.myspoti.host.android.Logbook.log("connect: picker lists ${list.size} devices (${list.joinToString { it.type.lowercase() }})")
         return list
     }
 
@@ -2193,14 +2200,28 @@ object SongPlayer {
             Log.i(TAG, "local song to ${device.name}: $track in $context at $at ms")
             ConnectMirror.leaving(device.name)
             LocalPlayer.stop()
-            command {
+            command(onFailure = { transferFailed(device) }) {
                 api.devices.transfer(device.id)
                 api.player.play(context, trackUri = track.takeIf { it != context }, positionMs = at)
                 if (!wasPlaying) api.player.pause()
             }
             return
         }
-        command { if (device.isSelf) api.devices.pullHere() else api.devices.transfer(device.id) }
+        command(onFailure = { transferFailed(device) }) { if (device.isSelf) api.devices.pullHere() else api.devices.transfer(device.id) }
+    }
+
+    /**
+     * A transfer Spotify did not take (no such device any more, a speaker that went to sleep, a
+     * refusal): the picker had already shown the device as playing, and the app went on driving a
+     * device that plays nothing. Back on this phone, and the person is told.
+     */
+    private fun transferFailed(device: ConnectDevice) {
+        if (device.isSelf || chosenRemote != device.id) return
+        chosenRemote = null
+        _activeDevice.value = null
+        main.post {
+            android.widget.Toast.makeText(Graph.app, Graph.app.getString(app.myspoti.engine.R.string.cast_failed, device.name), android.widget.Toast.LENGTH_LONG).show()
+        }
     }
 
     /** Volume (0..100) of the device that plays, as last reported. State: the player's volume bar follows it. */

@@ -576,7 +576,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Impossible de lire sur %1$s</string>
     <string name="cast_lost">%1$s perdu : retour sur ce téléphone</string>
-    <string name="cast_spotify_via_connect">Les titres Spotify passent sur les appareils Cast par Spotify Connect</string>
+    <string name="cast_spotify_detail">Google Cast · lit Spotify dessus</string>
+    <string name="cast_spotify_failed">Impossible de lancer Spotify sur %1$s</string>
     <string name="downloads_need_source_detail">Les titres sont téléchargés par des extensions. Aucune n\'est installée : ouvrez le store des extensions et installez Mornye pour télécharger.</string>
     <string name="downloads_need_source_title">Les téléchargements demandent une extension</string>
     <string name="episode_new">Nouveau</string>
@@ -604,4 +605,8 @@
     <string name="hidden_songs_empty">Aucun titre masqué. Choisissez « Pas intéressé » dans le menu d\'un titre.</string>
     <string name="login_failed_title">La connexion n\'a pas abouti</string>
     <string name="login_failed_detail">La page de Spotify ne s\'est pas chargée ou n\'a pas démarré. Vérifiez votre connexion et réessayez. Si cela échoue encore, essayez un autre réseau.</string>
+    <string name="lan_device_detail">Sur ce réseau</string>
+    <string name="lan_logging_in">Connexion…</string>
+    <string name="lan_failed">%1$s n’a pas accepté la connexion. Ouvrez-le une fois avec l’application Spotify, puis réessayez.</string>
+    <string name="lan_others">%1$d autres appareils de ce réseau doivent d’abord être connectés par l’application Spotify</string>
 </resources>
