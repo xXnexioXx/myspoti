@@ -52,6 +52,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -540,6 +541,9 @@ private fun RowScope.PlayerCredits(
     Column(
         Modifier
             .weight(1f)
+            // Measured at its own height and centred on the header's: held to HEADER_HEIGHT, the
+            // source line was cut at the bottom with a larger font (reported twice).
+            .wrapContentHeight(unbounded = true)
             // Scaling the already measured type is a draw-only operation.
             .graphicsLayer {
                 val scale = 1f - 0.2f * collapse()
