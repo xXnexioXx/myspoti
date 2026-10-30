@@ -212,9 +212,13 @@ fun rememberImmersivePlayer(navController: NavController): ImmersivePlayerBridge
                 if (on) Toast.makeText(context, context.getString(R.string.immersive_player_added_to_liked), Toast.LENGTH_SHORT).show()
             },
             openAlbum = {
-                val albumId = SongPlayer.nowPlaying.value.albumUri.substringAfterLast(":")
-                if (albumId.isNotBlank()) {
-                    navController.navigate(albumRoute(vm.currentSongAlbum.value, vm.currentSongSinger.value, albumId))
+                // An extension's or a download's song has no album in Spotify's state: the song's own
+                // album, as the options' "Go to album" (a tap on the title did nothing for them).
+                val song = nowPlayingSong(vm)
+                val albumId = SongPlayer.nowPlaying.value.albumUri.substringAfterLast(":").ifBlank { song.albumId }
+                val album = vm.currentSongAlbum.value.ifBlank { song.album }
+                if (albumId.isNotBlank() || album.isNotBlank()) {
+                    navController.navigate(albumRoute(album, vm.currentSongSinger.value.ifBlank { song.singer }, albumId))
                 }
             },
             openArtist = {
