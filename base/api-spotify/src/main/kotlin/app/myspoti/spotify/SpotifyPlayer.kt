@@ -108,6 +108,11 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
      */
     @Volatile private var pickBeforeAd: Pick? = null
     /**
+     * The user's last pick around an ad they paused during ([pickBeforeAd] then): nothing plays it
+     * before their [resume], which plays it instead of the song before the ad.
+     */
+    @Volatile private var pickAfterPause: Pick? = null
+    /**
      * A pick before an ad whose break ended in a reload of ours, or one made during a reload (see
      * [playAsked]): played on the new page, however long the reload took (it is the user's),
      * unless they played or skipped something since.
@@ -726,7 +731,8 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
                         adAttempts++
                         adReloaded = true
                         muteUntilSong = true
-                        // A song picked before the pause is not played either.
+                        // A song picked before the pause is not played either: it waits for the user's resume.
+                        pickBeforeAd?.let { pickAfterPause = it }
                         pickBeforeAd = null
                         onwardAfterPausedAd = lastTrackState
                         bridge.logger?.invoke("ad stuck on ${ad?.item?.name}: paused by the user, reloading the player with nothing resumed (attempt $adAttempts)")
@@ -1256,6 +1262,14 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
         if (adJustEnded && pick != null && !AdRecoveryRules.keepsPickBeforeAd(mirroring)) {
             pickBeforeAd = null
             bridge.logger?.invoke("song picked before the ad: left to the mirror (the page only mirrors)")
+        } else if (adJustEnded && pick != null && pausedByUser) {
+            // Paused by the user during the ad: nothing plays before their resume, which plays the pick.
+            pickBeforeAd = null
+            val landed = if (pick.track != null) s?.item?.uri == pick.track else s?.contextUri == pick.context
+            if (!landed) {
+                pickAfterPause = pick
+                bridge.logger?.invoke("song picked before the ad: paused by the user, played on their resume")
+            }
         } else if (adJustEnded && pick != null) {
             pickBeforeAd = null
             // Reported (beta.9): a song picked in another playlist, an ad, then the old queue went
@@ -1308,8 +1322,8 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
         noteTrackChange(lastTrackState, s, adJustEnded)
         lastTrackState = s
         _state.value = s
-        // A song plays: nothing left to play on from after a paused ad.
-        if (s?.item != null && !s.isPaused) onwardAfterPausedAd = null
+        // A song plays, the user's pause over: nothing left to play on from after a paused ad.
+        if (s?.item != null && !s.isPaused && !pausedByUser) { onwardAfterPausedAd = null; pickAfterPause = null }
         // Reported (2.0.2-beta.3, log seen): Spotify refusing the audio licences (429), the page
         // skips on by itself through every song it gets no licence for, to the end of the list and
         // round again. The hold's one pause was sent while the page was loading the next song and
@@ -1659,6 +1673,7 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
     private suspend fun playAsked(contextUri: Uri, trackUri: Uri?, index: Int?, positionMs: Long?, order: List<Uri>?, origin: String) {
         userMoveAt = System.currentTimeMillis()
         onwardAfterPausedAd = null
+        pickAfterPause = null
         // The ad due after the song that played before: a new play brings its own queue, and the
         // put-back of an earlier ad skip would queue that old song after the pick.
         adRestore?.cancel()
@@ -1814,6 +1829,21 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
         // the ad, as the recovery would have played it (one play).
         val onward = onwardAfterPausedAd
         onwardAfterPausedAd = null
+        // The user's pick around an ad they paused during: played now, in one play (held by
+        // [playAsked] if an ad or a reload is still on), not the song before the ad.
+        val pick = pickAfterPause?.takeIf { pausedByUser }
+        pickAfterPause = null
+        if (pick != null) {
+            val now = _state.value
+            val landed = if (pick.track != null) now?.item?.uri == pick.track else now?.contextUri == pick.context
+            if (!landed) {
+                pausedByUser = false
+                bridge.logger?.invoke("resume after a paused ad: playing the song picked around it, ${pick.track ?: pick.context}")
+                if (_adPlaying.value) { pickBeforeAd = pick; resumePage(); return }
+                playOnNewPage { playAsked(pick.context, trackUri = pick.track, index = pick.index, positionMs = pick.positionMs, order = pick.order, origin = "pick held over a paused ad") }
+                return
+            }
+        }
         if (onward != null && !_adPlaying.value && _state.value?.item == null && liveIntent() == null) {
             pausedByUser = false
             bridge.logger?.invoke("resume after an ad got past while paused: playing on from ${onward.item?.name}")
