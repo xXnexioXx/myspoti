@@ -35,15 +35,23 @@ class UpdateCheckerTest {
         val body = "- **Local Files**: a folder\n  - nested [link](https://x.y)\n\n**Full Changelog**: https://github.com/a/b/compare/v1...v2"
         assertEquals("• Local Files: a folder\n  • nested link", UpdateChecker.cleanNotes(body))
     }
-    @Test fun findsTheReleaseApk() {
-        val release = org.json.JSONObject("""{"assets":[
+    @Test fun findsTheReleaseApkOfThisChannelOnly() {
+        // An older release: one APK named after the version, whichever channel the release is.
+        val legacy = org.json.JSONObject("""{"tag_name":"v2.0.0-beta.4","assets":[
             {"name":"checksums.txt","browser_download_url":"https://x/c.txt"},
             {"name":"myspoti-2.0.0-beta.4.apk","browser_download_url":"https://x/myspoti.apk"}]}""")
-        assertEquals("https://x/myspoti.apk", UpdateChecker.apkAsset(release))
-        val both = org.json.JSONObject("""{"tag_name":"v2.2.1-beta.1","assets":[
-            {"name":"myspoti-stable-2.2.0.apk","browser_download_url":"https://x/stable.apk"},
-            {"name":"myspoti-beta-2.2.1-beta.1.apk","browser_download_url":"https://x/beta.apk"}]}""")
-        assertEquals("https://x/beta.apk", UpdateChecker.apkAsset(both))
-        assertEquals("", UpdateChecker.apkAsset(org.json.JSONObject("{}")))
+        assertEquals("https://x/myspoti.apk", UpdateChecker.apkAsset(legacy, beta = true))
+        assertEquals("https://x/myspoti.apk", UpdateChecker.apkAsset(legacy, beta = false))
+        val both = org.json.JSONObject("""{"tag_name":"v2.2.1","assets":[
+            {"name":"myspoti-stable-2.2.1.apk","browser_download_url":"https://x/stable.apk"},
+            {"name":"myspoti-beta-2.2.1.apk","browser_download_url":"https://x/beta.apk"}]}""")
+        assertEquals("https://x/beta.apk", UpdateChecker.apkAsset(both, beta = true))
+        assertEquals("https://x/stable.apk", UpdateChecker.apkAsset(both, beta = false))
+        // Only the other channel's APK, or an unrelated .apk: no link, never the wrong build.
+        val other = org.json.JSONObject("""{"tag_name":"v2.2.1","assets":[
+            {"name":"myspoti-stable-2.2.1.apk","browser_download_url":"https://x/stable.apk"},
+            {"name":"something-else.apk","browser_download_url":"https://x/else.apk"}]}""")
+        assertEquals("", UpdateChecker.apkAsset(other, beta = true))
+        assertEquals("", UpdateChecker.apkAsset(org.json.JSONObject("{}"), beta = true))
     }
 }
