@@ -43,6 +43,9 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
     @Volatile var onDeviceRegistered: (() -> Unit)? = null
     private val main = Handler(Looper.getMainLooper())
 
+    /** The guarded fallback channel of a WebView without web message listeners (see [PlayerChannel]). */
+    internal var channel: PlayerChannel? = null
+
     /** The same client ([http]), pinned to one address family (see RelayRoutes); same pool. */
     private val v4Client by lazy { http.newBuilder().dns(FamilyDns(IpFamily.V4)).build() }
     private val v6Client by lazy { http.newBuilder().dns(FamilyDns(IpFamily.V6)).build() }
@@ -52,7 +55,7 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
         NetworkReport.logOnce(view.context.applicationContext)
         // Before Android 14: Cronet from Play services, ready before any refusal needs it.
         CronetStack.prepare(view.context)
-        view.exposeToPlayer("MyspotiNet", ::onMessage)
+        channel = view.exposeToPlayer("MyspotiNet", ::onMessage)
         val documentStart = androidx.webkit.WebViewFeature.isFeatureSupported(androidx.webkit.WebViewFeature.DOCUMENT_START_SCRIPT)
         if (documentStart) androidx.webkit.WebViewCompat.addDocumentStartJavaScript(view, SCRIPT, setOf("https://open.spotify.com"))
         Logbook.log("control relay installed (document start: $documentStart)")

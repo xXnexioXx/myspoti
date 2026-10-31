@@ -119,16 +119,18 @@ object UpdateChecker {
         return Release(version, url, prefs.getString("notes", null).orEmpty(), prefs.getString("apk", null).orEmpty()).takeIf { isNewer(version, BuildConfig.VERSION_NAME) }
     }
 
-    /** The release's APK download link (the CI uploads one `myspoti-<beta|stable>-<version>.apk`; older releases `myspoti-<version>.apk`). */
-    internal fun apkAsset(release: JSONObject): String {
+    /**
+     * The release's APK download link for this app's channel (the CI uploads one `myspoti-<beta|stable>-<version>.apk`;
+     * older releases `myspoti-<version>.apk`, which is the app's own channel since [fetch] only offers a release of it).
+     * Only this channel's APK: a release carrying both must not hand a phone the other channel's build
+     * (a different package, it could not update this one), and a name that matches none gives no link.
+     */
+    internal fun apkAsset(release: JSONObject, beta: Boolean = isBeta): String {
         val assets = release.optJSONArray("assets") ?: return ""
-        val all = (0 until assets.length()).map { assets.getJSONObject(it) }
-        // This release's own APK first: a release carrying several APKs (both
-        // channels) must not hand a phone the other channel's build.
         val version = release.optString("tag_name").removePrefix("v")
-        val want = setOf("myspoti-beta-$version.apk", "myspoti-stable-$version.apk", "myspoti-$version.apk")
-        return (all.firstOrNull { it.optString("name") in want }
-            ?: all.firstOrNull { it.optString("name").endsWith(".apk", ignoreCase = true) })
+        val want = setOf("myspoti-${if (beta) "beta" else "stable"}-$version.apk", "myspoti-$version.apk")
+        return (0 until assets.length()).map { assets.getJSONObject(it) }
+            .firstOrNull { it.optString("name") in want }
             ?.optString("browser_download_url").orEmpty()
     }
 

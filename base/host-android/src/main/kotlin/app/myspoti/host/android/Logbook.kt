@@ -1,6 +1,7 @@
 package app.myspoti.host.android
 
 import android.content.Context
+import app.myspoti.spotify.bridge.LogMask
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,6 +24,9 @@ object Logbook {
      */
     private const val MAX_LINES = 6000
 
+    /** The longest line kept; the longest ones written on purpose (devices, identity) stay under it. */
+    private const val MAX_LINE = 2000
+
     /** Guarded by its own monitor: [log] is called from the main thread, OkHttp threads and coroutines. */
     private val lines = ArrayDeque<String>(MAX_LINES)
     private val stamp = SimpleDateFormat("HH:mm:ss.SSS", Locale.US)
@@ -32,7 +36,9 @@ object Logbook {
      * Records [line] and mirrors it to Logcat with the same message, so the exported report
      * and `adb logcat -s Myspoti` show the same thing. Safe from any thread.
      */
-    fun log(line: String) {
+    fun log(raw: String) {
+        // Secrets are hidden and a huge line cut here, once, for every caller (see LogMask).
+        val line = LogMask.shown(raw, MAX_LINE)
         android.util.Log.d(WebPlayerHost.LOG, line)
         synchronized(lines) {
             lines.addLast("${stamp.format(Date())} $line")
@@ -72,7 +78,7 @@ object Logbook {
      * where it is known, the latest value wins.
      */
     private val facts = java.util.concurrent.ConcurrentHashMap<String, String>()
-    fun fact(key: String, value: String) { facts[key] = value }
+    fun fact(key: String, value: String) { facts[key] = LogMask.redact(value) }
 
     /** More header lines the app knows of (its extensions), asked when the report is written. */
     @Volatile var headerExtras: (() -> List<Pair<String, String>>)? = null
