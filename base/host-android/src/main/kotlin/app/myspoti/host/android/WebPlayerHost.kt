@@ -226,11 +226,20 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
                 // skips on by itself through every song it gets no licence for (measured in the 25/10
                 // logs: 20 to 25 more licence requests in the 4 s after the hold began, ~4 a second,
                 // every one answered 429). Those are not sent: the page gets the same 429 from here
-                // and Spotify sees no more of them while the hold lasts.
+                // and Spotify sees no more of them while the hold lasts. With the headers Spotify's own
+                // answer has for the page (log seen, 2.0.2-beta.5: without them the page read a CORS
+                // failure, status 0, not a 429) and the hold's time left.
                 if (request.method == "POST" && licenseLimited() && url.contains(LICENSE_PATH)) {
                     if (heldLicenses++ == 0) Logbook.log("audio licence requests answered here while Spotify is limiting")
                     app.myspoti.spotify.report.Refusal402.licenceHeld()
-                    return WebResourceResponse("application/octet-stream", "utf-8", 429, "Too Many Requests", emptyMap(), ByteArrayInputStream(ByteArray(0)))
+                    val left = ((_licenseLimitedUntil.value - android.os.SystemClock.elapsedRealtime()) / 1000).coerceAtLeast(1)
+                    val headers = mapOf(
+                        "Access-Control-Allow-Origin" to PLAYER_URL.trimEnd('/'),
+                        "Access-Control-Allow-Credentials" to "true",
+                        "Access-Control-Expose-Headers" to "Retry-After",
+                        "Retry-After" to "$left",
+                    )
+                    return WebResourceResponse("application/octet-stream", "utf-8", 429, "Too Many Requests", headers, ByteArrayInputStream(ByteArray(0)))
                 }
                 // The sign-in flow lives on accounts.spotify.com: logging its steps is what turns
                 // "the login is stuck" into the exact request that failed (with the status from
@@ -406,6 +415,19 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
     private val roots by lazy { context.getSharedPreferences("web_player", Context.MODE_PRIVATE) }
 
     /**
+     * When a signed-in session was first seen in this WebView since the last sign-out: 0 never,
+     * -1 one already signed in when this was first noted (its age unknown). For the report's
+     * summary only (audio licences refused on sign-ins less than a day old, 30/10): a date, no account.
+     */
+    val signedInSince: Long get() = roots.getLong(SIGNED_IN_KEY, 0L)
+
+    /** A signed-in session is there; [fresh]: it came after a login page or an anonymous one in this run. */
+    fun noteSignedIn(fresh: Boolean) {
+        if (signedInSince != 0L) return
+        roots.edit().putLong(SIGNED_IN_KEY, if (fresh) System.currentTimeMillis() else -1L).apply()
+    }
+
+    /**
      * Where Spotify sends "/" for this account's language (`…/intl-fr/`), loaded directly: the
      * redirect cost a whole navigation, about 0.5 s, on every start and reload (measured on the
      * test phone). Learnt from the last load; a language where "/" is final keeps [PLAYER_URL].
@@ -488,6 +510,7 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
 
     /** Signs out of Spotify in this WebView, then shows the login page. */
     fun logout() = main.post {
+        roots.edit().remove(SIGNED_IN_KEY).apply()
         CookieManager.getInstance().removeAllCookies {
             main.post {
                 // Web storage too: localStorage/IndexedDB hold the player's session
@@ -578,6 +601,7 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
         const val PLAYER_URL = "https://open.spotify.com/"
         private val PLAYER_ROOT = Regex("""https://open\.spotify\.com/intl-[a-z]{2,3}(?:-[a-zA-Z]{2,4})?/""")
         private const val ROOT_KEY = "player_root"
+        private const val SIGNED_IN_KEY = "signed_in_since"
         private const val PLAYER_HOST = "open.spotify.com"
         private const val PAGE_LOAD_TIMEOUT_MS = 25_000L
         private const val DRM_WATCH_MS = 10_000L
