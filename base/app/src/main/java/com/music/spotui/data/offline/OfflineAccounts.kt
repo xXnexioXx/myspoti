@@ -98,7 +98,9 @@ object OfflineAccounts {
 
     private fun hasDownloads(dir: File): Boolean =
         File(dir, "index.json").length() > 2 || File(dir, "collections.json").length() > 2 ||
-            File(dir, "pending.json").length() > 2 || File(dir, "podcasts-pending.json").length() > 2
+            File(dir, "pending.json").length() > 2 || File(dir, "podcasts-pending.json").length() > 2 ||
+            // Songs whose index was lost (only the older copy, or none, could be read) are downloads too.
+            File(dir, "audio").list()?.isNotEmpty() == true || File(dir, "recovered").exists()
 
     /** Running downloads stop; the queues on disk are kept as they were, so they resume with their account. */
     private suspend fun stopDownloads(dir: File) {

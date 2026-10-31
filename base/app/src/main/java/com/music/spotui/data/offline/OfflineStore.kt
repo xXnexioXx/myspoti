@@ -115,7 +115,10 @@ object OfflineStore {
         audioDir.mkdirs(); coverDir.mkdirs()
         // The index lists only finished files; anything else in the folders is a leftover.
         // An index that cannot be read fully is never trusted to delete anything: the last
-        // good copy is used instead, and if that fails too the files are all kept.
+        // good copy is used instead, and if that fails too the files are all kept. Only the
+        // index itself, read in full, sweeps leftovers: the last good copy is older and lacks
+        // the songs added since, so with it (or with no index) the files it does not list are
+        // moved to the recovered folder, which nothing deletes, rather than swept by a later load.
         val read = readIndex(indexFile) ?: run {
             if (indexFile.exists()) {
                 indexFile.copyTo(File(root, "index.corrupt-${System.currentTimeMillis()}.json"), overwrite = true)
@@ -126,21 +129,38 @@ object OfflineStore {
         val list = read?.tracks.orEmpty()
         val kept = list.filter { File(audioDir, it.file).isFile }
         kept.forEach { tracks[it.trackId] = it }
-        if (read != null && read.complete) {
-            if (kept.size != list.size || read.file == backupFile) writeIndex()
-            val names = kept.map { it.file }.toSet()
+        val names = kept.map { it.file }.toSet()
+        val covers = kept.map { it.cover }.toSet()
+        if (read != null && read.complete && read.file == indexFile) {
+            if (kept.size != list.size) writeIndex()
             audioDir.listFiles()?.forEach { if (it.name !in names) it.delete() }
-            val covers = kept.map { it.cover }.toSet()
             coverDir.listFiles()?.forEach { if (it.name !in covers) it.delete() }
+        } else {
+            val aside = keepAside(audioDir, names, File(recoveredDir, "audio")) + keepAside(coverDir, covers, File(recoveredDir, "covers"))
+            if (aside > 0) runCatching { app.myspoti.host.android.Logbook.log("offline: download index not read in full; $aside files the index does not list kept in ${recoveredDir.name}/") }
+            if (read != null && read.complete) writeIndex()
         }
         return kept.map { File(audioDir, it.file) }
     }
+
+    /**
+     * Moves the files of [from] not in [listed] to [to], under another name when one is in the way;
+     * returns how many. A file that cannot be moved stays where it is.
+     */
+    private fun keepAside(from: File, listed: Set<String>, to: File): Int =
+        from.listFiles()?.filter { it.name !in listed }?.count { f ->
+            to.mkdirs()
+            val target = File(to, f.name).takeUnless { it.exists() } ?: File(to, "${System.currentTimeMillis()}-${f.name}")
+            f.renameTo(target)
+        } ?: 0
 
     val audioDir: File get() = File(root, "audio")
     val coverDir: File get() = File(root, "covers")
     private val indexFile: File get() = File(root, "index.json")
     /** The index before the last write, the fallback when [indexFile] is damaged. */
     private val backupFile: File get() = File(root, "index.json.bak")
+    /** Files an index read only in part (or its older copy) did not list: kept, never swept. */
+    internal val recoveredDir: File get() = File(root, "recovered")
     internal val pendingFile: File get() = File(root, "pending.json")
     /** The podcast queue: kept apart so a restart resumes episodes without touching music. */
     internal val podcastPendingFile: File get() = File(root, "podcasts-pending.json")
