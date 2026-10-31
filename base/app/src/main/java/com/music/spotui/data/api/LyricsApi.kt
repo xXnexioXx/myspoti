@@ -268,9 +268,7 @@ object LyricsApi {
             runCatching {
                 val f = file(key) ?: return
                 val o = encode(lyrics).put("key", key).put("at", System.currentTimeMillis())
-                val tmp = java.io.File(f.parentFile, f.name + ".tmp")
-                tmp.writeText(o.toString())
-                if (!tmp.renameTo(f)) { f.delete(); tmp.renameTo(f) }
+                com.music.spotui.data.writeTextSafely(f, o.toString(), sync = false)
                 if (++writes % 20 == 0) prune()
             }.onFailure { Log.w("LyricsApi", "could not keep lyrics: ${it.javaClass.simpleName}") }
         }
