@@ -415,6 +415,19 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
     private val roots by lazy { context.getSharedPreferences("web_player", Context.MODE_PRIVATE) }
 
     /**
+     * When a signed-in session was first seen in this WebView since the last sign-out: 0 never,
+     * -1 one already signed in when this was first noted (its age unknown). For the report's
+     * summary only (audio licences refused on sign-ins less than a day old, 30/10): a date, no account.
+     */
+    val signedInSince: Long get() = roots.getLong(SIGNED_IN_KEY, 0L)
+
+    /** A signed-in session is there; [fresh]: it came after a login page or an anonymous one in this run. */
+    fun noteSignedIn(fresh: Boolean) {
+        if (signedInSince != 0L) return
+        roots.edit().putLong(SIGNED_IN_KEY, if (fresh) System.currentTimeMillis() else -1L).apply()
+    }
+
+    /**
      * Where Spotify sends "/" for this account's language (`…/intl-fr/`), loaded directly: the
      * redirect cost a whole navigation, about 0.5 s, on every start and reload (measured on the
      * test phone). Learnt from the last load; a language where "/" is final keeps [PLAYER_URL].
@@ -497,6 +510,7 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
 
     /** Signs out of Spotify in this WebView, then shows the login page. */
     fun logout() = main.post {
+        roots.edit().remove(SIGNED_IN_KEY).apply()
         CookieManager.getInstance().removeAllCookies {
             main.post {
                 // Web storage too: localStorage/IndexedDB hold the player's session
@@ -587,6 +601,7 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
         const val PLAYER_URL = "https://open.spotify.com/"
         private val PLAYER_ROOT = Regex("""https://open\.spotify\.com/intl-[a-z]{2,3}(?:-[a-zA-Z]{2,4})?/""")
         private const val ROOT_KEY = "player_root"
+        private const val SIGNED_IN_KEY = "signed_in_since"
         private const val PLAYER_HOST = "open.spotify.com"
         private const val PAGE_LOAD_TIMEOUT_MS = 25_000L
         private const val DRM_WATCH_MS = 10_000L

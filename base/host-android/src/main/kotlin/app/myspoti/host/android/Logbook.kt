@@ -162,7 +162,15 @@ object Logbook {
             audioDetails(context)?.let { add("audio" to it) }
             runCatching { headerExtras?.invoke() }.getOrNull()?.let { addAll(it) }
         }
+        // With how long ago this WebView was signed in (a new sign-in had its licences refused, 30/10).
+        val signedIn = if (MyspotiRuntime.isStarted) runCatching { MyspotiRuntime.host.signedInSince }.getOrNull() else null
+        val signedInAge = when {
+            signedIn == null || signedIn == 0L -> null
+            signedIn < 0 -> "signed in here before this was noted"
+            else -> "signed in here ${ageBucket(System.currentTimeMillis() - signedIn)}"
+        }
         val installAge = info?.firstInstallTime?.let { ageBucket(System.currentTimeMillis() - it) }
+            ?.let { age -> listOfNotNull(age, signedInAge).joinToString(", ") }
         val summary = app.myspoti.spotify.report.Refusal402.summary(facts["account"], installAge)
         // Masked and cut down (DiagnosticDigest): small enough to paste, nothing that opens an account.
         return buildString {

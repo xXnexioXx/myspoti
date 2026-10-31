@@ -539,8 +539,11 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
         val readyState: Int = -1,
         val networkState: Int = -1,
         val error: String? = null,
+        /** The element has media keys (1) or not (0), and how often it waited for a key ("waitingforkey"); -1: not said. */
+        val keys: Int = -1,
+        val keyWaits: Int = -1,
     ) {
-        fun describe() = "paused=$paused muted=$muted volume=$level own=$own t=${"%.1f".format(time)} ready=$readyState net=$networkState error=${error ?: "none"} active=$active"
+        fun describe() = "paused=$paused muted=$muted volume=$level own=$own t=${"%.1f".format(time)} ready=$readyState net=$networkState error=${error ?: "none"} keys=$keys keyWaits=$keyWaits active=$active"
     }
 
     private suspend fun readMedia(): Media? {
@@ -559,6 +562,8 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
             readyState = p("readyState")?.intOrNull ?: -1,
             networkState = p("networkState")?.intOrNull ?: -1,
             error = p("error")?.contentOrNull?.takeIf { it != "null" },
+            keys = p("keys")?.intOrNull ?: -1,
+            keyWaits = p("keyWaits")?.intOrNull ?: -1,
         )
     }
 
