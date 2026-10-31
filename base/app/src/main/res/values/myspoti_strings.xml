@@ -526,6 +526,7 @@
     <string name="library_chip_by_me">By me</string>
     <string name="library_chip_artists">Artists</string>
     <string name="library_chip_albums">Albums</string>
+    <string name="library_chip_podcasts">Podcasts</string>
     <string name="library_chip_songs">Songs</string>
     <string name="add_playlist_to_playlist">Add playlist to another playlist</string>
     <string name="add_collection_reading">Reading the songs…</string>
