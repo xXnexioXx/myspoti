@@ -40,6 +40,9 @@
     <string name="nerd_processing_none">None</string>
     <string name="nerd_crossfade">Crossfade %1$d s</string>
     <string name="nerd_fading">fading between two songs now</string>
+    <string name="nerd_equalizer">Equalizer: %1$s</string>
+    <string name="nerd_speed">Speed %1$s×</string>
+    <string name="nerd_skip_silence">silences skipped</string>
     <string name="nerd_device">Device</string>
     <string name="nerd_device_this_phone">This phone</string>
     <string name="nerd_requested">Requested from the page</string>

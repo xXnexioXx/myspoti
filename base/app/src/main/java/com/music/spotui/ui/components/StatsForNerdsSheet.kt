@@ -128,6 +128,11 @@ internal object NerdStats {
         row(R.string.nerd_processing, listOfNotNull(
             CrossfadePref.seconds.takeIf { it > 0 }?.let { c.getString(R.string.nerd_crossfade, it) },
             if (LocalPlayer.fadeProgress() < 1f) c.getString(R.string.nerd_fading) else null,
+            com.music.spotui.data.preferences.EqualizerPref.takeIf { it.enabled }?.let {
+                c.getString(R.string.nerd_equalizer, c.getString(com.music.spotui.ui.screens.eqPresetLabel(it.preset)))
+            },
+            com.music.spotui.data.preferences.EqualizerPref.speed.takeIf { it != 1f }?.let { c.getString(R.string.nerd_speed, speedLabel(it.toDouble())) },
+            if (com.music.spotui.data.preferences.EqualizerPref.skipSilence) c.getString(R.string.nerd_skip_silence) else null,
         ).joinToString(" · ").ifBlank { c.getString(R.string.nerd_processing_none) })
         return NerdSection(c.getString(R.string.nerd_section_exo), rows)
     }
