@@ -984,7 +984,7 @@ private fun ContextContent(navController: NavController, vm: ContextViewModel, p
                 song = song,
                 showCover = p.type != "album",
                 isCurrent = song.id == currentSongId,
-                saved = SongPlayer.library["spotify:track:${song.spotifyTrackId}"] ?: ("spotify:track:${song.spotifyTrackId}" in saved),
+                saved = com.music.spotui.di.trackSaved(song.spotifyTrackId, saved),
                 offline = com.music.spotui.data.offline.OfflineStore.statusOf(song.spotifyTrackId),
                 addedBy = vm.adders.value.let { a -> a["row:" + song.rowUid] ?: a["song:" + song.spotifyTrackId] },
                 onClick = { if (SmartShuffle.on.value == p.uri) vm.playSmart(p, song) else vm.play(p, song, sort) },

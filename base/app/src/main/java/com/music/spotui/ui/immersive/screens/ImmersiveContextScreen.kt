@@ -229,6 +229,7 @@ private fun ImmersiveContextContent(navController: NavController, vm: ContextVie
     val isLiked = p.type == "liked" || p.type == "liked-artist"
     val isThisContext = np.contextUri == p.uri || (isLiked && np.contextUri.contains(":collection"))
     val contextSaved by vm.contextSaved
+    val savedTracks by vm.savedUris
     val smart = SmartShuffle.on.value == p.uri
     val tapper = rememberTrackTapper()
 
@@ -516,6 +517,10 @@ private fun ImmersiveContextContent(navController: NavController, vm: ContextVie
                             trackNumber = if (numbered) index + 1 else null,
                             showDuration = numbered,
                             showAlbum = !numbered,
+                            // As in the Classic list: the heart and the download of the song, from the same state
+                            // (what Spotify last reported, the list's one batch check, the downloads kept on the phone).
+                            liked = com.music.spotui.di.trackSaved(song.spotifyTrackId, savedTracks),
+                            offline = OfflineStore.statusOf(song.spotifyTrackId),
                             // Collaborative: the small face of who added the song.
                             trailing = vm.adders.value.let { a -> a["row:" + song.rowUid] ?: a["song:" + song.spotifyTrackId] }?.let { m ->
                                 { com.music.spotui.ui.components.ProfileAvatar(m.imageUrl, m.name, 22.dp) }

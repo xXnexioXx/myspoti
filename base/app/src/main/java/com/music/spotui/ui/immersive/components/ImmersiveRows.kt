@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -43,6 +44,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.myspoti.engine.R
 import com.music.spotui.data.entity.SongsModel
+import com.music.spotui.data.offline.OfflineStatus
+import com.music.spotui.ui.components.DownloadBadge
 import com.music.spotui.ui.immersive.Immersive
 
 /** The cover of a row, and the height that lines the rows up (4 dp above and below it make [Immersive.RowHeight]). */
@@ -71,6 +74,8 @@ private val RowTitle = Immersive.Body.copy(fontWeight = FontWeight.Medium)
  * @param trackNumber shown in place of the cover, for an album's own listing.
  * @param showDuration the length at the end of the row.
  * @param showAlbum "artist · album" as the second line instead of just the artist.
+ * @param liked the song is in Liked Songs: a small heart before the more button.
+ * @param offline the song's download, as the Classic list shows it before the artist: nothing when it has none.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -84,6 +89,8 @@ fun ImmersiveSongRow(
     trackNumber: Int? = null,
     showDuration: Boolean = false,
     showAlbum: Boolean = false,
+    liked: Boolean = false,
+    offline: OfflineStatus? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val titleColor by animateColorAsState(
@@ -127,7 +134,20 @@ fun ImmersiveSongRow(
         gapAfterLeading = if (trackNumber == null) 14.dp else Immersive.Gutter,
         trailingText = if (showDuration && song.durationMs > 0) formatDuration(song.durationMs) else null,
         onMore = onMore,
-        trailing = trailing,
+        subtitleLeading = if (offline != null) ({
+            DownloadBadge(offline, size = 14.dp)
+            Spacer(Modifier.width(6.dp))
+        }) else null,
+        trailing = if (liked) ({
+            trailing?.invoke()
+            Spacer(Modifier.width(8.dp))
+            Icon(
+                Icons.Rounded.Favorite,
+                contentDescription = stringResource(R.string.liked_song),
+                tint = Immersive.Accent,
+                modifier = Modifier.size(18.dp),
+            )
+        }) else trailing,
     )
 }
 
@@ -196,6 +216,7 @@ private fun RowScaffold(
     gapAfterLeading: Dp,
     trailingText: String?,
     onMore: (() -> Unit)?,
+    subtitleLeading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val haptics = LocalHapticFeedback.current
@@ -223,12 +244,15 @@ private fun RowScaffold(
             ImmersiveSongTitle(title = title, explicit = explicit, style = RowTitle, color = titleColor)
             if (subtitle.isNotBlank()) {
                 Spacer(Modifier.height(2.dp))
-                Text(
-                    text = subtitle,
-                    style = Immersive.Subhead,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    subtitleLeading?.invoke()
+                    Text(
+                        text = subtitle,
+                        style = Immersive.Subhead,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
         trailing?.invoke()
