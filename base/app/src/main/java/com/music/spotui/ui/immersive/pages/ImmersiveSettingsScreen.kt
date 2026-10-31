@@ -240,6 +240,14 @@ private fun PlaybackPage(navController: NavController, open: (SettingsPage) -> U
                     chevron = true, onClick = { open(SettingsPage.Crossfade) },
                 )
             }
+            // The local player's equalizer, speed and silence skipping (never Spotify's own songs).
+            row {
+                ImmersiveGroupRow(
+                    stringResource(R.string.equalizer_title), detail = stringResource(R.string.equalizer_settings_detail),
+                    value = if (com.music.spotui.data.preferences.EqualizerPref.enabled) stringResource(com.music.spotui.ui.screens.eqPresetLabel(com.music.spotui.data.preferences.EqualizerPref.preset)) else null,
+                    chevron = true, onClick = { navController.navigate(Routes.Equalizer.route) },
+                )
+            }
             row {
                 ImmersiveSwitchRow(
                     stringResource(R.string.settings_keep_playing_title), checked = keepPlaying,

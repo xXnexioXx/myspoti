@@ -117,6 +117,14 @@ fun SettingsScreen(navController: NavController) {
                 onChecked = { com.music.spotui.data.preferences.AppShufflePref.set(ctx, it) },
             )
             CrossfadeRow()
+            // The local player's equalizer, speed and silence skipping (never Spotify's own songs).
+            Column(
+                Modifier.fillMaxWidth().clickable { navController.navigate(com.music.spotui.ui.navigation.Routes.Equalizer.route) }
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+            ) {
+                Text(stringResource(R.string.equalizer_title), color = AppText, fontSize = 16.sp)
+                Text(stringResource(R.string.equalizer_settings_detail), color = AppMuted, fontSize = 12.sp)
+            }
             var keepPlaying by remember { mutableStateOf(app.myspoti.host.android.PlaybackService.keepsPlayingOnClose(ctx)) }
             OptionRow(
                 label = stringResource(R.string.settings_keep_playing_title),
@@ -358,7 +366,7 @@ private fun SourcesBlock(action: app.myspoti.extensions.Action, navController: N
 }
 
 @Composable
-private fun Section(title: Int) {
+internal fun Section(title: Int) {
     Text(stringResource(title).uppercase(), color = com.music.spotui.ui.theme.AppAccent, fontSize = 12.sp, fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp, modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 8.dp))
 }
@@ -570,7 +578,7 @@ private fun RemoveDownloadsRow() {
 
 
 @Composable
-private fun OptionRow(label: String, detail: String, checked: Boolean,
+internal fun OptionRow(label: String, detail: String, checked: Boolean,
     enabled: Boolean = true, onChecked: (Boolean) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)

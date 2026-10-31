@@ -174,6 +174,12 @@ object ConnectMirror {
         val online = !download || com.music.spotui.data.offline.OfflineStore.isOnline(com.music.spotui.di.Graph.app)
         // An extension that mirrors the download itself (playback.mirror) keeps the page, as before that setting.
         val extensionHolds = download && (yieldedUri == uri || com.music.spotui.extensions.Extensions.mirror.active != null)
+        // Played off 1× (the equalizer's speed): Spotify's page plays music at 1× only, it would
+        // be put back every few seconds; the song plays alone, as with the setting off.
+        if (LocalPlayer.rate() != 1f) {
+            if (running) stop("the song plays at ${LocalPlayer.rate()}×, Spotify plays at 1× only")
+            return
+        }
         if (extensionHolds || !MirrorRules.eligible(origin, id, ConnectMirrorPref.on, com.music.spotui.data.DataSaver.active, DownloadSyncPref.on, online)) {
             if (running) stop(if (origin == MirrorRules.Origin.AUDIO_SOURCE) "not mirrored: ${t.title}" else "a download or a file of the phone plays")
             return

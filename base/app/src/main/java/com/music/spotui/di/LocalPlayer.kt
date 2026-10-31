@@ -61,7 +61,7 @@ object LocalPlayer {
     }
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-    private fun build(main: Boolean): ExoPlayer = ExoPlayer.Builder(Graph.app)
+    private fun build(main: Boolean): ExoPlayer = ExoPlayer.Builder(Graph.app, Renderers)
         // The fading-out copy of a crossfade owns neither the audio focus nor the noisy-audio pause:
         // the main player has them and the fade follows its play state.
         .setAudioAttributes(audioAttributes, main && !mirrorActive)
@@ -70,6 +70,37 @@ object LocalPlayer {
         .setMediaSourceFactory(androidx.media3.exoplayer.source.DefaultMediaSourceFactory(
             com.music.spotui.data.offline.OfflineCrypto.Factory(Graph.app)).setLoadErrorHandlingPolicy(NoAudioNotRetried))
         .build()
+        // The speed and the silence skipping of the settings (the fading-out copy too: both are heard).
+        .also(::tune)
+
+    /**
+     * The default renderers, with the equalizer in the audio chain (each player its own, see
+     * EqualizerProcessor), ahead of the silence skipping and the speed the sink adds after it.
+     */
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    private object Renderers : androidx.media3.exoplayer.DefaultRenderersFactory(Graph.app) {
+        override fun buildAudioSink(context: android.content.Context, enableFloatOutput: Boolean, enableAudioTrackPlaybackParams: Boolean): androidx.media3.exoplayer.audio.AudioSink =
+            androidx.media3.exoplayer.audio.DefaultAudioSink.Builder(context)
+                .setEnableFloatOutput(enableFloatOutput)
+                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                .setAudioProcessors(arrayOf(EqualizerProcessor()))
+                .build()
+    }
+
+    private fun tune(p: ExoPlayer) {
+        val pref = com.music.spotui.data.preferences.EqualizerPref
+        if (p.playbackParameters.speed != pref.speed) p.playbackParameters = androidx.media3.common.PlaybackParameters(pref.speed)
+        if (p.skipSilenceEnabled != pref.skipSilence) p.skipSilenceEnabled = pref.skipSilence
+    }
+
+    /** The speed or the silence skipping changed in the settings: the song playing (and a fade) takes it now. */
+    fun applyPlayback() {
+        exo?.let(::tune); outgoing?.let(::tune)
+        log("speed ${rate()}×, skip silences ${if (com.music.spotui.data.preferences.EqualizerPref.skipSilence) "on" else "off"}")
+    }
+
+    /** The speed the local player plays at (the settings', 1 by default). */
+    fun rate(): Float = com.music.spotui.data.preferences.EqualizerPref.speed
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun player(): ExoPlayer = exo ?: build(true).also { p ->

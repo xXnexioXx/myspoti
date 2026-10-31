@@ -152,6 +152,15 @@ fun MyNavHost(
             if (isImmersive()) com.music.spotui.ui.immersive.pages.ImmersiveHiddenSongsScreen(navHostController) else com.music.spotui.ui.screens.HiddenSongsScreen(navHostController)
         }
 
+        // The local player's equalizer, speed and silence skipping (Settings > Playback, the player's menu).
+        page(Routes.Equalizer.route) {
+            LaunchedEffect(playerState) {
+                bottomBarState.value = true
+                bottomBarPlayerState.value = playerState != ""
+            }
+            if (isImmersive()) com.music.spotui.ui.immersive.pages.ImmersiveEqualizerScreen(navHostController) else com.music.spotui.ui.screens.EqualizerScreen(navHostController)
+        }
+
         page(Routes.NewReleases.route) {
             LaunchedEffect(playerState) {
                 bottomBarState.value = true

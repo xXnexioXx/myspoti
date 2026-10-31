@@ -25,6 +25,7 @@ sealed class Routes(
     object LocalFiles : Routes(0, "LocalFiles", "localfiles")
     object Downloads : Routes(0, "Downloads", "downloads")
     object HiddenSongs : Routes(0, "HiddenSongs", "hiddensongs")
+    object Equalizer : Routes(0, "Equalizer", "equalizer")
     object Folder : Routes(0, "Folder", "folder")
     object LocalPlaylist : Routes(0, "LocalPlaylist", "localplaylist")
     object Category : Routes(0, "Category", "category")
