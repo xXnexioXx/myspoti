@@ -55,9 +55,11 @@ object LibraryOutbox {
         for ((uri, saved) in read().all.entries.toList()) {
             runCatching { sender(uri, saved) }.onFailure {
                 android.util.Log.w("LibraryOutbox", "kept for later: $uri (${it.message})")
+                app.myspoti.host.android.Logbook.log("library: $uri still kept for later (${it.javaClass.simpleName} ${it.message})")
                 return
             }
             synchronized(this) { write(read().apply { sent(uri, saved) }) }
+            app.myspoti.host.android.Logbook.log("library: $uri ${if (saved) "saved" else "removed"} on Spotify (kept from earlier)")
         }
     }
 }

@@ -1839,10 +1839,13 @@ object SongPlayer {
     /** Save / remove the current track in Liked Songs. */
     fun setLiked(on: Boolean) {
         // A file of the device is not in the Spotify library; a stream or a download is.
-        if (LocalPlayer.active.value && !routing && localSpotifyUri(LocalPlayer.current()) == null) return
+        if (LocalPlayer.active.value && !routing && localSpotifyUri(LocalPlayer.current()) == null) {
+            app.myspoti.host.android.Logbook.log("library: like not sent, the local song has no Spotify id (${LocalPlayer.current()?.uri?.scheme})")
+            return
+        }
         Haptics.toggle(on)
         val uri = currentLikeUri().ifBlank { if (currentTrackId.isNotBlank()) SPOTIFY_TRACK_PREFIX + currentTrackId else "" }
-        if (uri.isBlank()) { boundState?.likeState?.value = on; return }
+        if (uri.isBlank()) { boundState?.likeState?.value = on; app.myspoti.host.android.Logbook.log("library: like not sent, no song id"); return }
         setSaved(uri, on)
     }
 
@@ -2050,15 +2053,21 @@ object SongPlayer {
         // No connection: the change stays on screen and is sent when the network is back.
         if (!com.music.spotui.data.offline.OfflineStore.isOnline(Graph.app)) {
             com.music.spotui.data.LibraryOutbox.put(uri, on)
+            app.myspoti.host.android.Logbook.log("library: $uri ${if (on) "saved" else "removed"} kept for later (offline${if (com.music.spotui.data.DataSaver.active) ", data saver" else ""})")
+            // Sent as soon as Spotify answers, not only when Android reports a network coming up:
+            // a network already there (or the data saver turned off) never reports one.
+            scope.launch { flushLibraryOutbox() }
             return
         }
         scope.launch {
             // One write at a time; a refused one is undone on screen if no newer tap replaced it.
             libraryLock.withLock {
                 runCatching { writeLibrary(uri, on) }.onSuccess {
+                    app.myspoti.host.android.Logbook.log("library: $uri ${if (on) "saved" else "removed"} on Spotify")
                     if (track) likedChanges.value++
                 }.onFailure {
                     Log.w(TAG, "library change failed: ${it.message}")
+                    app.myspoti.host.android.Logbook.log("library: $uri change failed: ${it.javaClass.simpleName} ${it.message}")
                     // The connection went while it was sent: kept for later, like an offline tap.
                     if (it is java.io.IOException && !com.music.spotui.data.offline.OfflineStore.isOnline(Graph.app)) {
                         com.music.spotui.data.LibraryOutbox.put(uri, on)
