@@ -39,6 +39,7 @@ object ImmersiveRepeat {
     const val OFF = 0
     const val ALL = 1
     const val ONE = 2
+    const val ONCE = 3
 }
 
 /**
