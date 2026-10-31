@@ -176,7 +176,7 @@ class Bridge(private val host: BridgeHost, scope: CoroutineScope) {
         pending[id] = waiter
         try {
             val started = System.currentTimeMillis()
-            if (!quiet) logger?.invoke("call #$id $method${label?.let { " ($it)" }.orEmpty()} ${args.toString().take(200)}")
+            if (!quiet) logger?.invoke("call #$id $method${label?.let { " ($it)" }.orEmpty()} ${LogMask.shown(args.toString())}")
             host.evaluate("window.Myspoti && window.Myspoti.call($id, ${json.encodeToString(JsonElement.serializer(), kotlinx.serialization.json.JsonPrimitive(method))}, $args).catch(() => {})")
             return try {
                 // withTimeoutOrNull, not withTimeout: a timeout must surface as a
@@ -187,12 +187,12 @@ class Bridge(private val host: BridgeHost, scope: CoroutineScope) {
                     ?: throw BridgeException("timeout after $timeoutMs ms: $method")
                 result.also {
                     if (quiet) return@also
-                    val shown = if (method == "token.get") "(token hidden)" else it.toString().take(200)
+                    val shown = if (method == "token.get") "(token hidden)" else LogMask.shown(it.toString())
                     logger?.invoke("call #$id $method ok in ${System.currentTimeMillis() - started} ms: $shown")
                 }
             } catch (e: Exception) {
                 if (e is BridgeException && e.message?.startsWith("timeout") == true) lastTimeoutAt = System.currentTimeMillis()
-                logger?.invoke("call #$id $method${if (quiet) " " + args.toString().take(100) else ""} FAILED after ${System.currentTimeMillis() - started} ms: ${e.message}")
+                logger?.invoke("call #$id $method${if (quiet) " " + LogMask.shown(args.toString(), 100) else ""} FAILED after ${System.currentTimeMillis() - started} ms: ${LogMask.shown(e.message.orEmpty())}")
                 throw e
             }
         } finally {
