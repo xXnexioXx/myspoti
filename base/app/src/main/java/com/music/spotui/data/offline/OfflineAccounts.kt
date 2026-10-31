@@ -37,7 +37,7 @@ object OfflineAccounts {
         // Whose they are is unknown (never signed in online since): kept aside, never given to anyone.
         val key = owner ?: "unclaimed-${System.currentTimeMillis()}"
         stopDownloads(dir)
-        val moved = withContext(Dispatchers.IO) { putAside(dir, parked(context, key)) }
+        val moved = withContext(Dispatchers.IO) { OfflineStore.moving { putAside(dir, parked(context, key)) } }
         if (!moved) {
             // Still in place and still stamped with their account: the next sign-in puts them aside.
             Logbook.log("offline: downloads not put aside for sign-out")
@@ -59,18 +59,7 @@ object OfflineAccounts {
         }
         // Another account's downloads are in place (a sign-out that could not put them aside), or none.
         stopDownloads(dir)
-        val ready = withContext(Dispatchers.IO) {
-            // This account's stamp only goes on an emptied folder or its own: downloads that could not
-            // be moved keep their own account's stamp, never this one.
-            val cleared = if (owner != null) putAside(dir, parked(context, owner)) else dir.deleteRecursively()
-            if (!cleared) return@withContext Claimed.NOT_CLEARED
-            val back = parked(context, key)
-            // Not stamped when its own folder did not come back: an empty folder with its stamp would
-            // read as its downloads in place, and the folder put aside would never be tried again.
-            if (back.isDirectory && !(back.renameTo(dir) && dir.isDirectory)) return@withContext Claimed.NOT_BROUGHT_BACK
-            stamp(dir, key)
-            Claimed.READY
-        }
+        val ready = withContext(Dispatchers.IO) { OfflineStore.moving { swap(context, dir, owner, key) } }
         if (ready != Claimed.READY) {
             Logbook.log(
                 if (ready == Claimed.NOT_CLEARED) "offline: the other account's downloads could not be put aside"
@@ -87,6 +76,20 @@ object OfflineAccounts {
     }
 
     private enum class Claimed { READY, NOT_CLEARED, NOT_BROUGHT_BACK }
+
+    /** The downloads of [owner] (or none) in [dir] go aside, and those of [key] come back in their place. */
+    private fun swap(context: Context, dir: File, owner: String?, key: String): Claimed {
+        // This account's stamp only goes on an emptied folder or its own: downloads that could not
+        // be moved keep their own account's stamp, never this one.
+        val cleared = if (owner != null) putAside(dir, parked(context, owner)) else dir.deleteRecursively()
+        if (!cleared) return Claimed.NOT_CLEARED
+        val back = parked(context, key)
+        // Not stamped when its own folder did not come back: an empty folder with its stamp would
+        // read as its downloads in place, and the folder put aside would never be tried again.
+        if (back.isDirectory && !(back.renameTo(dir) && dir.isDirectory)) return Claimed.NOT_BROUGHT_BACK
+        stamp(dir, key)
+        return Claimed.READY
+    }
 
     /**
      * Moves [dir] to [to]. A folder already there (left by an earlier sign-out that went wrong) is

@@ -95,12 +95,30 @@ object OfflineStore {
     fun init(context: Context) {
         if (::root.isInitialized) return
         val plain = load(File(context.filesDir, "offline"))
-        // Songs downloaded before encryption existed: encrypted once, in the background.
+        // Songs downloaded before encryption existed: encrypted once, in the background. One file at a
+        // time under [folderLock], and not after the folder was moved (another account's in its place,
+        // where a file of the same name would be read as this one's): what is left goes at the next launch.
+        val start = moves
         if (plain.isNotEmpty()) Thread {
-            plain.forEach { f -> runCatching { OfflineCrypto.encryptInPlace(context.applicationContext, f) }
-                .onFailure { android.util.Log.w("Offline", "could not encrypt ${f.name}: ${it.message}") } }
+            for (f in plain) {
+                val done = synchronized(folderLock) {
+                    if (moves != start) return@synchronized false
+                    runCatching { OfflineCrypto.encryptInPlace(context.applicationContext, f) }
+                        .onFailure { android.util.Log.w("Offline", "could not encrypt ${f.name}: ${it.message}") }
+                    true
+                }
+                if (!done) break
+            }
         }.apply { name = "offline-encrypt"; priority = Thread.MIN_PRIORITY }.start()
     }
+
+    /** Held while a downloaded file is encrypted in place, and while the downloads folder is moved. */
+    private val folderLock = Any()
+    /** How many times the downloads folder was moved (see [moving]). */
+    @Volatile private var moves = 0
+
+    /** Runs [block], which moves the downloads folder (OfflineAccounts), never during a file's encryption. */
+    internal fun <T> moving(block: () -> T): T = synchronized(folderLock) { moves++; block() }
 
     /** Reads the downloads folder again (main thread): another account's downloads were put in its place. */
     fun reopen(context: Context) {
