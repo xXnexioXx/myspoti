@@ -87,6 +87,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import app.myspoti.engine.R
 import com.music.spotui.data.api.Api
+import com.music.spotui.data.api.ProfileCache
 import com.music.spotui.data.api.Response
 import com.music.spotui.data.entity.AccountModel
 import com.music.spotui.data.entity.ArtistsModel
@@ -130,6 +131,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 /** The chips under the title, in the Classic order; their logic is the shared [LibraryChips]. */
 private val LibraryChipLabels = listOf(
     LibraryChip.PLAYLISTS to R.string.library_chip_playlists,
+    LibraryChip.BY_ME to R.string.library_chip_by_me,
     LibraryChip.ARTISTS to R.string.library_chip_artists,
     LibraryChip.ALBUMS to R.string.library_chip_albums,
     LibraryChip.SONGS to R.string.library_chip_songs,
@@ -148,6 +150,7 @@ fun ImmersiveLibraryScreen(navController: NavController) {
     val account by vm.account.collectAsState()
     val followedArtists by vm.followedArtists.collectAsState()
     val context = LocalContext.current
+    LaunchedEffect(Unit) { ProfileCache.ensure(context) }
 
     // The first lists of the library load in the background, ready before a tap.
     LaunchedEffect((entries as? Response.Success)?.data?.take(8)?.map { it.spotifyId }) {
@@ -187,8 +190,10 @@ fun ImmersiveLibraryScreen(navController: NavController) {
     val loading = entries is Response.Loading
     val (allEntries, pinned) = libraryEntries(entries)
     // The kind and search filters only run again when their inputs change, not on every recomposition.
-    val (shownEntries, shownArtists) = remember(kind, allEntries, followedArtists, searchQuery) {
-        val (byKind, artists) = LibraryChips.apply(kind, allEntries, followedArtists, LIBRARY_SONG_IDS)
+    // Read through the name, which redraws the screen once the account is known.
+    val myId = ProfileCache.name?.let { ProfileCache.id }
+    val (shownEntries, shownArtists) = remember(kind, allEntries, followedArtists, searchQuery, myId) {
+        val (byKind, artists) = LibraryChips.apply(kind, allEntries, followedArtists, LIBRARY_SONG_IDS, myId)
         if (searchQuery.isBlank()) byKind to artists
         else byKind.filter {
             it.name.contains(searchQuery, ignoreCase = true) || it.subtitle.contains(searchQuery, ignoreCase = true)

@@ -523,6 +523,7 @@
     <string name="playlist_stop_collab_public">Stop collaborating on %1$s? Its collaborators are removed from the playlist. Invitation links already shared stay valid until they expire (up to 7 days) and cannot be cancelled.</string>
     <string name="playlist_members_more">%1$s and %2$d others</string>
     <string name="library_chip_playlists">Playlists</string>
+    <string name="library_chip_by_me">By me</string>
     <string name="library_chip_artists">Artists</string>
     <string name="library_chip_albums">Albums</string>
     <string name="library_chip_songs">Songs</string>
