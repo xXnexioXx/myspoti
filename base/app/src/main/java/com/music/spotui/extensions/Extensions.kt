@@ -1310,11 +1310,8 @@ object Extensions {
     private fun settingsOf(id: String) = settings.getOrPut(id) { FileStore(File(dir, "$id/settings.json")) }
     private fun storeOf(id: String) = stores.getOrPut(id) { FileStore(File(dir, "$id/storage.json")) }
 
-    internal fun writeBytesAtomically(file: File, bytes: ByteArray) {
-        val tmp = File(file.parentFile, file.name + ".tmp")
-        tmp.writeBytes(bytes)
-        if (!tmp.renameTo(file)) { file.delete(); tmp.renameTo(file) }
-    }
+    /** Replaces [file] whole or throws, never losing the old one (see [com.music.spotui.data.writeBytesSafely]). */
+    internal fun writeBytesAtomically(file: File, bytes: ByteArray) = com.music.spotui.data.writeBytesSafely(file, bytes)
 
     // ── What the sandbox reaches of the app ──
 
