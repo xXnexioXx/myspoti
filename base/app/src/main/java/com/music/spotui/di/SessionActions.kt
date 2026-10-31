@@ -39,6 +39,8 @@ object SessionActions {
         com.music.spotui.data.api.Api.LikedCache.tracks = null
         com.music.spotui.data.api.TopStats.clear()
         com.music.spotui.data.api.ProfileCache.clearSession()
+        // Likes kept for later stay this account's, sent when it signs in again; the next account gets none.
+        com.music.spotui.data.LibraryOutbox.signedOut()
         SongPlayer.clearSession()
         listOf("PlaybackState", "LibraryCache", "RecentItems", "LikedSongs",
             "LikedSongsFromSpotify", "LikedAlbums", "FollowedArtists").forEach { name ->

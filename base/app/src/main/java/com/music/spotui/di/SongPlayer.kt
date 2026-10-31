@@ -2054,9 +2054,8 @@ object SongPlayer {
         if (!com.music.spotui.data.offline.OfflineStore.isOnline(Graph.app)) {
             com.music.spotui.data.LibraryOutbox.put(uri, on)
             app.myspoti.host.android.Logbook.log("library: $uri ${if (on) "saved" else "removed"} kept for later (offline${if (com.music.spotui.data.DataSaver.active) ", data saver" else ""})")
-            // Sent as soon as Spotify answers, not only when Android reports a network coming up:
-            // a network already there (or the data saver turned off) never reports one.
-            scope.launch { flushLibraryOutbox() }
+            // Sent as soon as Spotify answers (put asks for it), not only when Android reports a
+            // network coming up: a network already there (or the data saver turned off) never reports one.
             return
         }
         scope.launch {
@@ -2095,18 +2094,19 @@ object SongPlayer {
     }
 
     /** The library changes made offline ([com.music.spotui.data.LibraryOutbox]), sent once Spotify is reachable. */
-    fun startLibraryOutbox(context: Context) = com.music.spotui.data.LibraryOutbox.init(context,
-        sender = { uri, on -> libraryLock.withLock { writeLibrary(uri, on) }; if (uri.startsWith(SPOTIFY_TRACK_PREFIX)) likedChanges.value++ },
-        onAvailable = { scope.launch { kotlinx.coroutines.delay(3_000); flushLibraryOutbox() } },
-    ).also { scope.launch { flushLibraryOutbox() } }
-
-    private suspend fun flushLibraryOutbox() {
-        if (com.music.spotui.data.LibraryOutbox.waiting == 0) return
-        // The engine is started after the app's graph: wait for it, then for Spotify to answer.
-        while (!MyspotiRuntime.isStarted) kotlinx.coroutines.delay(1_000)
-        api.ready.first { it }
-        com.music.spotui.data.LibraryOutbox.flush()
+    fun startLibraryOutbox(context: Context) {
+        com.music.spotui.data.LibraryOutbox.init(context, scope,
+            sender = { uri, on -> libraryLock.withLock { writeLibrary(uri, on) }; if (uri.startsWith(SPOTIFY_TRACK_PREFIX)) likedChanges.value++ },
+            // The engine is started after the app's graph: wait for it, then for Spotify to answer.
+            ready = { awaitEngine(); api.ready.first { it } },
+            account = { com.music.spotui.data.api.ProfileCache.id },
+            onAvailable = { scope.launch { kotlinx.coroutines.delay(3_000); com.music.spotui.data.LibraryOutbox.request() } },
+        )
+        // The Web Player ready again (a reload, a new sign-in): what waits is sent (nothing is asked when nothing waits).
+        scope.launch { awaitEngine(); api.ready.collect { if (it) com.music.spotui.data.LibraryOutbox.request() } }
     }
+
+    private suspend fun awaitEngine() { while (!MyspotiRuntime.isStarted) kotlinx.coroutines.delay(1_000) }
 
     // ── Music video: Spotify's own clips are not played by this engine; the YouTube
     // clips (MusicVideoController) are. These keep the player screen's contract. ──
