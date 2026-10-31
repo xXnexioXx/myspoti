@@ -63,14 +63,19 @@ object OfflineAccounts {
             // This account's stamp only goes on an emptied folder or its own: downloads that could not
             // be moved keep their own account's stamp, never this one.
             val cleared = if (owner != null) putAside(dir, parked(context, owner)) else dir.deleteRecursively()
-            if (!cleared) return@withContext false
+            if (!cleared) return@withContext Claimed.NOT_CLEARED
             val back = parked(context, key)
-            if (back.isDirectory && !back.renameTo(dir)) Logbook.log("offline: this account's downloads could not be brought back")
+            // Not stamped when its own folder did not come back: an empty folder with its stamp would
+            // read as its downloads in place, and the folder put aside would never be tried again.
+            if (back.isDirectory && !(back.renameTo(dir) && dir.isDirectory)) return@withContext Claimed.NOT_BROUGHT_BACK
             stamp(dir, key)
-            true
+            Claimed.READY
         }
-        if (!ready) {
-            Logbook.log("offline: the other account's downloads could not be put aside")
+        if (ready != Claimed.READY) {
+            Logbook.log(
+                if (ready == Claimed.NOT_CLEARED) "offline: the other account's downloads could not be put aside"
+                else "offline: this account's downloads could not be brought back; they stay put aside, tried again at the next sign-in"
+            )
             reopen(context)
             return@withLock
         }
@@ -80,6 +85,8 @@ object OfflineAccounts {
         PodcastDownloader.resumePending()
         Logbook.log("offline: this account's downloads in place (${OfflineStore.tracks.size} songs)")
     }
+
+    private enum class Claimed { READY, NOT_CLEARED, NOT_BROUGHT_BACK }
 
     /**
      * Moves [dir] to [to]. A folder already there (left by an earlier sign-out that went wrong) is
