@@ -1376,13 +1376,16 @@ object Extensions {
                 try { return dispatcher.execute(call) } finally { Extensions.mirrorEndedBy(extensionId) }
             }
             // Myspoti's own Connect mirror has the page already ("Count extension plays on Spotify"): it wins.
-            if (com.music.spotui.di.ConnectMirror.running) {
+            // A download mirrored by "Sync downloaded songs with Spotify" gives way instead, as before that setting.
+            val download = com.music.spotui.di.ConnectMirror.mirrorsDownload
+            if (com.music.spotui.di.ConnectMirror.running && !download) {
                 val why = "setLocalMute: Myspoti already plays this song on Spotify (Count extension plays on Spotify)"
                 Extensions.log(extensionId, "refused: $why"); throw IllegalStateException(why)
             }
             if (!arbitrate(extensionId, "setLocalMute")) return "null"
             val (playing, uri, dur) = SongPlayer.localSnapshot3()
             Extensions.mirror.enable(extensionId, playing, uri, dur)?.let { Extensions.log(extensionId, "refused: $it"); throw IllegalStateException(it) }
+            if (download) com.music.spotui.di.ConnectMirror.yieldToExtension()
             return try { dispatcher.execute(call).also { Extensions.mirrorStartedBy(extensionId) } }
             catch (t: Throwable) { Extensions.mirror.disable(extensionId); throw t }
         }
