@@ -145,7 +145,10 @@ class LyricsViewModel constructor() : ViewModel() {
         }
     }
 
-    private fun sameLanguage(source: String?, target: String): Boolean =
-        source?.substringBefore('-')
-            ?.equals(target.substringBefore('-'), ignoreCase = true) == true
+    companion object {
+        /** Whether [source] is [target]'s language, regions apart: nothing to translate then. */
+        fun sameLanguage(source: String?, target: String): Boolean =
+            source?.substringBefore('-')
+                ?.equals(target.substringBefore('-'), ignoreCase = true) == true
+    }
 }

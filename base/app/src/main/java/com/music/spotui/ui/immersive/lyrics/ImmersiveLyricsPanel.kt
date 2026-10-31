@@ -6,8 +6,9 @@
  * Changes: LyricsPanel's list, PanelVoice, the gap dots, the loading skeleton and the
  * scroll lead / stagger, fed by Myspoti's LyricsViewModel. Myspoti's lyrics are mostly
  * line-synced, so a line lights whole (BitChord's line-level path) and the word sweep runs
- * only where a line has words. Translation, romanization, particles, duets, backing vocals,
- * line picking and the player-controls hand-off are left out for now.
+ * only where a line has words. Romanization, particles, duets, backing vocals,
+ * line picking and the player-controls hand-off are left out for now. The translation is
+ * Myspoti's own: the Classic screen's, shown under the lines.
  */
 package com.music.spotui.ui.immersive.lyrics
 
@@ -38,6 +39,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -118,6 +120,14 @@ import kotlin.math.abs
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FormatQuote
+import androidx.compose.material.icons.rounded.Translate
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.Icon
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
@@ -170,9 +180,55 @@ fun ImmersiveLyricsPanel(modifier: Modifier = Modifier, contentPadding: PaddingV
         is LyricsViewModel.State.Loaded -> {
             // A new track, or new lyrics for it, starts the list over: its scroll position and
             // handover state belong to the lines they were made for.
-            key(trackKey, System.identityHashCode(current.lyrics)) {
-                LyricsList(current.lyrics, trackKey, modifier, contentPadding)
+            val target = com.music.spotui.ui.components.readerLanguage()
+            Box(modifier) {
+                key(trackKey, System.identityHashCode(current.lyrics)) {
+                    LyricsList(
+                        current.lyrics, trackKey, Modifier.fillMaxSize(), contentPadding,
+                        translations = if (current.showTranslation) current.translations else null,
+                    )
+                }
+                // The Classic screen's translation, with its language setting and its service: the
+                // lyrics are only sent when it is tapped. Not offered for a song already in that language.
+                if (!LyricsViewModel.sameLanguage(current.sourceLanguage, target)) {
+                    val layoutDirection = LocalLayoutDirection.current
+                    TranslateToggle(
+                        on = current.showTranslation,
+                        loading = current.translating && current.translationRequested,
+                        onClick = { vm.toggleTranslation(target) },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(
+                                top = contentPadding.calculateTopPadding(),
+                                end = Immersive.Gutter + contentPadding.calculateEndPadding(layoutDirection),
+                            ),
+                    )
+                }
             }
+        }
+    }
+}
+
+/** A round toggle over the lyrics, lit white while the translation is showing; a spinner while it is fetched. */
+@Composable
+private fun TranslateToggle(on: Boolean, loading: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(36.dp)
+            .clip(CircleShape)
+            .background(if (on) Color.White else Color.White.copy(alpha = 0.14f))
+            .immersiveClickable(onClick = onClick, enabled = !loading, pressedScale = 0.9f),
+    ) {
+        if (loading) {
+            CircularProgressIndicator(color = Color.White, strokeWidth = 2.dp, modifier = Modifier.size(18.dp))
+        } else {
+            Icon(
+                Icons.Rounded.Translate,
+                contentDescription = stringResource(R.string.lyrics_fullscreen_chip_label_translate),
+                tint = if (on) Color.Black else Color.White,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }
@@ -190,6 +246,8 @@ private class PanelLine(
     /** Where a break ends; unused for a sung line. */
     val untilMs: Long,
     val swept: SweptLine,
+    /** The line's place in the source lyrics, which the translation is indexed by; -1 for a break the panel adds. */
+    val source: Int = -1,
 ) {
     val isWordSynced: Boolean get() = !isGap && swept.isWordSynced
 
@@ -218,9 +276,9 @@ private fun panelLines(lyrics: Lyrics, synced: Boolean): List<PanelLine> {
     source.forEachIndexed { index, line ->
         val next = source.getOrNull(index + 1)?.timeMs
         if (synced && isGapText(line.text)) {
-            out += PanelLine(line.timeMs, "", true, next ?: (line.timeMs + TRAILING_GAP_MS), SweptLine(line.timeMs, ""))
+            out += PanelLine(line.timeMs, "", true, next ?: (line.timeMs + TRAILING_GAP_MS), SweptLine(line.timeMs, ""), index)
         } else {
-            out += PanelLine(line.timeMs, line.text, false, 0L, line.toSwept(next))
+            out += PanelLine(line.timeMs, line.text, false, 0L, line.toSwept(next), index)
         }
     }
     return out
@@ -288,6 +346,8 @@ private fun LyricsList(
     trackKey: String,
     modifier: Modifier,
     contentPadding: PaddingValues,
+    /** The lines in the reader's language, one per line of the lyrics; null while they are not shown. */
+    translations: List<String>?,
 ) {
     val isSynced = remember(lyrics) { lyrics.synced && lyrics.lines.any { it.timeMs > 0L } }
     val rows = remember(lyrics, isSynced) { panelLines(lyrics, isSynced) }
@@ -455,6 +515,7 @@ private fun LyricsList(
                 glowing = blurOk,
                 clock = clock,
                 noteMeasurer = noteMeasurer,
+                translation = translations?.getOrNull(row.source)?.takeIf { row.source >= 0 },
                 onNote = notes[index]?.let { n -> { noteOpen = n } },
                 onHold = notes[index]?.let { n ->
                     {
@@ -490,6 +551,8 @@ private fun PanelRow(
     glowing: Boolean,
     clock: MutableLongState,
     noteMeasurer: TextMeasurer,
+    /** The line in the reader's language, under it. */
+    translation: String?,
     /** Opens the Genius note on this line; null when Genius has none. */
     onNote: (() -> Unit)?,
     onHold: (() -> Unit)?,
@@ -628,25 +691,40 @@ private fun PanelRow(
             },
         )
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        NoteLayout(
-            text = row.text,
-            style = lineStyle,
-            measurer = noteMeasurer,
-            onNote = onNote,
-            modifier = shape,
-        ) {
-            PanelVoice(
-                row = row,
-                clock = clock,
+    // The words, and under them the same line in the reader's language: one row to the press, the
+    // dimming and the blur.
+    Column(shape) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            NoteLayout(
+                text = row.text,
                 style = lineStyle,
-                isActive = isActive,
-                sung = sung,
-                synced = synced,
-                browsing = browsing,
-                glowAlpha = glow,
-                room = GLOW_ROOM,
-                modifier = Modifier.fillMaxWidth(),
+                measurer = noteMeasurer,
+                onNote = onNote,
+            ) {
+                PanelVoice(
+                    row = row,
+                    clock = clock,
+                    style = lineStyle,
+                    isActive = isActive,
+                    sung = sung,
+                    synced = synced,
+                    browsing = browsing,
+                    glowAlpha = glow,
+                    room = GLOW_ROOM,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+        AnimatedVisibility(
+            visible = !translation.isNullOrBlank(),
+            enter = expandVertically(tween(260)) + fadeIn(tween(260)),
+            exit = shrinkVertically(tween(260)) + fadeOut(tween(260)),
+        ) {
+            Text(
+                text = translation.orEmpty(),
+                style = Immersive.Headline.copy(fontWeight = FontWeight.Medium),
+                color = Immersive.TextSecondary,
+                modifier = Modifier.padding(horizontal = GLOW_ROOM).padding(bottom = 8.dp),
             )
         }
     }

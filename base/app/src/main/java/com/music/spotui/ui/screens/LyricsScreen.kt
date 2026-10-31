@@ -569,8 +569,7 @@ fun LyricsScreen(
                     }
                 }
                 }
-                val sameLanguage = state.sourceLanguage?.substringBefore('-')
-                    ?.equals(targetLanguage.substringBefore('-'), ignoreCase = true) == true
+                val sameLanguage = LyricsViewModel.sameLanguage(state.sourceLanguage, targetLanguage)
                 LyricsControls(
                     palette = palette,
                     position = position,
