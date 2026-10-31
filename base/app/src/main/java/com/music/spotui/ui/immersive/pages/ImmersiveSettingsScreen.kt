@@ -226,6 +226,14 @@ private fun PlaybackPage(navController: NavController, open: (SettingsPage) -> U
                 )
             }
             row {
+                ImmersiveSwitchRow(
+                    stringResource(R.string.myspoti_shuffle_title),
+                    checked = com.music.spotui.data.preferences.AppShufflePref.on,
+                    onChecked = { com.music.spotui.data.preferences.AppShufflePref.set(ctx, it) },
+                    detail = stringResource(R.string.myspoti_shuffle_detail),
+                )
+            }
+            row {
                 ImmersiveGroupRow(
                     stringResource(R.string.settings_crossfade_title), detail = stringResource(R.string.settings_crossfade_detail),
                     value = if (crossfade == 0) stringResource(R.string.settings_crossfade_off) else stringResource(R.string.settings_crossfade_seconds, crossfade),
