@@ -593,6 +593,8 @@
     <string name="settings_headset_skip_title">Headphone buttons skip 15 s on podcasts</string>
     <string name="settings_headset_skip_detail">When off, they go to the next or previous episode</string>
     <string name="settings_connect_mirror_title">Count extension plays on Spotify</string>
+    <string name="settings_download_sync_title">Sync downloaded songs with Spotify</string>
+    <string name="settings_download_sync_detail">When you\'re online, a downloaded song also plays muted on Spotify, so it counts and your devices see and control it. Off, downloads play only from the phone.</string>
     <string name="settings_connect_mirror_detail">Plays the Spotify song muted in the background, so it counts and your devices can control it. Uses a little more data and battery: turn it off if you don\'t need it.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

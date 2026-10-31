@@ -97,6 +97,24 @@ object ConnectMirrorPref {
 }
 
 /**
+ * "Sync downloaded songs with Spotify" (on by default): a downloaded song with a Spotify id, played
+ * from its file while the phone is online, is played by the Web Player too, unheard, as an
+ * extension's stream is (see [com.music.spotui.di.ConnectMirror]): Spotify counts it, Spotify Connect
+ * sees and controls it. Off, or offline: the file plays alone, as before.
+ */
+object DownloadSyncPref {
+    private const val KEY = "download_spotify_sync"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, true))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+        com.music.spotui.di.ConnectMirror.settingChanged()
+    }
+}
+
+/**
  * The automatic update check at launch (on by default: the app behaved that way before this
  * option existed). Off means no check when the app starts — a check asked for in Settings still
  * works, it reads the same release list.

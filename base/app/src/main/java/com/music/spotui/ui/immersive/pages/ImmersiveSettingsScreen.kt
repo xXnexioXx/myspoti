@@ -263,6 +263,15 @@ private fun PlaybackPage(navController: NavController, open: (SettingsPage) -> U
                     detail = stringResource(R.string.settings_connect_mirror_detail),
                 )
             }
+            // Downloaded songs, played from their files online, played by Spotify too (unheard), as an extension's.
+            row {
+                ImmersiveSwitchRow(
+                    stringResource(R.string.settings_download_sync_title),
+                    checked = com.music.spotui.data.preferences.DownloadSyncPref.on,
+                    onChecked = { com.music.spotui.data.preferences.DownloadSyncPref.set(ctx, it) },
+                    detail = stringResource(R.string.settings_download_sync_detail),
+                )
+            }
             // Songs marked "Not interested": skipped by lists, listed here to be shown again.
             row {
                 ImmersiveGroupRow(

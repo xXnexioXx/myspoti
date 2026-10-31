@@ -152,6 +152,13 @@ fun SettingsScreen(navController: NavController) {
                     checked = com.music.spotui.data.preferences.ConnectMirrorPref.on,
                     onChecked = { com.music.spotui.data.preferences.ConnectMirrorPref.set(ctx, it) },
                 )
+            // Downloaded songs, played from their files online, played by Spotify too (unheard), as an extension's.
+            OptionRow(
+                label = stringResource(R.string.settings_download_sync_title),
+                detail = stringResource(R.string.settings_download_sync_detail),
+                checked = com.music.spotui.data.preferences.DownloadSyncPref.on,
+                onChecked = { com.music.spotui.data.preferences.DownloadSyncPref.set(ctx, it) },
+            )
             // Songs marked "Not interested": skipped by lists, listed here to be shown again.
             Column(
                 Modifier.fillMaxWidth().clickable { navController.navigate(com.music.spotui.ui.navigation.Routes.HiddenSongs.route) }
