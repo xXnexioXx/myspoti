@@ -82,6 +82,12 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
+      # Strict semver tags, so Obtainium and the app compare versions right: "v2.2.1-beta.1" (a beta
+      # of the next version, above the last stable) or "v2.2.1". See tools/check_tag.py.
+      - name: Tag format
+        working-directory: .
+        run: python3 tools/check_tag.py "$GITHUB_REF_NAME"
+
       # Two keys, one per channel (they install side by side as two apps):
       # betas ("v2.0.0-beta.3") use MYSPOTI_KEYSTORE_BASE64, MYSPOTI_KEYSTORE_PASSWORD,
       # MYSPOTI_KEY_ALIAS, MYSPOTI_KEY_PASSWORD; releases use the same names with
@@ -104,11 +110,13 @@ jobs:
           MYSPOTI_KEY_PASSWORD: ${{ contains(github.ref_name, '-') && secrets.MYSPOTI_KEY_PASSWORD || secrets.MYSPOTI_STABLE_KEY_PASSWORD }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          # myspoti-beta-2.2.1-beta.1.apk / myspoti-stable-2.2.1.apk: Obtainium filters on the channel.
+          CHANNEL=stable; case "$VERSION" in *-*) CHANNEL=beta ;; esac
           ./gradlew assembleRelease \
             -PappVersionName="$VERSION" \
             -PappVersionCode="$((1000 + GITHUB_RUN_NUMBER))" \
             -PupdateRepo="$GITHUB_REPOSITORY"
-          mv app/build/outputs/apk/release/app-release.apk "app/build/outputs/apk/release/myspoti-$VERSION.apk"
+          mv app/build/outputs/apk/release/app-release.apk "app/build/outputs/apk/release/myspoti-$CHANNEL-$VERSION.apk"
 
       # This version's section of CHANGELOG.md becomes the release description.
       - name: Release notes

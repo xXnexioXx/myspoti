@@ -44,6 +44,11 @@ Under the hood, the official Spotify Web Player plays the music, hidden inside t
 
 New versions are offered inside the app: one tap downloads and installs them.
 
+Obtainium (add `https://github.com/kota-zo/myspoti`; the stable app and the beta app are two apps and each release carries one APK named for its channel):
+- **Stable** (`app.myspoti.stable`): leave "Include prereleases" off and set the APK filter to `^myspoti-stable-.*\.apk$`.
+- **Beta** (`app.myspoti`): turn "Include prereleases" on and set the APK filter to `^myspoti-beta-.*\.apk$`.
+- Betas are named `<next version>-beta.<n>` (`2.2.1-beta.1`, then `2.2.1-beta.2`...), marked prerelease on GitHub, and always newer than the last stable.
+
 ## What you get
 
 **Listening**
@@ -155,7 +160,7 @@ google-chrome --user-data-dir="$HOME/.myspoti-chrome" --remote-debugging-port=92
 ./gradlew :host-cdp:test -Pcdp=http://localhost:9222
 ```
 
-Every push builds and tests on GitHub Actions. A `v*` tag publishes a signed APK in Releases.
+Every push builds and tests on GitHub Actions. A `vX.Y.Z` tag publishes a stable APK in Releases and a `vX.Y.Z-beta.N` tag a beta one (a prerelease, `tools/check_tag.py` checks the number).
 
 ## Credits
 

@@ -40,6 +40,10 @@ class UpdateCheckerTest {
             {"name":"checksums.txt","browser_download_url":"https://x/c.txt"},
             {"name":"myspoti-2.0.0-beta.4.apk","browser_download_url":"https://x/myspoti.apk"}]}""")
         assertEquals("https://x/myspoti.apk", UpdateChecker.apkAsset(release))
+        val both = org.json.JSONObject("""{"tag_name":"v2.2.1-beta.1","assets":[
+            {"name":"myspoti-stable-2.2.0.apk","browser_download_url":"https://x/stable.apk"},
+            {"name":"myspoti-beta-2.2.1-beta.1.apk","browser_download_url":"https://x/beta.apk"}]}""")
+        assertEquals("https://x/beta.apk", UpdateChecker.apkAsset(both))
         assertEquals("", UpdateChecker.apkAsset(org.json.JSONObject("{}")))
     }
 }
