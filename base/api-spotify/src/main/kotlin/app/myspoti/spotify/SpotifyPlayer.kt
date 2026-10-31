@@ -993,6 +993,7 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
     }
 
     private val skipChain = TrackChanges.Chain()
+    private val commandsExplained = TrackChanges.Commands()
     private val _skipChained = kotlinx.coroutines.flow.MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     /**
      * The page moved on by itself through several songs after a few seconds each (it cannot play
@@ -1011,10 +1012,17 @@ class SpotifyPlayer(private val bridge: Bridge, private val scope: CoroutineScop
         if (from.uri == to.uri || from.kind == ItemKind.AD || remoteActive) return
         val now = System.currentTimeMillis()
         val played = old.positionAt(now)
-        val sinceCommand = now - maxOf(userMoveAt, lastPlay?.third ?: 0L)
-        val cause = TrackChanges.cause(played, from.durationMs, sinceCommand, adJustEnded, crossfadeArmed)
-        bridge.logger?.invoke("track change: ${from.name} -> ${to.name} (${cause.text}, left at ${TrackChanges.clock(played)} of ${TrackChanges.clock(from.durationMs)}${if (playbackHeld()) ", playback held" else ""})")
-        if (playbackHeld()) { skipChain.reset(); return }
+        val play = lastPlay
+        val commandAt = maxOf(userMoveAt, play?.third ?: 0L)
+        // The song a play asked for; a skip (newer than the last play) names none.
+        val target = play?.takeIf { it.third >= userMoveAt }?.second
+        val used = commandsExplained.used(commandAt, to.uri, target)
+        val cause = TrackChanges.cause(played, from.durationMs, now - commandAt, adJustEnded, crossfadeArmed, commandUsed = used)
+        val list = if (old.contextUri == s.contextUri) "in ${s.contextUri}" else "${old.contextUri} -> ${s.contextUri}"
+        bridge.logger?.invoke("track change: ${from.name} -> ${to.name} (${cause.text}, left at ${TrackChanges.clock(played)} of ${TrackChanges.clock(from.durationMs)}, $list${if (playbackHeld()) ", playback held" else ""}${if (mirroring) ", mirroring" else ""})")
+        // The page only mirrors a song of an extension (heard from the phone's own player): pausing
+        // it would not stop what the user hears, and the mirror sends its song again.
+        if (playbackHeld() || mirroring) { skipChain.reset(); return }
         if (skipChain.record(cause, played, now)) {
             bridge.logger?.invoke("skip chain: the page moved on by itself three times in a row after a few seconds each (now on ${to.name}): paused")
             _skipChained.tryEmit(Unit)
