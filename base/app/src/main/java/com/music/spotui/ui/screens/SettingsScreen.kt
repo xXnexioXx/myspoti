@@ -176,6 +176,14 @@ fun SettingsScreen(navController: NavController) {
                     else app.myspoti.power.BatteryExemption.request(ctx)
                 },
             )
+            // Samsung's "Sleeping apps" is a second list: the app has to be in Never sleeping apps too.
+            if (app.myspoti.power.BatteryExemption.isSamsung()) Column(
+                Modifier.fillMaxWidth().clickable { app.myspoti.power.BatteryExemption.openAppSettings(ctx) }
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+            ) {
+                Text(stringResource(R.string.background_playback_open), color = AppText, fontSize = 16.sp)
+                Text(stringResource(R.string.background_playback_samsung), color = AppMuted, fontSize = 12.sp)
+            }
             }
             if (tab == 1) {
             Section(R.string.settings_section_downloads)

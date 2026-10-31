@@ -414,6 +414,13 @@ private fun DataPage(back: () -> Unit) {
                     detail = stringResource(if (exempt) R.string.background_playback_on else R.string.background_playback_off),
                 )
             }
+            // Samsung's "Sleeping apps" is a second list: the app has to be in Never sleeping apps too.
+            if (app.myspoti.power.BatteryExemption.isSamsung()) row {
+                ImmersiveGroupRow(
+                    stringResource(R.string.background_playback_open), detail = stringResource(R.string.background_playback_samsung),
+                    chevron = true, onClick = { app.myspoti.power.BatteryExemption.openAppSettings(ctx) },
+                )
+            }
         }
     }
 }
