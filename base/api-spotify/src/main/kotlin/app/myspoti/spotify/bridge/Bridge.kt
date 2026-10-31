@@ -84,6 +84,8 @@ class Bridge(private val host: BridgeHost, scope: CoroutineScope) {
         val url = (msg["url"] as? JsonPrimitive)?.contentOrNull ?: return
         if ("widevine-license" !in url) return
         app.myspoti.spotify.report.Refusal402.licence((msg["status"] as? JsonPrimitive)?.intOrNull ?: 0)
+        // The player reads them too: refusals in a row stop playback (see SpotifyPlayer.onLicence).
+        _events.tryEmit("licence" to msg)
     }
 
     private fun handle(raw: String) {
