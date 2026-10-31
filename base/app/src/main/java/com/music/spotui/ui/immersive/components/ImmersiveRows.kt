@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -74,7 +74,7 @@ private val RowTitle = Immersive.Body.copy(fontWeight = FontWeight.Medium)
  * @param trackNumber shown in place of the cover, for an album's own listing.
  * @param showDuration the length at the end of the row.
  * @param showAlbum "artist · album" as the second line instead of just the artist.
- * @param liked the song is in Liked Songs: a small heart before the more button.
+ * @param liked the song is in Liked Songs: a small star before the more button, as the player marks it.
  * @param offline the song's download, as the Classic list shows it before the artist: nothing when it has none.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -142,7 +142,7 @@ fun ImmersiveSongRow(
             trailing?.invoke()
             Spacer(Modifier.width(8.dp))
             Icon(
-                Icons.Rounded.Favorite,
+                Icons.Rounded.Star,
                 contentDescription = stringResource(R.string.liked_song),
                 tint = Immersive.Accent,
                 modifier = Modifier.size(18.dp),
