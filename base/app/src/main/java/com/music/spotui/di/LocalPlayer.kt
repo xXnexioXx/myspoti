@@ -130,6 +130,8 @@ object LocalPlayer {
                     log("error ${error.errorCodeName}: ${generic(error.cause?.toString() ?: error.message.orEmpty())}")
                     val item = p.currentMediaItem?.localConfiguration?.uri ?: return
                     if (item.scheme == com.music.spotui.extensions.ExtensionAudio.SCHEME) com.music.spotui.extensions.Extensions.noteAttempt(item.lastPathSegment) { it.copy(error = "${error.errorCodeName}: ${error.cause ?: error.message.orEmpty()}") }
+                    // A file that is gone (a download deleted while the queue played): never left stopped on it.
+                    if (item.scheme != com.music.spotui.extensions.ExtensionAudio.SCHEME && DeletedDownloads.isMissingFile(error.errorCode, error.cause)) return fileGone(p, item)
                     if (item.scheme != com.music.spotui.extensions.ExtensionAudio.SCHEME) return
                     val t = current() ?: return
                     val noAudio = com.music.spotui.extensions.AudioRoute.isNoAudio(error)
@@ -228,6 +230,86 @@ object LocalPlayer {
         prefetchNext(p)
     }
 
+    /** The downloads deleted during this session, by file: the song each one is (see [downloadsDeleted]). */
+    private val deletedDownloads = HashMap<String, com.music.spotui.data.entity.SongsModel>()
+
+    /**
+     * Downloads were deleted ([gone]: the song of each file, see OfflineStore.remove, removeAll): the
+     * songs of the queue that played from those files play from their source, as the list's songs
+     * never downloaded do (the extensions, else Spotify), or are left out offline (see
+     * [DeletedDownloads]). The song playing keeps its open file and ends as usual. On the main thread.
+     */
+    fun downloadsDeleted(gone: Map<String, com.music.spotui.data.entity.SongsModel>) {
+        val p = exo ?: return
+        if (!active.value || tracks.isEmpty()) return
+        deletedDownloads.putAll(gone)
+        val cur = p.currentMediaItemIndex
+        val plan = DeletedDownloads.plan(tracks.map { t -> gone[t.uri.toString()]?.spotifyTrackId }, cur,
+            com.music.spotui.data.offline.OfflineStore.isOnline(Graph.app))
+        if (plan.all { it == DeletedDownloads.Fix.KEEP }) return
+        var streamed = 0; var dropped = 0; var droppedBefore = 0
+        for (i in plan.indices.reversed()) when (plan[i]) {
+            DeletedDownloads.Fix.STREAM -> { swap(p, i, com.music.spotui.extensions.ExtensionAudio.localTrack(gone.getValue(tracks[i].uri.toString()))); streamed++ }
+            DeletedDownloads.Fix.DROP -> {
+                p.removeMediaItem(i)
+                val t = tracks.removeAt(i)
+                queued -= t; radioSongs -= t
+                unshuffled = unshuffled?.filterNot { it === t }
+                dropped++; if (i < cur) droppedBefore++
+            }
+            DeletedDownloads.Fix.KEEP -> Unit
+        }
+        if (noFadeFor >= 0) noFadeFor -= droppedBefore
+        log("downloads deleted while playing: $streamed songs of the queue play from their source, $dropped left out (offline or no id); ${current()?.title} ends from its open file")
+        prefetchNext(p); continueIfLast(p)
+        publish()
+    }
+
+    /** Puts [t] at [index] of the queue in place of the song there (same place in the queue, the shuffle and the radio). */
+    private fun swap(p: ExoPlayer, index: Int, t: LocalTrack) {
+        val old = tracks[index]
+        p.replaceMediaItem(index, item(t))
+        tracks[index] = t
+        if (queued.remove(old)) queued += t
+        if (radioSongs.remove(old)) radioSongs += t
+        if (playingQueued === old) playingQueued = t
+        unshuffled = unshuffled?.map { if (it === old) t else it }
+    }
+
+    /**
+     * The file of the song the player is on is gone ([uri]: a download deleted while the queue
+     * played, or a file that left the phone): never left stopped there. A deleted download plays
+     * from its source (see [downloadsDeleted]); any other file is skipped, the queue stopping only
+     * when the songs after it fail too (see StreamErrors).
+     */
+    private fun fileGone(p: ExoPlayer, uri: android.net.Uri) {
+        val i = p.currentMediaItemIndex
+        val t = tracks.getOrNull(i) ?: return
+        val song = deletedDownloads[uri.toString()]
+            ?.takeIf { it.spotifyTrackId.isNotBlank() && com.music.spotui.data.offline.OfflineStore.isOnline(Graph.app) }
+        if (song != null) {
+            log("${t.title}: its download was deleted, it plays from its source")
+            // From where it was (a seek into a song whose file went reopens it).
+            val at = p.currentPosition
+            swap(p, i, com.music.spotui.extensions.ExtensionAudio.localTrack(song))
+            p.seekTo(i, at); p.prepare(); p.play()
+            return
+        }
+        // No retry: a file that is not there will not be on a second open.
+        errors.alreadyRetried(uri.toString())
+        when (errors.failed(uri.toString(), p.hasNextMediaItem())) {
+            StreamErrors.Step.SKIP -> {
+                log("skipped ${t.title}: its file is gone")
+                android.widget.Toast.makeText(Graph.app, Graph.app.getString(app.myspoti.engine.R.string.song_unavailable_skipped, t.title), android.widget.Toast.LENGTH_SHORT).show()
+                p.seekToNextMediaItem(); p.prepare(); p.play()
+            }
+            else -> {
+                log("stopped on ${t.title}: its file is gone, and the songs after it failed too or none follows")
+                android.widget.Toast.makeText(Graph.app, Graph.app.getString(app.myspoti.engine.R.string.song_unavailable, t.title), android.widget.Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     /** The most a song's start read ahead is kept (less when its address expires sooner). */
     private const val HEAD_KEEP_MS = 10 * 60_000L
 
@@ -278,7 +360,7 @@ object LocalPlayer {
         active.value = false
         // A page left muted by an extension's mirror must not stay silent once Spotify plays again.
         SongPlayer.unmuteMirror()
-        forgetRadio(); continues = false
+        forgetRadio(); continues = false; deletedDownloads.clear()
         exo?.let { it.stop(); it.clearMediaItems() }
         tracks.clear(); unshuffled = null
         queued.clear(); playingQueued = null; radioSongs.clear()

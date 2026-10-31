@@ -166,17 +166,30 @@ object OfflineStore {
             File(audioDir, t.file).delete()
             if (t.cover.isNotBlank()) File(coverDir, t.cover).delete()
             writeIndex()
+            deleted(listOf(t))
         }
     }
 
     fun removeAll() {
         synchronized(lock) {
+            val all = tracks.values.toList()
             tracks.clear()
             status.clear()
             audioDir.listFiles()?.forEach { it.delete() }
             coverDir.listFiles()?.forEach { it.delete() }
             writeIndex()
+            deleted(all)
         }
+    }
+
+    /**
+     * Downloads [gone] were deleted: the local player's queue stops pointing at their files (see
+     * LocalPlayer.downloadsDeleted), on the main thread. Their file, and the song each one is.
+     */
+    private fun deleted(gone: List<OfflineTrack>) {
+        if (gone.isEmpty()) return
+        val songs = gone.associate { Uri.fromFile(audioFile(it)).toString() to toSong(it) }
+        android.os.Handler(android.os.Looper.getMainLooper()).post { com.music.spotui.di.LocalPlayer.downloadsDeleted(songs) }
     }
 
     fun totalBytes(): Long = tracks.values.sumOf { it.bytes }
