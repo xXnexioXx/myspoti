@@ -29,6 +29,15 @@ object CastDiscovery {
     /** Before Android 14 NsdManager resolves one service at a time: the others wait here. */
     private val waiting = ArrayDeque<NsdServiceInfo>()
     private var resolving = false
+    /** Counts the resolutions: a late answer of one given up (or cut by [stop]) does not end the next one. */
+    private var round = 0
+    /** A resolution that never answers (seen before Android 14) is given up after this, or no device would ever be listed. */
+    private const val RESOLVE_GUARD_MS = 5_000L
+    private val resolveGuard = Runnable {
+        log("a Cast device did not resolve in ${RESOLVE_GUARD_MS / 1000} s: moving on")
+        resolving = false
+        next()
+    }
 
     /** Starts looking (each [start] wants one [stop]). Main thread. */
     fun start(context: Context) {
@@ -62,6 +71,10 @@ object CastDiscovery {
         listener?.let { l -> runCatching { nsd?.stopServiceDiscovery(l) } }
         listener = null
         waiting.clear()
+        // A resolution in flight is left behind: a later start must not wait for its answer.
+        main.removeCallbacks(resolveGuard)
+        resolving = false
+        round++
     }
 
     @Suppress("DEPRECATION")
@@ -70,7 +83,14 @@ object CastDiscovery {
         val info = waiting.removeFirstOrNull() ?: return
         val m = nsd ?: return
         resolving = true
-        val done = { main.post { resolving = false; next() }; Unit }
+        val mine = ++round
+        main.postDelayed(resolveGuard, RESOLVE_GUARD_MS)
+        val done = {
+            main.post {
+                if (round == mine && resolving) { main.removeCallbacks(resolveGuard); resolving = false; next() }
+            }
+            Unit
+        }
         runCatching {
             m.resolveService(info, object : NsdManager.ResolveListener {
                 override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {

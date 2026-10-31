@@ -558,7 +558,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Não foi possível tocar em %1$s</string>
     <string name="cast_lost">%1$s perdido: de volta neste celular</string>
-    <string name="cast_spotify_via_connect">As músicas do Spotify tocam em dispositivos Cast pelo Spotify Connect</string>
+    <string name="cast_spotify_via_connect">O Cast toca músicas baixadas, de extensões e do celular. Para uma música do Spotify, o dispositivo precisa aparecer no Spotify Connect.</string>
     <string name="downloads_need_source_detail">As músicas são baixadas por extensões. Nenhuma está instalada ainda: abra a loja de extensões e instale o Mornye para baixar.</string>
     <string name="downloads_need_source_title">Os downloads precisam de uma extensão</string>
     <string name="episode_new">Novo</string>

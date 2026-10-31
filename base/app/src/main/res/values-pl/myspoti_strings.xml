@@ -569,7 +569,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Nie udało się odtworzyć na %1$s</string>
     <string name="cast_lost">Utracono %1$s: z powrotem na tym telefonie</string>
-    <string name="cast_spotify_via_connect">Utwory Spotify grają na urządzeniach Cast przez Spotify Connect</string>
+    <string name="cast_spotify_via_connect">Cast odtwarza pobrane utwory, utwory z rozszerzeń i z telefonu. Utwór ze Spotify wymaga, by urządzenie było widoczne w Spotify Connect.</string>
     <string name="downloads_need_source_detail">Utwory pobierają rozszerzenia. Żadne nie jest jeszcze zainstalowane: otwórz sklep z rozszerzeniami i zainstaluj Mornye, aby pobierać.</string>
     <string name="downloads_need_source_title">Pobieranie wymaga rozszerzenia</string>
     <string name="episode_new">Nowy</string>

@@ -48,6 +48,8 @@
     <string name="background_playback_title">Lecture en arrière-plan</string>
     <string name="background_playback_on">L\'optimisation de la batterie est désactivée : la musique et Spotify Connect continuent écran éteint.</string>
     <string name="background_playback_off">Désactive l\'optimisation de la batterie pour qu\'Android ne mette pas l\'app en pause en arrière-plan.</string>
+    <string name="background_playback_samsung">Samsung peut encore mettre Myspoti en veille écran éteint. Ajoutez-le aux « Applications jamais en veille » : Réglages &gt; Batterie &gt; Limites d\'utilisation en arrière-plan.</string>
+    <string name="background_playback_open">Ouvrir les réglages de l\'app</string>
     <plurals name="local_files_count">
         <item quantity="one">%d titre</item>
         <item quantity="other">%d titres</item>
@@ -564,7 +566,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Impossible de lire sur %1$s</string>
     <string name="cast_lost">%1$s perdu : retour sur ce téléphone</string>
-    <string name="cast_spotify_via_connect">Les titres Spotify passent sur les appareils Cast par Spotify Connect</string>
+    <string name="cast_spotify_via_connect">Le Cast joue les titres téléchargés, d\'extensions et du téléphone. Pour un titre Spotify, l\'appareil doit apparaître dans Spotify Connect.</string>
     <string name="downloads_need_source_detail">Les titres sont téléchargés par des extensions. Aucune n\'est installée : ouvrez le store des extensions et installez Mornye pour télécharger.</string>
     <string name="downloads_need_source_title">Les téléchargements demandent une extension</string>
     <string name="episode_new">Nouveau</string>

@@ -118,6 +118,47 @@ object Logbook {
         "music volume $v/$max muted=${am.isStreamMute(android.media.AudioManager.STREAM_MUSIC)} mode=${am.mode} output types=$outs"
     }.getOrNull()
 
+    /**
+     * What decides whether Android lets the app run with the screen off: the battery exemption, the
+     * standby bucket, the power saver, the process importance, the maker's name (Samsung and others
+     * add their own sleeping lists). Music that stops a few seconds after the lock cannot be told
+     * apart without them.
+     */
+    private fun powerLines(context: Context): List<Pair<String, String>> = buildList {
+        runCatching {
+            val pm = context.getSystemService(android.os.PowerManager::class.java)
+            add("exempt" to "ignoring battery optimizations=${pm.isIgnoringBatteryOptimizations(context.packageName)}")
+            add("saver" to "power save mode=${pm.isPowerSaveMode} device idle=${pm.isDeviceIdleMode}")
+        }
+        if (android.os.Build.VERSION.SDK_INT >= 28) runCatching {
+            val bucket = context.getSystemService(android.app.usage.UsageStatsManager::class.java).appStandbyBucket
+            val name = when (bucket) {
+                android.app.usage.UsageStatsManager.STANDBY_BUCKET_ACTIVE -> "active"
+                android.app.usage.UsageStatsManager.STANDBY_BUCKET_WORKING_SET -> "working set"
+                android.app.usage.UsageStatsManager.STANDBY_BUCKET_FREQUENT -> "frequent"
+                android.app.usage.UsageStatsManager.STANDBY_BUCKET_RARE -> "rare"
+                android.app.usage.UsageStatsManager.STANDBY_BUCKET_RESTRICTED -> "restricted"
+                else -> "other"
+            }
+            val restricted = context.getSystemService(android.app.ActivityManager::class.java).isBackgroundRestricted
+            add("standby" to "bucket $bucket ($name) background restricted=$restricted")
+        }
+        runCatching {
+            val me = android.app.ActivityManager.RunningAppProcessInfo().also { android.app.ActivityManager.getMyMemoryState(it) }
+            val importance = when (me.importance) {
+                android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND -> "foreground"
+                android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND_SERVICE -> "foreground service"
+                android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE -> "visible"
+                android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_PERCEPTIBLE -> "perceptible"
+                android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE -> "service"
+                android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED -> "cached"
+                else -> "other"
+            }
+            add("process" to "importance ${me.importance} ($importance)")
+        }
+        add("maker" to "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}")
+    }
+
     /** The lines the 402 analyses read: refusals, the matrix, registration, clusters, licences, routes, ads. */
     private val RELEVANT_402 = Regex("""(?i)refus|\b402\b|registration|cluster:|licence|command headers|commands from the page|relay route|relay: |audio after|ad break|page ready|connect/transfer|previous player device""")
     private const val RELEVANT_LINES = 50
@@ -172,6 +213,9 @@ object Logbook {
             summary.forEach { (k, v) -> appendLine("${k.padEnd(12)}: ${app.myspoti.spotify.report.DiagnosticDigest.mask(v)}") }
             appendLine()
             header.forEach { (k, v) -> appendLine("${k.padEnd(12)}: ${app.myspoti.spotify.report.DiagnosticDigest.mask(v)}") }
+            appendLine()
+            appendLine("--- power ---")
+            powerLines(context).forEach { (k, v) -> appendLine("${k.padEnd(12)}: ${app.myspoti.spotify.report.DiagnosticDigest.mask(v)}") }
             val relevant = tail.filter { RELEVANT_402.containsMatchIn(it.drop(13)) }.takeLast(RELEVANT_LINES)
             if (relevant.isNotEmpty()) {
                 appendLine()

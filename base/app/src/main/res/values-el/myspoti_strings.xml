@@ -558,7 +558,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Δεν ήταν δυνατή η αναπαραγωγή στο %1$s</string>
     <string name="cast_lost">Χάθηκε η σύνδεση με %1$s: ξανά σε αυτό το τηλέφωνο</string>
-    <string name="cast_spotify_via_connect">Τα τραγούδια του Spotify παίζουν σε συσκευές Cast μέσω Spotify Connect</string>
+    <string name="cast_spotify_via_connect">Το Cast παίζει τραγούδια που έχουν γίνει λήψη, από επεκτάσεις και από το τηλέφωνο. Για ένα τραγούδι του Spotify, η συσκευή πρέπει να εμφανίζεται στο Spotify Connect.</string>
     <string name="downloads_need_source_detail">Τα τραγούδια κατεβαίνουν από επεκτάσεις. Δεν έχει εγκατασταθεί καμία ακόμα: ανοίξτε το κατάστημα επεκτάσεων και εγκαταστήστε το Mornye για λήψεις.</string>
     <string name="downloads_need_source_title">Οι λήψεις χρειάζονται επέκταση</string>
     <string name="episode_new">Νέο</string>

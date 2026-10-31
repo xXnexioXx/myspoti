@@ -558,7 +558,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Wiedergabe auf %1$s nicht möglich</string>
     <string name="cast_lost">Verbindung zu %1$s verloren: zurück auf diesem Handy</string>
-    <string name="cast_spotify_via_connect">Spotify-Songs laufen auf Cast-Geräten über Spotify Connect</string>
+    <string name="cast_spotify_via_connect">Cast spielt heruntergeladene Titel, Titel von Erweiterungen und Titel vom Handy. Für einen Spotify-Titel muss das Gerät in Spotify Connect erscheinen.</string>
     <string name="downloads_need_source_detail">Songs werden von Erweiterungen heruntergeladen. Noch ist keine installiert: Öffne den Erweiterungs-Store und installiere Mornye, um herunterzuladen.</string>
     <string name="downloads_need_source_title">Downloads brauchen eine Erweiterung</string>
     <string name="episode_new">Neu</string>

@@ -569,7 +569,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Не удалось воспроизвести на %1$s</string>
     <string name="cast_lost">Связь с %1$s потеряна: снова на этом телефоне</string>
-    <string name="cast_spotify_via_connect">Треки Spotify играют на устройствах Cast через Spotify Connect</string>
+    <string name="cast_spotify_via_connect">Cast воспроизводит загруженные треки, треки из расширений и с телефона. Чтобы играл трек Spotify, устройство должно появиться в Spotify Connect.</string>
     <string name="downloads_need_source_detail">Треки скачивают расширения. Пока ни одно не установлено: откройте магазин расширений и установите Mornye, чтобы скачивать.</string>
     <string name="downloads_need_source_title">Для загрузок нужно расширение</string>
     <string name="episode_new">Новый</string>
