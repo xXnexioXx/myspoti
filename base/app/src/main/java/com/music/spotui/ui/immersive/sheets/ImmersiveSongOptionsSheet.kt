@@ -30,6 +30,7 @@ import androidx.compose.material.icons.rounded.SortByAlpha
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material.icons.rounded.ThumbDownOffAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -302,6 +303,13 @@ fun ImmersiveSongOptionsSheet(
         }
         if (nowPlaying && song.url.startsWith("episode:")) {
             ImmersiveSheetRow(Icons.Rounded.Speed, stringResource(R.string.playback_speed)) { showSpeed = true }
+        }
+        // The app's own playback (extensions, downloads, files): its equalizer, speed and silences.
+        if (nowPlaying && com.music.spotui.di.LocalPlayer.active.value) {
+            ImmersiveSheetRow(Icons.Rounded.GraphicEq, stringResource(R.string.equalizer_title)) {
+                onDismiss()
+                navController.navigate(com.music.spotui.ui.navigation.Routes.Equalizer.route)
+            }
         }
         ImmersiveSheetRow(Icons.Rounded.Share, stringResource(R.string.context_menu_share), enabled = hasId) {
             SpotifyCode.show(ShareTarget("spotify:track:${song.spotifyTrackId}", song.title, song.singer, song.coverUri))

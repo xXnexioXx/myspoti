@@ -45,6 +45,7 @@ import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Speed
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material.icons.outlined.ThumbDownOffAlt
 import kotlinx.coroutines.launch
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -321,6 +322,13 @@ fun SongOptionsSheet(
             }
             if (nowPlaying && song.url.startsWith("episode:")) {
                 MenuRow(Icons.Outlined.Speed, stringResource(R.string.playback_speed)) { showSpeed = true }
+            }
+            // The app's own playback (extensions, downloads, files): its equalizer, speed and silences.
+            if (nowPlaying && com.music.spotui.di.LocalPlayer.active.value) {
+                MenuRow(Icons.Outlined.GraphicEq, stringResource(R.string.equalizer_title)) {
+                    onDismiss()
+                    navController.navigate(com.music.spotui.ui.navigation.Routes.Equalizer.route)
+                }
             }
             MenuRow(Icons.Outlined.Share, stringResource(R.string.context_menu_share), enabled = hasId) {
                 SpotifyCode.show(ShareTarget("spotify:track:${song.spotifyTrackId}", song.title, song.singer, song.coverUri))
