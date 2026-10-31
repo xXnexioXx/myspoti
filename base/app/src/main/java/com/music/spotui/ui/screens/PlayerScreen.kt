@@ -25,6 +25,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -1408,6 +1409,7 @@ fun PlayerFull(
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun PlayerConnectRow(
     context: Context,
@@ -1451,16 +1453,20 @@ fun PlayerConnectRow(
                 // download); a tap opens what plays and its quality.
                 val source = com.music.spotui.ui.components.playingSourceLabel()
                 var quality by remember { mutableStateOf(false) }
+                var nerd by remember { mutableStateOf(false) }
                 if (quality) com.music.spotui.ui.components.QualitySheet { quality = false }
+                if (nerd) com.music.spotui.ui.components.StatsForNerdsSheet { nerd = false }
                 if (source.isNotBlank()) Text(
                     text = source,
                     color = com.music.spotui.ui.theme.AppMuted,
                     fontSize = 11.sp,
                     maxLines = 1,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                    modifier = Modifier.clickable(
+                    // A tap: what plays and its quality; a long press: the stats for nerds.
+                    modifier = Modifier.combinedClickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
+                        onLongClick = { nerd = true },
                     ) { quality = true },
                 )
             }

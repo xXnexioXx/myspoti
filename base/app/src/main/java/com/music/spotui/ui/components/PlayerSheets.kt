@@ -304,7 +304,7 @@ private fun DeviceRow(icon: ImageVector, name: String, detail: String?, current:
     }
 }
 
-private fun streamingLabel(q: com.music.spotui.data.preferences.StreamingQuality): Int = when (q) {
+internal fun streamingLabel(q: com.music.spotui.data.preferences.StreamingQuality): Int = when (q) {
     com.music.spotui.data.preferences.StreamingQuality.AUTO -> R.string.quality_streaming_auto
     com.music.spotui.data.preferences.StreamingQuality.LOW -> R.string.quality_streaming_low
     com.music.spotui.data.preferences.StreamingQuality.NORMAL -> R.string.quality_streaming_normal
@@ -359,7 +359,7 @@ fun QualitySheet(onDismiss: () -> Unit) {
     }
 }
 
-private fun codecName(mime: String): String = when {
+internal fun codecName(mime: String): String = when {
     "mp4a" in mime -> "AAC"
     "flac" in mime -> "FLAC"
     "opus" in mime -> "Opus"

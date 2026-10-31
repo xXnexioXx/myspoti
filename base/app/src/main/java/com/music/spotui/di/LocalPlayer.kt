@@ -891,6 +891,8 @@ object LocalPlayer {
     fun audioFormat(): androidx.media3.common.Format? = if (CastPlayback.active) null else exo?.audioFormat
     /** The length the player knows of the audio itself (null: not known), never Spotify's. */
     fun knownLength(): Long? = if (CastPlayback.active) null else exo?.duration?.takeIf { it != C.TIME_UNSET && it > 0 }
+    /** How far ahead of the position the song is loaded, ms (null: nothing playing here); read by "Stats for nerds" only. */
+    fun bufferedAheadMs(): Long? = if (CastPlayback.active) null else exo?.let { (it.bufferedPosition - it.currentPosition).coerceAtLeast(0L) }
     fun current(): LocalTrack? = exo?.currentMediaItemIndex?.let { tracks.getOrNull(it) }
 
     /**

@@ -115,6 +115,9 @@ object ExtensionAudio {
     /** The extension that gave the audio of the song with Spotify id [trackId] last, or null. */
     fun providerOf(trackId: String): String? = known[trackId]?.stream?.providerId
 
+    /** The answer kept for the song [trackId] (what the extension announced about its audio), or null. */
+    fun streamOf(trackId: String): AudioStream? = known[trackId]?.stream
+
     /** The quality the extension announced for the song [trackId] ("FLAC · 24-bit · 96 kHz"), or null. */
     fun qualityOf(trackId: String): String? = known[trackId]?.stream?.qualityLabel()
 

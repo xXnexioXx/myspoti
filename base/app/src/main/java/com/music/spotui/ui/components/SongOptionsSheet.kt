@@ -43,6 +43,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material.icons.outlined.ThumbDownOffAlt
 import kotlinx.coroutines.launch
@@ -109,6 +110,11 @@ fun SongOptionsSheet(
     var showSleep by remember { mutableStateOf(false) }
     var showCredits by remember { mutableStateOf(false) }
     var showSpeed by remember { mutableStateOf(false) }
+    var showNerd by remember { mutableStateOf(false) }
+    if (showNerd) {
+        StatsForNerdsSheet(onDismiss = { showNerd = false; onDismiss() })
+        return
+    }
     if (showCredits) {
         CreditsSheet(song = song, onDismiss = { showCredits = false; onDismiss() })
         return
@@ -327,6 +333,7 @@ fun SongOptionsSheet(
                     stringResource(R.string.context_menu_sleep_timer),
                     tint = if (active) MenuGreen else MenuIconColor,
                 ) { showSleep = true }
+                MenuRow(Icons.Outlined.Analytics, stringResource(R.string.nerd_title)) { showNerd = true }
             }
             // Entries from extensions (menu.items), after the app's own; each names its extension.
             if (hasId) com.music.spotui.extensions.ExtensionMenuEntries(

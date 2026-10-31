@@ -28,6 +28,7 @@ import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.SortByAlpha
 import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.ThumbDownOffAlt
 import androidx.compose.runtime.Composable
@@ -88,6 +89,8 @@ fun ImmersiveSongOptionsSheet(
     var showSpeed by remember { mutableStateOf(false) }
     var showMeaning by remember { mutableStateOf(false) }
     var showSources by remember { mutableStateOf(false) }
+    var showNerd by remember { mutableStateOf(false) }
+    if (showNerd) { com.music.spotui.ui.components.StatsForNerdsSheet(onDismiss = { showNerd = false; onDismiss() }); return }
     if (showSources) { com.music.spotui.ui.components.LyricsSourceSheet(onDismiss = { showSources = false; onDismiss() }); return }
     if (showCredits) { CreditsSheet(song = song, onDismiss = { showCredits = false; onDismiss() }); return }
     if (showMeaning) {
@@ -310,6 +313,7 @@ fun ImmersiveSongOptionsSheet(
                 stringResource(R.string.context_menu_sleep_timer),
                 tint = if (SongPlayer.sleepEndsAt.value != null) LocalImmersiveSheetTint.current.accent else null,
             ) { showSleep = true }
+            ImmersiveSheetRow(Icons.Rounded.Analytics, stringResource(R.string.nerd_title)) { showNerd = true }
         }
         // Entries from extensions (menu.items), after the app's own; each names its extension.
         if (hasId) com.music.spotui.extensions.ExtensionMenuEntries(
