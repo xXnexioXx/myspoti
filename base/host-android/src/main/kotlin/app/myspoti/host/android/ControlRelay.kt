@@ -107,6 +107,11 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
             Logbook.log("page identity: ${identity.toString().take(320)}")
             return
         }
+        // A relayed answer that came back after its page was replaced: the new page left it alone.
+        if (m.optString("type") == "stale") {
+            Logbook.log("relay reply #${m.optInt("id")} for a previous page ignored")
+            return
+        }
         if (m.optString("type") == "direct") {
             if (m.has("kept")) {
                 Logbook.log("commands from the page: ${if (m.optBoolean("kept")) "kept, the music plays" else "dropped, nothing played in 10 s"}")
@@ -132,12 +137,12 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
         }
         val id = m.optInt("id", -1).takeIf { it >= 0 } ?: return
         val body = if (m.isNull("body")) null else m.optString("body")
-        send(id, m.optString("url"), m.optString("method", "GET"), m.optJSONObject("headers") ?: JSONObject(), body)
+        send(id, m.optString("doc"), m.optString("url"), m.optString("method", "GET"), m.optJSONObject("headers") ?: JSONObject(), body)
     }
 
-    private fun send(id: Int, url: String, method: String, given: JSONObject, body: String?) {
+    private fun send(id: Int, doc: String, url: String, method: String, given: JSONObject, body: String?) {
         if (!isRelayed(url)) {
-            reply(id, 0, "{}", "")
+            reply(id, doc, 0, "{}", "")
             return
         }
         val built = relayHeaders(given, identity, fingerprint.userAgent, fallbackLanguage, fingerprint.secChUa)
@@ -195,7 +200,7 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
         fun finish(answer: Answer) {
             matrixDone(page = answer.code == 402)
             if (command) app.myspoti.spotify.report.Refusal402.command(kind, answer.code, retried = refusal != null)
-            handle(id, url, method, body, registration, asked, answer)
+            handle(id, doc, url, method, body, registration, asked, answer)
         }
         fun attempt(route: RelayRoute) {
             tried += route
@@ -213,7 +218,7 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
                         // A kept route the network no longer offers (IPv6 gone with the Wi-Fi): this
                         // request goes the default way; the route stays kept for the next ones.
                         route != RelayRoute.DEFAULT && RelayRoute.DEFAULT !in tried -> attempt(RelayRoute.DEFAULT)
-                        else -> reply(id, 0, "{}", "")
+                        else -> reply(id, doc, 0, "{}", "")
                     }
                     return@fetch
                 }
@@ -308,7 +313,7 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
     }
 
     /** What the page gets back, and what the logs keep of it. */
-    private fun handle(id: Int, url: String, method: String, body: String?, registration: Boolean, asked: Long, it: Answer) {
+    private fun handle(id: Int, doc: String, url: String, method: String, body: String?, registration: Boolean, asked: Long, it: Answer) {
         val out = JSONObject()
         it.headers.forEach { (name, value) -> out.put(name, value) }
         val text = it.text
@@ -371,14 +376,14 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
             if (app.myspoti.spotify.bridge.AdBlock.ahead.value != a) Logbook.log("ad ahead: ${a.nextUri} is played before the end")
             app.myspoti.spotify.bridge.AdBlock.ahead.value = a
         }
-        reply(id, it.code, out.toString(), sent)
+        reply(id, doc, it.code, out.toString(), sent)
     }
 
-    private fun reply(id: Int, status: Int, headersJson: String, body: String) {
+    private fun reply(id: Int, doc: String, status: Int, headersJson: String, body: String) {
         val posted = android.os.SystemClock.uptimeMillis()
         // Quoted here, on the network thread: a large reply (a track-playback state machine) was
         // quoted on the main thread, which also draws the app and runs every tap behind it.
-        val script = "window.__mspNetDone && window.__mspNetDone($id, $status, ${JSONObject.quote(headersJson)}, ${JSONObject.quote(body)})"
+        val script = "window.__mspNetDone && window.__mspNetDone($id, $status, ${JSONObject.quote(headersJson)}, ${JSONObject.quote(body)}, ${JSONObject.quote(doc)})"
         main.post { replyNow(id, script, posted) }
     }
 
@@ -827,6 +832,10 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
               let registered = false;
               const pending = new Map();
               let seq = 0;
+              // This document's own mark on its requests: ids start again at 1 in every page, and an
+              // answer relayed for the page before a reload must not resolve the new page's request
+              // of the same id.
+              const doc = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
               const original = window.fetch;
               const command = /player\/command|connect\/transfer/;
               // A refused play or transfer (free accounts in some countries): the app tries another way.
@@ -865,7 +874,11 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
                 }, 10000);
               };
               const direct = (url, init) => original.call(window, url, init).then(r => { tell(r.status, url, false, init && init.body); return r; });
-              window.__mspNetDone = (id, status, headers, body) => {
+              window.__mspNetDone = (id, status, headers, body, from) => {
+                if (from !== doc) {
+                  try { window.MyspotiNet.postMessage(JSON.stringify({ type: 'stale', id })); } catch (e) { /* host gone */ }
+                  return;
+                }
                 const p = pending.get(id);
                 if (!p) return;
                 pending.delete(id);
@@ -900,7 +913,7 @@ internal class ControlRelay(private val view: WebView, private val fingerprint: 
                 return new Promise((resolve, reject) => {
                   const id = ++seq;
                   pending.set(id, { resolve, reject, url, init, method });
-                  window.MyspotiNet.postMessage(JSON.stringify({ id, url, method, headers, body: body == null ? null : body }));
+                  window.MyspotiNet.postMessage(JSON.stringify({ id, doc, url, method, headers, body: body == null ? null : body }));
                 });
               };
             })();
