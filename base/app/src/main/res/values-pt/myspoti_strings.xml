@@ -568,6 +568,8 @@
     <string name="settings_headset_skip_title">Botões dos fones de ouvido: 15 s nos podcasts</string>
     <string name="settings_headset_skip_detail">Desativado: passam ao episódio seguinte ou anterior</string>
     <string name="settings_connect_mirror_title">Contar no Spotify o que você toca com extensões</string>
+    <string name="settings_download_sync_title">Sincronizar as músicas baixadas com o Spotify</string>
+    <string name="settings_download_sync_detail">Quando você está online, uma música baixada também toca sem som no Spotify: ela é contada e seus dispositivos a veem e controlam. Desativado, os downloads tocam só no celular.</string>
     <string name="settings_connect_mirror_detail">Reproduz a música do Spotify sem som em segundo plano, para que conte e seus dispositivos possam controlá-la. Usa um pouco mais de dados e bateria: desative se não precisar.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

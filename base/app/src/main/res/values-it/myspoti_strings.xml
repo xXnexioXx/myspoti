@@ -568,6 +568,8 @@
     <string name="settings_headset_skip_title">Tasti delle cuffie: 15 s nei podcast</string>
     <string name="settings_headset_skip_detail">Disattivato: passano all\'episodio successivo o precedente</string>
     <string name="settings_connect_mirror_title">Conta su Spotify gli ascolti delle estensioni</string>
+    <string name="settings_download_sync_title">Sincronizza i brani scaricati con Spotify</string>
+    <string name="settings_download_sync_detail">Quando sei online, un brano scaricato viene riprodotto anche in muto su Spotify: l\'ascolto viene contato e i tuoi dispositivi lo vedono e lo controllano. Disattivato, i download vengono riprodotti solo dal telefono.</string>
     <string name="settings_connect_mirror_detail">Riproduce il brano Spotify in silenzio in background, così viene conteggiato e i tuoi dispositivi possono controllarlo. Usa un po\' più di dati e batteria: disattivalo se non ti serve.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

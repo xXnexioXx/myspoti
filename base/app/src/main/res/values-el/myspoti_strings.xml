@@ -568,6 +568,8 @@
     <string name="settings_headset_skip_title">Κουμπιά ακουστικών: 15 δ στα podcast</string>
     <string name="settings_headset_skip_detail">Απενεργοποιημένο: πηγαίνουν στο επόμενο ή προηγούμενο επεισόδιο</string>
     <string name="settings_connect_mirror_title">Μέτρηση ακροάσεων επεκτάσεων στο Spotify</string>
+    <string name="settings_download_sync_title">Συγχρονισμός των τραγουδιών που έχετε κατεβάσει με το Spotify</string>
+    <string name="settings_download_sync_detail">Όταν είστε online, ένα τραγούδι που έχετε κατεβάσει παίζει και σε σίγαση στο Spotify: μετράει ως ακρόαση και οι συσκευές σας το βλέπουν και το ελέγχουν. Απενεργοποιημένο, οι λήψεις παίζουν μόνο από το τηλέφωνο.</string>
     <string name="settings_connect_mirror_detail">Παίζει το τραγούδι του Spotify σε σίγαση στο παρασκήνιο, ώστε να μετράει και οι συσκευές σας να το ελέγχουν. Χρησιμοποιεί λίγο περισσότερα δεδομένα και μπαταρία: απενεργοποιήστε το αν δεν το χρειάζεστε.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

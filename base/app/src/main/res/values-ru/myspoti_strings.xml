@@ -579,6 +579,8 @@
     <string name="settings_headset_skip_title">Кнопки наушников: 15 с в подкастах</string>
     <string name="settings_headset_skip_detail">Если выключено, переключают на следующий или предыдущий выпуск</string>
     <string name="settings_connect_mirror_title">Учитывать прослушивания расширений в Spotify</string>
+    <string name="settings_download_sync_title">Синхронизировать скачанные треки со Spotify</string>
+    <string name="settings_download_sync_detail">В сети скачанный трек также беззвучно играет в Spotify: прослушивание засчитывается, а ваши устройства видят его и могут им управлять. Если выключено, скачанное играет только с телефона.</string>
     <string name="settings_connect_mirror_detail">Воспроизводит трек Spotify без звука в фоне, чтобы прослушивание засчитывалось и ваши устройства могли им управлять. Расходует немного больше трафика и заряда: отключите, если это не нужно.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

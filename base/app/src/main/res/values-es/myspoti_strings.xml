@@ -568,6 +568,8 @@
     <string name="settings_headset_skip_title">Botones de auriculares: 15 s en podcasts</string>
     <string name="settings_headset_skip_detail">Desactivado: pasan al episodio siguiente o anterior</string>
     <string name="settings_connect_mirror_title">Contar en Spotify lo que suena con extensiones</string>
+    <string name="settings_download_sync_title">Sincronizar las canciones descargadas con Spotify</string>
+    <string name="settings_download_sync_detail">Con conexión, una canción descargada también suena en silencio en Spotify: cuenta como escucha y tus dispositivos la ven y la controlan. Desactivado, las descargas solo suenan desde el teléfono.</string>
     <string name="settings_connect_mirror_detail">Reproduce la canción de Spotify en silencio en segundo plano, para que cuente y tus dispositivos puedan controlarla. Usa algo más de datos y batería: desactívalo si no lo necesitas.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

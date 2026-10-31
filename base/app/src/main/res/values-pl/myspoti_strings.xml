@@ -579,6 +579,8 @@
     <string name="settings_headset_skip_title">Przyciski słuchawek: 15 s w podcastach</string>
     <string name="settings_headset_skip_detail">Gdy wyłączone, przechodzą do następnego lub poprzedniego odcinka</string>
     <string name="settings_connect_mirror_title">Liczenie odtworzeń z rozszerzeń w Spotify</string>
+    <string name="settings_download_sync_title">Synchronizuj pobrane utwory ze Spotify</string>
+    <string name="settings_download_sync_detail">Gdy jesteś online, pobrany utwór gra też bez dźwięku na Spotify: odsłuchanie jest liczone, a Twoje urządzenia go widzą i mogą nim sterować. Wyłączone: pobrane utwory grają tylko z telefonu.</string>
     <string name="settings_connect_mirror_detail">Odtwarza utwór Spotify bez dźwięku w tle, aby był liczony, a Twoje urządzenia mogły nim sterować. Zużywa nieco więcej danych i baterii: wyłącz, jeśli tego nie potrzebujesz.</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>

@@ -570,6 +570,8 @@
     <string name="settings_headset_skip_title">耳机按键在播客中快进/快退 15 秒</string>
     <string name="settings_headset_skip_detail">关闭后，切换到下一集或上一集</string>
     <string name="settings_connect_mirror_title">在 Spotify 上统计扩展的播放</string>
+    <string name="settings_download_sync_title">与 Spotify 同步已下载的歌曲</string>
+    <string name="settings_download_sync_detail">联网时，已下载的歌曲也会在 Spotify 上静音播放：播放会被计入，你的设备也能看到并控制它。关闭后，下载的歌曲只在手机上播放。</string>
     <string name="settings_connect_mirror_detail">在后台静音播放该 Spotify 歌曲，使其计入播放次数并可由你的设备控制。会多耗一些流量和电量：不需要时可以关闭。</string>
     <string name="explicit_badge">E</string>
     <string name="spotify_plan">Spotify %1$s</string>
