@@ -11,6 +11,7 @@
     <string name="remove_from_liked">Aus Lieblingssongs entfernen</string>
     <string name="repeat_on">Wiederholen: an</string>
     <string name="repeat_one">Titel wiederholen</string>
+    <string name="repeat_once">Einmal wiederholen</string>
     <string name="repeat_off">Wiederholen: aus</string>
     <string name="headphones">Kopfhörer</string>
     <string name="listen_on">Hören auf</string>
@@ -47,6 +48,8 @@
     <string name="background_playback_title">Wiedergabe im Hintergrund</string>
     <string name="background_playback_on">Akkuoptimierung ist aus: Musik und Spotify Connect laufen weiter, wenn der Bildschirm aus ist.</string>
     <string name="background_playback_off">Schalte die Akkuoptimierung aus, damit Android die App im Hintergrund nicht pausiert.</string>
+    <string name="background_playback_samsung">Samsung kann Myspoti bei ausgeschaltetem Bildschirm trotzdem in den Ruhezustand versetzen. Füge die App zu „Nie automatisch in den Ruhezustand versetzte Apps“ hinzu: Einstellungen &gt; Akku &gt; Limits für Hintergrundnutzung.</string>
+    <string name="background_playback_open">App-Einstellungen öffnen</string>
     <plurals name="local_files_count">
         <item quantity="one">%d Titel</item>
         <item quantity="other">%d Titel</item>
@@ -121,6 +124,9 @@
     <string name="new_releases_latest">Neueste Veröffentlichungen</string>
     <string name="your_episodes_title">Deine Episoden</string>
     <string name="your_episodes_empty">Gespeicherte Episoden erscheinen hier.</string>
+    <string name="new_episodes_title">Neue Episoden</string>
+    <string name="new_episodes_subtitle">Von den Podcasts, denen du folgst</string>
+    <string name="new_episodes_empty">Alle neuen Episoden der Podcasts, denen du folgst, wurden abgespielt.</string>
     <string name="recap_title">Dein Rückblick</string>
     <string name="recap_month">30 Tage</string>
     <string name="recap_year">12 Monate</string>
@@ -305,6 +311,9 @@
     <string name="share_as_image">Als Bild teilen</string>
     <string name="settings_autoplay_title">Autoplay</string>
     <string name="settings_autoplay_detail">Wenn deine Musik endet, werden ähnliche Songs weitergespielt</string>
+    <string name="myspoti_shuffle_title">Myspoti-Zufallswiedergabe</string>
+    <string name="myspoti_shuffle_detail">Bei aktivierter Zufallswiedergabe spielt eine Playlist, ein Album oder Lieblingssongs jeden Song einmal in zufälliger Reihenfolge, bevor es von vorn beginnt. Aus: Zufallswiedergabe von Spotify. Ein kostenloses Konto behält bei manchen Listen die Zufallswiedergabe von Spotify.</string>
+    <string name="myspoti_shuffle_imposed">Spotify behält für dein Konto bei dieser Liste die eigene Zufallswiedergabe: Die Myspoti-Zufallswiedergabe ist dafür aus.</string>
     <string name="settings_rotation_title">Bildschirmdrehung</string>
     <string name="settings_rotation_portrait">Hochformat</string>
     <string name="settings_rotation_auto">Automatisch</string>
@@ -508,8 +517,10 @@
     <string name="playlist_stop_collab_private">Zusammenarbeit an %1$s beenden? Die Mitwirkenden werden zu Zuhörern: Sie können sie weiterhin hören, aber keine Titel mehr hinzufügen oder entfernen. Bereits geteilte Einladungslinks bleiben bis zu ihrem Ablauf (bis zu 7 Tage) gültig und können nicht widerrufen werden.</string>
     <string name="playlist_stop_collab_public">Zusammenarbeit an %1$s beenden? Die Mitwirkenden werden aus der Playlist entfernt. Bereits geteilte Einladungslinks bleiben bis zu ihrem Ablauf (bis zu 7 Tage) gültig und können nicht widerrufen werden.</string>
     <string name="library_chip_playlists">Playlists</string>
+    <string name="library_chip_by_me">Von mir</string>
     <string name="library_chip_artists">Künstler</string>
     <string name="library_chip_albums">Alben</string>
+    <string name="library_chip_podcasts">Podcasts</string>
     <string name="library_chip_songs">Titel</string>
     <string name="add_playlist_to_playlist">Playlist zu einer anderen Playlist hinzufügen</string>
     <string name="add_collection_reading">Titel werden gelesen…</string>

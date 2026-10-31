@@ -10,7 +10,8 @@
     <string name="welcome_privacy">Inicias sessão na página oficial do Spotify. O Myspoti nunca vê a tua palavra-passe.</string>
     <string name="remove_from_liked">Remover das Músicas apreciadas</string>
     <string name="repeat_on">Repetir: ativado</string>
-    <string name="repeat_one">Repetir uma</string>
+    <string name="repeat_one">Repetir uma música</string>
+    <string name="repeat_once">Repetir uma vez</string>
     <string name="repeat_off">Repetir: desativado</string>
     <string name="headphones">Auscultadores</string>
     <string name="listen_on">Ouvir em</string>
@@ -47,6 +48,8 @@
     <string name="background_playback_title">Reprodução em segundo plano</string>
     <string name="background_playback_on">A otimização da bateria está desativada: a música e o Spotify Connect continuam com o ecrã desligado.</string>
     <string name="background_playback_off">Desativa a otimização da bateria para que o Android não pause a app em segundo plano.</string>
+    <string name="background_playback_samsung">A Samsung ainda pode colocar o Myspoti em suspensão com a tela desligada. Adicione-o a “Apps que nunca entram em suspensão”: Configurações &gt; Bateria &gt; Limites de uso em segundo plano.</string>
+    <string name="background_playback_open">Abrir configurações do app</string>
     <plurals name="local_files_count">
         <item quantity="one">%d faixa</item>
         <item quantity="other">%d faixas</item>
@@ -121,6 +124,9 @@
     <string name="new_releases_latest">Últimos lançamentos</string>
     <string name="your_episodes_title">Os teus episódios</string>
     <string name="your_episodes_empty">Os episódios que guardares aparecem aqui.</string>
+    <string name="new_episodes_title">Novos episódios</string>
+    <string name="new_episodes_subtitle">Dos programas que você segue</string>
+    <string name="new_episodes_empty">Todos os episódios recentes dos programas que você segue já foram reproduzidos.</string>
     <string name="recap_title">O teu resumo</string>
     <string name="recap_month">30 dias</string>
     <string name="recap_year">12 meses</string>
@@ -305,6 +311,9 @@
     <string name="share_as_image">Partilhar como imagem</string>
     <string name="settings_autoplay_title">Reprodução automática</string>
     <string name="settings_autoplay_detail">Quando a tua música acabar, continua com músicas semelhantes</string>
+    <string name="myspoti_shuffle_title">Aleatório do Myspoti</string>
+    <string name="myspoti_shuffle_detail">Com o modo aleatório ativado, uma playlist, um álbum ou as Músicas apreciadas tocam cada música uma vez, em ordem aleatória, antes de recomeçar. Desativado: o modo aleatório do Spotify. Uma conta gratuita pode manter o modo aleatório do Spotify em algumas listas.</string>
+    <string name="myspoti_shuffle_imposed">O Spotify mantém o próprio modo aleatório nesta lista para a sua conta: o aleatório do Myspoti fica desativado nela.</string>
     <string name="settings_rotation_title">Rotação do ecrã</string>
     <string name="settings_rotation_portrait">Retrato</string>
     <string name="settings_rotation_auto">Automática</string>
@@ -508,8 +517,10 @@
     <string name="playlist_stop_collab_private">Parar de colaborar em %1$s? Os colaboradores viram ouvintes: ainda poderão ouvi-la, mas não adicionarão nem removerão músicas. Os links de convite já compartilhados continuam válidos até expirarem (até 7 dias) e não podem ser cancelados.</string>
     <string name="playlist_stop_collab_public">Parar de colaborar em %1$s? Os colaboradores são removidos da playlist. Os links de convite já compartilhados continuam válidos até expirarem (até 7 dias) e não podem ser cancelados.</string>
     <string name="library_chip_playlists">Playlists</string>
+    <string name="library_chip_by_me">Por mim</string>
     <string name="library_chip_artists">Artistas</string>
     <string name="library_chip_albums">Álbuns</string>
+    <string name="library_chip_podcasts">Podcasts</string>
     <string name="library_chip_songs">Músicas</string>
     <string name="add_playlist_to_playlist">Adicionar playlist a outra playlist</string>
     <string name="add_collection_reading">Lendo as músicas…</string>

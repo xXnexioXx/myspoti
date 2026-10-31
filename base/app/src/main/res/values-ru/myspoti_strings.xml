@@ -11,6 +11,7 @@
     <string name="remove_from_liked">Убрать из «Любимых треков»</string>
     <string name="repeat_on">Повтор: вкл.</string>
     <string name="repeat_one">Повтор одного трека</string>
+    <string name="repeat_once">Повторить один раз</string>
     <string name="repeat_off">Повтор: выкл.</string>
     <string name="headphones">Наушники</string>
     <string name="listen_on">Слушать на</string>
@@ -47,6 +48,8 @@
     <string name="background_playback_title">Фоновое воспроизведение</string>
     <string name="background_playback_on">Оптимизация батареи отключена: музыка и Spotify Connect продолжают играть при выключенном экране.</string>
     <string name="background_playback_off">Отключите оптимизацию батареи, чтобы Android не приостанавливал приложение в фоне.</string>
+    <string name="background_playback_samsung">Samsung всё ещё может усыплять Myspoti при выключенном экране. Добавьте приложение в «Приложения, которые никогда не переходят в спящий режим»: Настройки &gt; Батарея &gt; Ограничения работы в фоновом режиме.</string>
+    <string name="background_playback_open">Открыть настройки приложения</string>
     <plurals name="local_files_count">
         <item quantity="one">%d трек</item>
         <item quantity="few">%d трека</item>
@@ -131,6 +134,9 @@
     <string name="new_releases_latest">Последние релизы</string>
     <string name="your_episodes_title">Ваши выпуски</string>
     <string name="your_episodes_empty">Сохранённые выпуски появятся здесь.</string>
+    <string name="new_episodes_title">Новые выпуски</string>
+    <string name="new_episodes_subtitle">Из подкастов, на которые вы подписаны</string>
+    <string name="new_episodes_empty">Все недавние выпуски подкастов, на которые вы подписаны, уже воспроизведены.</string>
     <string name="recap_title">Ваш итог</string>
     <string name="recap_month">30 дней</string>
     <string name="recap_year">12 месяцев</string>
@@ -351,6 +357,9 @@
     <string name="share_as_image">Поделиться изображением</string>
     <string name="settings_autoplay_title">Автовоспроизведение</string>
     <string name="settings_autoplay_detail">Когда ваша музыка закончится, продолжать воспроизведение похожих треков</string>
+    <string name="myspoti_shuffle_title">Перемешивание Myspoti</string>
+    <string name="myspoti_shuffle_detail">Если перемешивание включено, плейлист, альбом или «Любимые треки» воспроизводят каждый трек один раз в случайном порядке, а затем начинают заново. Выключено: перемешивание Spotify. Бесплатный аккаунт может сохранять перемешивание Spotify в некоторых списках.</string>
+    <string name="myspoti_shuffle_imposed">Spotify сохраняет для вашего аккаунта собственное перемешивание в этом списке: перемешивание Myspoti для него выключено.</string>
     <string name="settings_crossfade_title">Плавный переход (треки затихают, но не накладываются)</string>
     <string name="settings_crossfade_detail">Трек затихает в последние секунды, следующий плавно нарастает. Они никогда не звучат одновременно: один плеер, один аудиопоток.</string>
     <string name="settings_crossfade_off">Выкл.</string>
@@ -530,8 +539,10 @@
     <string name="playlist_stop_collab_private">Прекратить совместную работу над «%1$s»? Соавторы станут слушателями: они смогут слушать плейлист, но не смогут добавлять или удалять треки. Уже отправленные ссылки-приглашения действуют до истечения срока (до 7 дней) и не могут быть отменены.</string>
     <string name="playlist_stop_collab_public">Прекратить совместную работу над «%1$s»? Соавторы будут удалены из плейлиста. Уже отправленные ссылки-приглашения действуют до истечения срока (до 7 дней) и не могут быть отменены.</string>
     <string name="library_chip_playlists">Плейлисты</string>
+    <string name="library_chip_by_me">Мои</string>
     <string name="library_chip_artists">Исполнители</string>
     <string name="library_chip_albums">Альбомы</string>
+    <string name="library_chip_podcasts">Подкасты</string>
     <string name="library_chip_songs">Треки</string>
     <string name="add_playlist_to_playlist">Добавить плейлист в другой плейлист</string>
     <string name="add_collection_reading">Чтение треков…</string>

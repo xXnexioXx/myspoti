@@ -11,6 +11,7 @@
     <string name="remove_from_liked">从“已点赞的歌曲”中移除</string>
     <string name="repeat_on">循环播放：开</string>
     <string name="repeat_one">单曲循环</string>
+    <string name="repeat_once">重复一次</string>
     <string name="repeat_off">循环播放：关</string>
     <string name="headphones">耳机</string>
     <string name="listen_on">收听设备</string>
@@ -47,6 +48,8 @@
     <string name="background_playback_title">后台播放</string>
     <string name="background_playback_on">电池优化已关闭：息屏后音乐和 Spotify Connect 仍会继续播放。</string>
     <string name="background_playback_off">请关闭电池优化，以免 Android 在后台暂停应用。</string>
+    <string name="background_playback_samsung">息屏后，三星系统仍可能让 Myspoti 进入休眠。请将其加入“永不休眠的应用”：设置 &gt; 电池 &gt; 后台使用限制。</string>
+    <string name="background_playback_open">打开应用设置</string>
     <plurals name="local_files_count">
         <item quantity="other">%d 首曲目</item>
     </plurals>
@@ -128,6 +131,9 @@
     <string name="new_releases_latest">最新发行</string>
     <string name="your_episodes_title">你的节目</string>
     <string name="your_episodes_empty">你保存的节目会显示在这里。</string>
+    <string name="new_episodes_title">新节目</string>
+    <string name="new_episodes_subtitle">来自你关注的播客</string>
+    <string name="new_episodes_empty">你关注的播客的所有最新节目都已播放。</string>
     <string name="recap_title">你的回顾</string>
     <string name="recap_month">30 天</string>
     <string name="recap_year">12 个月</string>
@@ -342,6 +348,9 @@
     <string name="share_as_image">以图片分享</string>
     <string name="settings_autoplay_title">自动播放</string>
     <string name="settings_autoplay_detail">音乐播放完后，继续播放类似的歌曲</string>
+    <string name="myspoti_shuffle_title">Myspoti 随机播放</string>
+    <string name="myspoti_shuffle_detail">开启随机播放后，播放列表、专辑或“已点赞的歌曲”会以随机顺序将每首歌播放一次，然后重新开始。关闭：使用 Spotify 的随机播放。免费账号在某些列表中可能仍使用 Spotify 的随机播放。</string>
+    <string name="myspoti_shuffle_imposed">Spotify 在此列表中为你的账号保留了它自己的随机播放：此列表已关闭 Myspoti 随机播放。</string>
     <string name="settings_crossfade_title">淡入淡出（曲目淡入淡出，不重叠）</string>
     <string name="settings_crossfade_detail">一首歌在最后几秒淡出，下一首淡入。它们不会同时播放：一个播放器，一路音频流。</string>
     <string name="settings_crossfade_off">关</string>
@@ -521,8 +530,10 @@
     <string name="playlist_stop_collab_private">停止协作 %1$s？协作者将变为听众：仍可收听，但无法再添加或移除歌曲。已分享的邀请链接在到期前（最长 7 天）仍然有效，且无法取消。</string>
     <string name="playlist_stop_collab_public">停止协作 %1$s？协作者将从播放列表中移除。已分享的邀请链接在到期前（最长 7 天）仍然有效，且无法取消。</string>
     <string name="library_chip_playlists">播放列表</string>
+    <string name="library_chip_by_me">我创建的</string>
     <string name="library_chip_artists">艺人</string>
     <string name="library_chip_albums">专辑</string>
+    <string name="library_chip_podcasts">播客</string>
     <string name="library_chip_songs">歌曲</string>
     <string name="add_playlist_to_playlist">将播放列表添加到另一个播放列表</string>
     <string name="add_collection_reading">正在读取歌曲…</string>

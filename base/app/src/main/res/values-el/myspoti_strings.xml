@@ -11,6 +11,7 @@
     <string name="remove_from_liked">Κατάργηση από τα τραγούδια που σου αρέσουν</string>
     <string name="repeat_on">Επανάληψη: ενεργή</string>
     <string name="repeat_one">Επανάληψη ενός τραγουδιού</string>
+    <string name="repeat_once">Επανάληψη μία φορά</string>
     <string name="repeat_off">Επανάληψη: ανενεργή</string>
     <string name="headphones">Ακουστικά</string>
     <string name="listen_on">Άκουσε σε</string>
@@ -47,6 +48,8 @@
     <string name="background_playback_title">Αναπαραγωγή στο παρασκήνιο</string>
     <string name="background_playback_on">Η βελτιστοποίηση μπαταρίας είναι απενεργοποιημένη: η μουσική και το Spotify Connect συνεχίζουν με την οθόνη σβηστή.</string>
     <string name="background_playback_off">Απενεργοποίησε τη βελτιστοποίηση μπαταρίας, ώστε το Android να μην σταματά την εφαρμογή στο παρασκήνιο.</string>
+    <string name="background_playback_samsung">Η Samsung μπορεί και πάλι να βάλει το Myspoti σε αναστολή με την οθόνη σβηστή. Πρόσθεσέ το στις «Εφαρμογές που δεν μπαίνουν ποτέ σε αναστολή»: Ρυθμίσεις &gt; Μπαταρία &gt; Όρια χρήσης στο παρασκήνιο.</string>
+    <string name="background_playback_open">Άνοιγμα ρυθμίσεων εφαρμογής</string>
     <plurals name="local_files_count">
         <item quantity="one">%d κομμάτι</item>
         <item quantity="other">%d κομμάτια</item>
@@ -121,6 +124,9 @@
     <string name="new_releases_latest">Τελευταίες κυκλοφορίες</string>
     <string name="your_episodes_title">Τα Επεισόδιά σου</string>
     <string name="your_episodes_empty">Τα επεισόδια που αποθηκεύεις εμφανίζονται εδώ.</string>
+    <string name="new_episodes_title">Νέα επεισόδια</string>
+    <string name="new_episodes_subtitle">Από τις εκπομπές που ακολουθείς</string>
+    <string name="new_episodes_empty">Όλα τα πρόσφατα επεισόδια των εκπομπών που ακολουθείς έχουν παιχτεί.</string>
     <string name="recap_title">Η ανασκόπησή σου</string>
     <string name="recap_month">30 ημέρες</string>
     <string name="recap_year">12 μήνες</string>
@@ -305,6 +311,9 @@
     <string name="share_as_image">Κοινοποίηση ως εικόνα</string>
     <string name="settings_autoplay_title">Αυτόματη αναπαραγωγή</string>
     <string name="settings_autoplay_detail">Όταν τελειώνει η μουσική σου, συνεχίζει με παρόμοια τραγούδια</string>
+    <string name="myspoti_shuffle_title">Τυχαία σειρά Myspoti</string>
+    <string name="myspoti_shuffle_detail">Με ενεργή την τυχαία σειρά, μια λίστα αναπαραγωγής, ένα άλμπουμ ή τα τραγούδια που σου αρέσουν παίζει κάθε τραγούδι μία φορά, με τυχαία σειρά, πριν ξεκινήσει ξανά. Ανενεργή: η τυχαία σειρά του Spotify. Ένας δωρεάν λογαριασμός μπορεί να κρατά την τυχαία σειρά του Spotify σε ορισμένες λίστες.</string>
+    <string name="myspoti_shuffle_imposed">Το Spotify κρατά τη δική του τυχαία σειρά σε αυτή τη λίστα για τον λογαριασμό σου: η τυχαία σειρά Myspoti είναι ανενεργή γι\' αυτήν.</string>
     <string name="settings_rotation_title">Περιστροφή οθόνης</string>
     <string name="settings_rotation_portrait">Κατακόρυφη</string>
     <string name="settings_rotation_auto">Αυτόματη</string>
@@ -508,8 +517,10 @@
     <string name="playlist_stop_collab_private">Διακοπή συνεργασίας στο «%1$s»; Οι συνεργάτες γίνονται ακροατές: μπορούν ακόμη να την ακούν, αλλά δεν προσθέτουν ή αφαιρούν τραγούδια. Οι σύνδεσμοι πρόσκλησης που έχουν ήδη κοινοποιηθεί ισχύουν μέχρι να λήξουν (έως 7 ημέρες) και δεν μπορούν να ακυρωθούν.</string>
     <string name="playlist_stop_collab_public">Διακοπή συνεργασίας στο «%1$s»; Οι συνεργάτες αφαιρούνται από τη λίστα αναπαραγωγής. Οι σύνδεσμοι πρόσκλησης που έχουν ήδη κοινοποιηθεί ισχύουν μέχρι να λήξουν (έως 7 ημέρες) και δεν μπορούν να ακυρωθούν.</string>
     <string name="library_chip_playlists">Λίστες αναπαραγωγής</string>
+    <string name="library_chip_by_me">Από εμένα</string>
     <string name="library_chip_artists">Καλλιτέχνες</string>
     <string name="library_chip_albums">Άλμπουμ</string>
+    <string name="library_chip_podcasts">Podcasts</string>
     <string name="library_chip_songs">Τραγούδια</string>
     <string name="add_playlist_to_playlist">Προσθήκη λίστας αναπαραγωγής σε άλλη λίστα</string>
     <string name="add_collection_reading">Ανάγνωση των τραγουδιών…</string>

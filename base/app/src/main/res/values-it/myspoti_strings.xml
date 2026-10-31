@@ -11,6 +11,7 @@
     <string name="remove_from_liked">Rimuovi dai Brani che ti piacciono</string>
     <string name="repeat_on">Ripeti: attivo</string>
     <string name="repeat_one">Ripeti brano</string>
+    <string name="repeat_once">Ripeti una volta</string>
     <string name="repeat_off">Ripeti: disattivo</string>
     <string name="headphones">Cuffie</string>
     <string name="listen_on">Ascolta su</string>
@@ -47,6 +48,8 @@
     <string name="background_playback_title">Riproduzione in background</string>
     <string name="background_playback_on">L\'ottimizzazione della batteria è disattivata: la musica e Spotify Connect continuano a schermo spento.</string>
     <string name="background_playback_off">Disattiva l\'ottimizzazione della batteria così Android non mette in pausa l\'app in background.</string>
+    <string name="background_playback_samsung">Samsung può ancora mettere Myspoti in stop a schermo spento. Aggiungila a «App mai in stop»: Impostazioni &gt; Batteria &gt; Limiti di utilizzo in background.</string>
+    <string name="background_playback_open">Apri impostazioni dell\'app</string>
     <plurals name="local_files_count">
         <item quantity="one">%d brano</item>
         <item quantity="other">%d brani</item>
@@ -121,6 +124,9 @@
     <string name="new_releases_latest">Ultime uscite</string>
     <string name="your_episodes_title">I tuoi episodi</string>
     <string name="your_episodes_empty">Gli episodi che salvi compaiono qui.</string>
+    <string name="new_episodes_title">Nuovi episodi</string>
+    <string name="new_episodes_subtitle">Dai programmi che segui</string>
+    <string name="new_episodes_empty">Tutti gli episodi recenti dei programmi che segui sono stati riprodotti.</string>
     <string name="recap_title">Il tuo riepilogo</string>
     <string name="recap_month">30 giorni</string>
     <string name="recap_year">12 mesi</string>
@@ -305,6 +311,9 @@
     <string name="share_as_image">Condividi come immagine</string>
     <string name="settings_autoplay_title">Riproduzione automatica</string>
     <string name="settings_autoplay_detail">Quando la musica finisce, continua con brani simili</string>
+    <string name="myspoti_shuffle_title">Casuale di Myspoti</string>
+    <string name="myspoti_shuffle_detail">Con la riproduzione casuale attiva, una playlist, un album o i Brani che ti piacciono riproduce ogni brano una volta, in ordine casuale, prima di ricominciare. Disattivata: la riproduzione casuale di Spotify. Un account gratuito può mantenere quella di Spotify su alcune liste.</string>
+    <string name="myspoti_shuffle_imposed">Spotify mantiene la propria riproduzione casuale su questa lista per il tuo account: quella di Myspoti è disattivata.</string>
     <string name="settings_rotation_title">Rotazione dello schermo</string>
     <string name="settings_rotation_portrait">Verticale</string>
     <string name="settings_rotation_auto">Automatica</string>
@@ -508,8 +517,10 @@
     <string name="playlist_stop_collab_private">Smettere di collaborare a %1$s? I collaboratori diventano ascoltatori: potranno ancora ascoltarla, ma non aggiungere o rimuovere più brani. I link di invito già condivisi restano validi fino alla scadenza (fino a 7 giorni) e non possono essere annullati.</string>
     <string name="playlist_stop_collab_public">Smettere di collaborare a %1$s? I collaboratori vengono rimossi dalla playlist. I link di invito già condivisi restano validi fino alla scadenza (fino a 7 giorni) e non possono essere annullati.</string>
     <string name="library_chip_playlists">Playlist</string>
+    <string name="library_chip_by_me">Creati da me</string>
     <string name="library_chip_artists">Artisti</string>
     <string name="library_chip_albums">Album</string>
+    <string name="library_chip_podcasts">Podcast</string>
     <string name="library_chip_songs">Brani</string>
     <string name="add_playlist_to_playlist">Aggiungi la playlist a un\'altra playlist</string>
     <string name="add_collection_reading">Lettura dei brani…</string>

@@ -137,6 +137,9 @@
     <string name="new_releases_latest">Dernières sorties</string>
     <string name="your_episodes_title">Vos épisodes</string>
     <string name="your_episodes_empty">Les épisodes que vous enregistrez apparaissent ici.</string>
+    <string name="new_episodes_title">Nouveaux épisodes</string>
+    <string name="new_episodes_subtitle">Des émissions que vous suivez</string>
+    <string name="new_episodes_empty">Tous les épisodes récents des émissions que vous suivez ont été écoutés.</string>
     <string name="recap_title">Votre récap</string>
     <string name="recap_month">30 jours</string>
     <string name="recap_year">12 mois</string>
@@ -380,6 +383,9 @@
     <string name="share_as_image">Partager en image</string>
     <string name="settings_autoplay_title">Lecture automatique</string>
     <string name="settings_autoplay_detail">Quand votre musique se termine, continuer avec des titres similaires</string>
+    <string name="myspoti_shuffle_title">Lecture aléatoire Myspoti</string>
+    <string name="myspoti_shuffle_detail">Avec la lecture aléatoire activée, une playlist, un album ou les titres likés jouent chaque titre une fois, dans un ordre aléatoire, avant de recommencer. Désactivée : la lecture aléatoire de Spotify. Un compte gratuit peut garder celle de Spotify sur certaines listes.</string>
+    <string name="myspoti_shuffle_imposed">Spotify garde sa propre lecture aléatoire sur cette liste pour votre compte : la lecture aléatoire Myspoti y est désactivée.</string>
     <string name="settings_crossfade_title">Fondu enchaîné</string>
     <string name="settings_crossfade_detail">Les morceaux issus d\'extensions, de téléchargements et de fichiers locaux se chevauchent : la fin de l\'un s\'efface pendant que le suivant monte. Les flux Spotify ne peuvent pas se chevaucher (un seul flux audio) : ils s\'effacent puis remontent seulement.</string>
     <string name="settings_crossfade_off">Désactivé</string>
@@ -516,8 +522,10 @@
     <string name="playlist_stop_collab_public">Arrêter la collaboration sur %1$s ? Ses collaborateurs sont retirés de la playlist. Les liens d’invitation déjà partagés restent valables jusqu’à leur expiration (7 jours maximum) et ne peuvent pas être annulés.</string>
     <string name="playlist_members_more">%1$s et %2$d autres</string>
     <string name="library_chip_playlists">Playlists</string>
+    <string name="library_chip_by_me">Par moi</string>
     <string name="library_chip_artists">Artistes</string>
     <string name="library_chip_albums">Albums</string>
+    <string name="library_chip_podcasts">Podcasts</string>
     <string name="library_chip_songs">Titres</string>
     <string name="add_playlist_to_playlist">Ajouter la playlist à une autre playlist</string>
     <string name="add_collection_reading">Lecture des titres…</string>
