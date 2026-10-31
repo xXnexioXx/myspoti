@@ -558,7 +558,7 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Impossibile riprodurre su %1$s</string>
     <string name="cast_lost">%1$s perso: di nuovo su questo telefono</string>
-    <string name="cast_spotify_via_connect">I brani Spotify vengono riprodotti sui dispositivi Cast tramite Spotify Connect</string>
+    <string name="cast_spotify_via_connect">Cast riproduce i brani scaricati, delle estensioni e del telefono. Per un brano Spotify, il dispositivo deve comparire in Spotify Connect.</string>
     <string name="downloads_need_source_detail">I brani vengono scaricati dalle estensioni. Non ne è ancora installata nessuna: apri lo store delle estensioni e installa Mornye per scaricare.</string>
     <string name="downloads_need_source_title">I download richiedono un\'estensione</string>
     <string name="episode_new">Nuovo</string>
