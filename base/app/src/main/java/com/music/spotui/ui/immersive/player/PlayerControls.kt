@@ -80,6 +80,7 @@ import com.music.spotui.di.Haptics
 import com.music.spotui.ui.immersive.Immersive
 import com.music.spotui.ui.look.MeshPalette
 import com.music.spotui.ui.look.ThinSlider
+import com.music.spotui.ui.components.RepeatIcons
 import com.music.spotui.ui.components.rememberFrameClock
 import kotlin.math.roundToInt
 
@@ -531,9 +532,14 @@ internal fun PlayerActionRow(
                     )
                     PillDivider()
                     PillSegment(
-                        icon = if (repeatMode == ImmersiveRepeat.ONE) Icons.Rounded.RepeatOne else Icons.Rounded.Repeat,
+                        icon = when (repeatMode) {
+                            ImmersiveRepeat.ONE -> Icons.Rounded.RepeatOne
+                            ImmersiveRepeat.ONCE -> RepeatIcons.once
+                            else -> Icons.Rounded.Repeat
+                        },
                         contentDescription = when (repeatMode) {
                             ImmersiveRepeat.ONE -> stringResource(R.string.immersive_player_repeat_one)
+                            ImmersiveRepeat.ONCE -> stringResource(R.string.immersive_player_repeat_once)
                             ImmersiveRepeat.ALL -> stringResource(R.string.immersive_player_repeat_all)
                             else -> stringResource(R.string.immersive_player_repeat_off)
                         },
