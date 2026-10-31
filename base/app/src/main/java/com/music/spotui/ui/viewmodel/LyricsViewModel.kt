@@ -33,6 +33,11 @@ class LyricsViewModel constructor() : ViewModel() {
     companion object {
         /** How many consecutive lines one share takes (Spotify's own card takes five). */
         const val MAX_SHARED_LINES = 6
+
+        /** Whether [source] is [target]'s language, regions apart: nothing to translate then. */
+        fun sameLanguage(source: String?, target: String): Boolean =
+            source?.substringBefore('-')
+                ?.equals(target.substringBefore('-'), ignoreCase = true) == true
     }
 
     private val _state = MutableStateFlow<State>(State.Loading)
@@ -242,12 +247,5 @@ class LyricsViewModel constructor() : ViewModel() {
                 )
             }
         }
-    }
-
-    companion object {
-        /** Whether [source] is [target]'s language, regions apart: nothing to translate then. */
-        fun sameLanguage(source: String?, target: String): Boolean =
-            source?.substringBefore('-')
-                ?.equals(target.substringBefore('-'), ignoreCase = true) == true
     }
 }
