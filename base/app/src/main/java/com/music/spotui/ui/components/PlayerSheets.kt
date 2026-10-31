@@ -267,9 +267,11 @@ fun DevicesSheet(onDismiss: () -> Unit) {
                     DeviceRow(deviceIcon(d.type), d.name, null) { SongPlayer.transferTo(d); onDismiss() }
                 }
                 if (list.none { !it.isSelf } && !headphones && remote == null && com.music.spotui.cast.CastDiscovery.devices.isEmpty() &&
-                    com.music.spotui.cast.CastPlayback.device.value == null)
+                    com.music.spotui.connect.LanDiscovery.devices.isEmpty() && com.music.spotui.cast.CastPlayback.device.value == null)
                     Text(stringResource(R.string.no_devices), color = AppText.copy(alpha = 0.7f), modifier = Modifier.padding(20.dp))
             }
+            // Spotify Connect devices of the network that are not logged in to the account yet.
+            com.music.spotui.connect.LanDeviceRows()
             // Cast devices, for Myspoti's own songs (Spotify's go through Spotify Connect above).
             com.music.spotui.cast.CastDeviceRows(onDismiss)
             JamSection(onDismiss)

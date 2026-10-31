@@ -583,7 +583,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Δεν ήταν δυνατή η αναπαραγωγή στο %1$s</string>
     <string name="cast_lost">Χάθηκε η σύνδεση με %1$s: ξανά σε αυτό το τηλέφωνο</string>
-    <string name="cast_spotify_via_connect">Το Cast παίζει τραγούδια που έχουν γίνει λήψη, από επεκτάσεις και από το τηλέφωνο. Για ένα τραγούδι του Spotify, η συσκευή πρέπει να εμφανίζεται στο Spotify Connect.</string>
+    <string name="cast_spotify_detail">Google Cast · παίζει Spotify σε αυτή τη συσκευή</string>
+    <string name="cast_spotify_failed">Δεν ήταν δυνατή η εκκίνηση του Spotify σε %1$s</string>
     <string name="downloads_need_source_detail">Τα τραγούδια κατεβαίνουν από επεκτάσεις. Δεν έχει εγκατασταθεί καμία ακόμα: ανοίξτε το κατάστημα επεκτάσεων και εγκαταστήστε το Mornye για λήψεις.</string>
     <string name="downloads_need_source_title">Οι λήψεις χρειάζονται επέκταση</string>
     <string name="episode_new">Νέο</string>
@@ -609,4 +610,10 @@
     <string name="hidden_songs_title">Κρυφά τραγούδια</string>
     <string name="hidden_songs_detail">Τα τραγούδια που σημειώνονται ως «Δεν με ενδιαφέρει» παραλείπονται σε λίστες και ραδιόφωνα</string>
     <string name="hidden_songs_empty">Δεν υπάρχουν κρυφά τραγούδια. Επιλέξτε «Δεν με ενδιαφέρει» στο μενού ενός τραγουδιού.</string>
+    <string name="login_failed_title">Η σύνδεση δεν ολοκληρώθηκε</string>
+    <string name="login_failed_detail">Η σελίδα του Spotify δεν φόρτωσε ή δεν ξεκίνησε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά. Αν εξακολουθεί να αποτυγχάνει, δοκιμάστε άλλο δίκτυο.</string>
+    <string name="lan_device_detail">Σε αυτό το δίκτυο</string>
+    <string name="lan_logging_in">Σύνδεση…</string>
+    <string name="lan_failed">Η συσκευή %1$s δεν δέχτηκε τη σύνδεση. Ανοίξτε την μία φορά με την εφαρμογή Spotify και δοκιμάστε ξανά.</string>
+    <string name="lan_others">%1$d ακόμη συσκευές σε αυτό το δίκτυο πρέπει πρώτα να συνδεθούν μέσω της εφαρμογής Spotify</string>
 </resources>

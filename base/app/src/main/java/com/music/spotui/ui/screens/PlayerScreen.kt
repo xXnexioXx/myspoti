@@ -1546,12 +1546,16 @@ fun PlayerOptionsSheet(
 
 
 /**
- * Opens the album of the track that plays, for both looks. A radio's tracks may come without
- * their album: asked from the track, else by the album's name (the album page resolves it).
+ * Opens the album of the track that plays, for both looks. An extension's or a download's song
+ * has no album in Spotify's state: the song's own, as the options' "Go to album". A radio's
+ * tracks may come without one: asked from the track, else by the album's name (the album page
+ * resolves it).
  */
 fun openNowPlayingAlbum(playerViewModel: PlayerViewModel, singer: String, scope: kotlinx.coroutines.CoroutineScope, navigate: (String) -> Unit) {
-    val albumId = nowPlayingSong(playerViewModel).albumId
-    val albumName = playerViewModel.currentSongAlbum.value
+    val song = nowPlayingSong(playerViewModel)
+    val albumId = song.albumId
+    val albumName = playerViewModel.currentSongAlbum.value.ifBlank { song.album }
+    @Suppress("NAME_SHADOWING") val singer = singer.ifBlank { song.singer }
     if (albumId.isNotBlank()) { navigate(albumRoute(albumName, singer, albumId)); return }
     val trackId = SongPlayer.currentTrackId
     scope.launch {

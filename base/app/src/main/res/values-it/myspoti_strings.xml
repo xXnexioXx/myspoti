@@ -583,7 +583,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Impossibile riprodurre su %1$s</string>
     <string name="cast_lost">%1$s perso: di nuovo su questo telefono</string>
-    <string name="cast_spotify_via_connect">Cast riproduce i brani scaricati, delle estensioni e del telefono. Per un brano Spotify, il dispositivo deve comparire in Spotify Connect.</string>
+    <string name="cast_spotify_detail">Google Cast · riproduce Spotify sul dispositivo</string>
+    <string name="cast_spotify_failed">Impossibile avviare Spotify su %1$s</string>
     <string name="downloads_need_source_detail">I brani vengono scaricati dalle estensioni. Non ne è ancora installata nessuna: apri lo store delle estensioni e installa Mornye per scaricare.</string>
     <string name="downloads_need_source_title">I download richiedono un\'estensione</string>
     <string name="episode_new">Nuovo</string>
@@ -609,4 +610,10 @@
     <string name="hidden_songs_title">Brani nascosti</string>
     <string name="hidden_songs_detail">I brani segnati come Non mi interessa vengono saltati nelle liste e nelle radio</string>
     <string name="hidden_songs_empty">Nessun brano nascosto. Scegli Non mi interessa nel menu di un brano.</string>
+    <string name="login_failed_title">Accesso non completato</string>
+    <string name="login_failed_detail">La pagina di Spotify non si è caricata o non è partita. Controlla la connessione e riprova. Se continua a fallire, prova un\'altra rete.</string>
+    <string name="lan_device_detail">Su questa rete</string>
+    <string name="lan_logging_in">Accesso in corso…</string>
+    <string name="lan_failed">%1$s non ha accettato l\'accesso. Aprilo una volta con l\'app Spotify, poi riprova.</string>
+    <string name="lan_others">Altri %1$d dispositivi su questa rete richiedono prima l\'accesso tramite l\'app Spotify</string>
 </resources>

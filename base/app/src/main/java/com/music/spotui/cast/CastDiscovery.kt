@@ -20,6 +20,7 @@ data class CastDevice(val id: String, val name: String, val model: String, val h
  */
 object CastDiscovery {
     private const val TYPE = "_googlecast._tcp"
+    private const val RESOLVE_MS = 6000L
     /** The devices found, newest last (main thread). */
     val devices = mutableStateListOf<CastDevice>()
     private val main = Handler(Looper.getMainLooper())
@@ -29,15 +30,10 @@ object CastDiscovery {
     /** Before Android 14 NsdManager resolves one service at a time: the others wait here. */
     private val waiting = ArrayDeque<NsdServiceInfo>()
     private var resolving = false
-    /** Counts the resolutions: a late answer of one given up (or cut by [stop]) does not end the next one. */
-    private var round = 0
-    /** A resolution that never answers (seen before Android 14) is given up after this, or no device would ever be listed. */
-    private const val RESOLVE_GUARD_MS = 5_000L
-    private val resolveGuard = Runnable {
-        log("a Cast device did not resolve in ${RESOLVE_GUARD_MS / 1000} s: moving on")
-        resolving = false
-        next()
-    }
+    /** Each resolve has a number: the answer of one given up on (or of a stopped search) is ignored. */
+    private var resolveGen = 0
+    /** Services whose resolve failed once: tried once more, then left. */
+    private val retried = HashSet<String>()
 
     /** Starts looking (each [start] wants one [stop]). Main thread. */
     fun start(context: Context) {
@@ -47,6 +43,8 @@ object CastDiscovery {
         nsd = m
         // Found anew each time: a device switched off since is not offered.
         devices.clear()
+        // A resolve of the search before may never have answered: it must not hold this one.
+        waiting.clear(); retried.clear(); resolving = false; resolveGen++
         val l = object : NsdManager.DiscoveryListener {
             override fun onDiscoveryStarted(serviceType: String) = log("looking for Cast devices")
             override fun onDiscoveryStopped(serviceType: String) = log("stopped looking for Cast devices")
@@ -71,10 +69,7 @@ object CastDiscovery {
         listener?.let { l -> runCatching { nsd?.stopServiceDiscovery(l) } }
         listener = null
         waiting.clear()
-        // A resolution in flight is left behind: a later start must not wait for its answer.
-        main.removeCallbacks(resolveGuard)
-        resolving = false
-        round++
+        resolving = false; resolveGen++
     }
 
     @Suppress("DEPRECATION")
@@ -83,18 +78,18 @@ object CastDiscovery {
         val info = waiting.removeFirstOrNull() ?: return
         val m = nsd ?: return
         resolving = true
-        val mine = ++round
-        main.postDelayed(resolveGuard, RESOLVE_GUARD_MS)
-        val done = {
-            main.post {
-                if (round == mine && resolving) { main.removeCallbacks(resolveGuard); resolving = false; next() }
-            }
-            Unit
-        }
+        val gen = ++resolveGen
+        val done = { main.post { if (gen == resolveGen) { resolving = false; next() } }; Unit }
+        // NsdManager sometimes never answers a resolve (seen on several phones): the next one must not wait for ever.
+        main.postDelayed({
+            if (gen == resolveGen && resolving) { log("a Cast device took too long to resolve"); resolving = false; next() }
+        }, RESOLVE_MS)
         runCatching {
             m.resolveService(info, object : NsdManager.ResolveListener {
                 override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
                     log("a Cast device could not be resolved (error $errorCode)")
+                    // Another resolve was still under way (error 3) or the device was busy: once more, after the others.
+                    main.post { if (listener != null && retried.add(info.serviceName)) waiting.addLast(info) }
                     done()
                 }
                 override fun onServiceResolved(s: NsdServiceInfo) {

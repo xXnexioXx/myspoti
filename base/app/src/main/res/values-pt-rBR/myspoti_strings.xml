@@ -591,7 +591,6 @@
     <string name="aa_library">Biblioteca</string>
     <string name="aa_downloads">Downloads</string>
     <string name="cast_device_detail">Google Cast</string>
-    <string name="cast_spotify_via_connect">O Cast toca suas músicas baixadas, de extensões e do celular. Para uma música do Spotify, o dispositivo precisa aparecer no Spotify Connect.</string>
     <string name="cast_connecting">Conectando…</string>
     <string name="cast_failed">Não foi possível tocar em %1$s</string>
     <string name="cast_lost">Perdeu %1$s: de volta a este celular</string>

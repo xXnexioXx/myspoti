@@ -594,7 +594,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">Не удалось воспроизвести на %1$s</string>
     <string name="cast_lost">Связь с %1$s потеряна: снова на этом телефоне</string>
-    <string name="cast_spotify_via_connect">Cast воспроизводит загруженные треки, треки из расширений и с телефона. Чтобы играл трек Spotify, устройство должно появиться в Spotify Connect.</string>
+    <string name="cast_spotify_detail">Google Cast · воспроизводит Spotify на устройстве</string>
+    <string name="cast_spotify_failed">Не удалось запустить Spotify на %1$s</string>
     <string name="downloads_need_source_detail">Треки скачивают расширения. Пока ни одно не установлено: откройте магазин расширений и установите Mornye, чтобы скачивать.</string>
     <string name="downloads_need_source_title">Для загрузок нужно расширение</string>
     <string name="episode_new">Новый</string>
@@ -624,4 +625,10 @@
     <string name="hidden_songs_title">Скрытые треки</string>
     <string name="hidden_songs_detail">Треки с отметкой «Не интересует» пропускаются в списках и радио</string>
     <string name="hidden_songs_empty">Скрытых треков пока нет. Выберите «Не интересует» в меню трека.</string>
+    <string name="login_failed_title">Не удалось войти</string>
+    <string name="login_failed_detail">Страница Spotify не загрузилась или не запустилась. Проверьте подключение и повторите попытку. Если не получается, попробуйте другую сеть.</string>
+    <string name="lan_device_detail">В этой сети</string>
+    <string name="lan_logging_in">Вход…</string>
+    <string name="lan_failed">%1$s не принял вход. Откройте его один раз в приложении Spotify и повторите попытку.</string>
+    <string name="lan_others">Ещё %1$d устройств в этой сети сначала нужно подключить через приложение Spotify</string>
 </resources>

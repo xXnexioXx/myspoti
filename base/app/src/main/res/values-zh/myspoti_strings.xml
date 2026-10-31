@@ -585,7 +585,8 @@
     <string name="cast_device_detail">Google Cast</string>
     <string name="cast_failed">无法在 %1$s 上播放</string>
     <string name="cast_lost">与 %1$s 的连接已断开：回到本手机播放</string>
-    <string name="cast_spotify_via_connect">Cast 可播放已下载、来自扩展和手机上的歌曲。播放 Spotify 歌曲时，设备需要出现在 Spotify Connect 中。</string>
+    <string name="cast_spotify_detail">Google Cast · 在该设备上播放 Spotify</string>
+    <string name="cast_spotify_failed">无法在 %1$s 上启动 Spotify</string>
     <string name="downloads_need_source_detail">歌曲由扩展下载。目前尚未安装任何扩展：打开扩展商店并安装 Mornye 即可下载。</string>
     <string name="downloads_need_source_title">下载需要扩展</string>
     <string name="episode_new">新</string>
@@ -609,4 +610,10 @@
     <string name="hidden_songs_title">已隐藏的歌曲</string>
     <string name="hidden_songs_detail">标记为“不感兴趣”的歌曲会在列表和电台中被跳过</string>
     <string name="hidden_songs_empty">还没有已隐藏的歌曲。请在歌曲菜单中选择“不感兴趣”。</string>
+    <string name="login_failed_title">登录未完成</string>
+    <string name="login_failed_detail">Spotify 页面未能加载或启动。请检查网络连接后重试；如果仍然失败，请换一个网络试试。</string>
+    <string name="lan_device_detail">在此网络</string>
+    <string name="lan_logging_in">正在登录…</string>
+    <string name="lan_failed">%1$s 未接受登录。请先用 Spotify 应用打开它一次，然后重试。</string>
+    <string name="lan_others">此网络中还有 %1$d 台设备需要先通过 Spotify 应用登录</string>
 </resources>
