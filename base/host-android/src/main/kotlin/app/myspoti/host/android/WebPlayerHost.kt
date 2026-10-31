@@ -135,6 +135,17 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
 
     private lateinit var relay: ControlRelay
 
+    /** The guarded fallback channel of the bridge's messages, when the WebView has no web message listener. */
+    private var hostChannel: PlayerChannel? = null
+
+    /** Hands the page that starts its secret for the fallback channels; the relay's script comes after. */
+    private fun armChannels(view: WebView, renew: Boolean) {
+        for (channel in listOfNotNull(hostChannel, relay.channel)) {
+            if (renew) channel.newPage()
+            view.evaluateJavascript(channel.shim(), null)
+        }
+    }
+
     /** Fetches the audio files itself: the last request the WebView would stamp with its package. */
     private val media = MediaProxy(MediaProxy.client()) { relay.identityPair() }
 
@@ -198,7 +209,7 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
             setAcceptCookie(true)
             setAcceptThirdPartyCookies(webView, true)
         }
-        exposeToPlayer("MyspotiHost") { json -> _messages.tryEmit(json) }
+        hostChannel = exposeToPlayer("MyspotiHost") { json -> _messages.tryEmit(json) }
         webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(message: android.webkit.ConsoleMessage): Boolean {
                 if (message.messageLevel() == android.webkit.ConsoleMessage.MessageLevel.ERROR ||
@@ -279,7 +290,7 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
                 if (!isLoginPage(url) && _loginLoad.value != LoginLoad.NONE && _loginLoad.value != LoginLoad.FAILED) setLoginLoad(LoginLoad.NONE)
                 _url.value = url
                 _loginRequired.value = isLoginPage(url)
-                if (url.startsWith(PLAYER_URL)) { drmAsked = false; licenseAnswersLogged = 0; onPageStarting?.invoke(); relay.injectNow() }
+                if (url.startsWith(PLAYER_URL)) { drmAsked = false; licenseAnswersLogged = 0; onPageStarting?.invoke(); armChannels(view, renew = true); relay.injectNow() }
                 if (PLAYER_ROOT.matches(url) && url != roots.getString(ROOT_KEY, null)) roots.edit().putString(ROOT_KEY, url).apply()
             }
 
@@ -333,6 +344,8 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
                     main.postDelayed(loginProbe, LoginLoad.FIRST_PROBE_MS)
                 }
                 if (url.startsWith(PLAYER_URL)) {
+                    // Again, same secret: the page start's call may have run before the new document existed.
+                    armChannels(view, renew = false)
                     onPageLoaded?.invoke()
                     if (!drmAsked) { main.removeCallbacks(drmWatch); main.postDelayed(drmWatch, DRM_WATCH_MS) }
                 }
@@ -344,9 +357,12 @@ class WebPlayerHost(private val context: Context) : BridgeHost {
                 // Exact or subdomain match: "evilspotify.com" must not count as Spotify.
                 val allowed = listOf("spotify.com", "spotify.net", "scdn.co", "google.com", "facebook.com", "apple.com")
                     .any { host == it || host.endsWith(".$it") }
+                // And only over https: a plain http link to those hosts, or any other scheme, stays out.
+                // The page's own loads (loadUrl, about:blank) do not come through here.
+                val secure = request.url.scheme == "https"
                 // A sign-in step that goes nowhere looks like a page that does nothing: say which host was refused.
-                if (!allowed) Logbook.log("navigation refused: ${host.ifEmpty { request.url.scheme.orEmpty() }}")
-                return !allowed
+                if (!allowed || !secure) Logbook.log("navigation refused: ${host.ifEmpty { request.url.scheme.orEmpty() }}${if (allowed && !secure) " (${request.url.scheme}, not https)" else ""}")
+                return !(allowed && secure)
             }
 
             /**
