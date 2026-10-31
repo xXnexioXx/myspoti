@@ -623,23 +623,7 @@ fun PlayerScreen(navController: NavController) {
                     onLikeClick = { playerViewModel.updateLikeState(!isLiked.value) },
                     likeSong = { nowPlayingSong(playerViewModel) },
                     adPlaying = adPlaying,
-                    onTitleClick = {
-                        // A radio's tracks may come without their album: asked from the track, else
-                        // by the album's name (the album page resolves it).
-                        val albumId = np.albumUri.substringAfterLast(":").ifBlank { nowPlayingSong(playerViewModel).albumId }
-                        val albumName = playerViewModel.currentSongAlbum.value
-                        if (albumId.isNotBlank()) navController.navigate(albumRoute(albumName, songSinger, albumId))
-                        else {
-                            val trackId = SongPlayer.currentTrackId
-                            titleScope.launch {
-                                val resolved = if (trackId.isBlank()) "" else kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                                    runCatching { app.myspoti.host.android.MyspotiRuntime.api.catalog.track("spotify:track:$trackId").album?.uri }
-                                        .getOrNull()?.substringAfterLast(":").orEmpty()
-                                }
-                                if (resolved.isNotBlank() || albumName.isNotBlank()) navController.navigate(albumRoute(albumName, songSinger, resolved))
-                            }
-                        }
-                    },
+                    onTitleClick = { openNowPlayingAlbum(playerViewModel, songSinger, titleScope) { navController.navigate(it) } },
                     onArtistClick = {
                         playerViewModel.goToArtist(SongPlayer.currentTrackId, songSinger) { route ->
                             navController.navigate(route)
@@ -1560,6 +1544,24 @@ fun PlayerOptionsSheet(
     )
 }
 
+
+/**
+ * Opens the album of the track that plays, for both looks. A radio's tracks may come without
+ * their album: asked from the track, else by the album's name (the album page resolves it).
+ */
+fun openNowPlayingAlbum(playerViewModel: PlayerViewModel, singer: String, scope: kotlinx.coroutines.CoroutineScope, navigate: (String) -> Unit) {
+    val albumId = nowPlayingSong(playerViewModel).albumId
+    val albumName = playerViewModel.currentSongAlbum.value
+    if (albumId.isNotBlank()) { navigate(albumRoute(albumName, singer, albumId)); return }
+    val trackId = SongPlayer.currentTrackId
+    scope.launch {
+        val resolved = if (trackId.isBlank()) "" else kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching { app.myspoti.host.android.MyspotiRuntime.api.catalog.track("spotify:track:$trackId").album?.uri }
+                .getOrNull()?.substringAfterLast(":").orEmpty()
+        }
+        if (resolved.isNotBlank() || albumName.isNotBlank()) navigate(albumRoute(albumName, singer, resolved))
+    }
+}
 
 /** The track that plays, as Spotify reports it (the local queue may not have it). */
 fun nowPlayingSong(playerViewModel: PlayerViewModel): SongsModel {

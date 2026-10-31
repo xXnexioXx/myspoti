@@ -51,6 +51,7 @@ import com.music.spotui.data.api.Response
 import com.music.spotui.data.entity.HomeFeedModel
 import com.music.spotui.data.entity.HomeItem
 import com.music.spotui.data.entity.HomeSection
+import com.music.spotui.data.entity.withoutDj
 import com.music.spotui.di.Graph
 import com.music.spotui.di.SongPlayer
 import com.music.spotui.ui.components.pressHint
@@ -120,7 +121,8 @@ fun ImmersiveHomeScreen(navController: NavController) {
     }
 
     // Podcasts can be off: their shows and episodes then leave the feed.
-    val sections = remember(feed) { feed?.let { visibleSections(it) }.orEmpty() }
+    val hideDj = com.music.spotui.data.preferences.HideDjPref.on
+    val sections = remember(feed, hideDj) { feed?.let { visibleSections(it) }.orEmpty().let { if (hideDj) it.withoutDj() else it } }
     // Only the untitled section the web home starts with is a shortcut grid; a titled lead
     // section is a carousel like any other.
     val gridSection = sections.firstOrNull()?.takeIf { it.title.isBlank() }

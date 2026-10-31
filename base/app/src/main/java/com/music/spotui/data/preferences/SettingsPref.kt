@@ -23,6 +23,21 @@ fun setLyricsWordSync(c: Context, v: Boolean) = prefs(c).edit().putBoolean("lyri
 
 private fun prefs(c: Context) = c.getSharedPreferences(PREF, Context.MODE_PRIVATE)
 
+/**
+ * "Show romanization" under the lyrics' lines (the song in Latin letters), offered when the lyrics
+ * carry one. Off by default; read as state by both looks, so the menu and the lines agree.
+ */
+object LyricsRomanizationPref {
+    private const val KEY = "lyrics_romanization"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, false))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
 /** The bottom bar: fading into the list (the default), or solid black. Read by the bar as state. */
 object SolidNavBar {
     private const val KEY = "solid_nav_bar"
@@ -162,6 +177,21 @@ object MusicVideoPref {
     }
 }
 
+/**
+ * "Hide the DJ" on Home (off by default): Spotify's DJ, which comes in the home feed as a
+ * playlist card, leaves the shelves. Read by both Home screens as state.
+ */
+object HideDjPref {
+    private const val KEY = "hide_dj"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, false))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
 fun getCrossfadeSeconds(c: Context): Int =
     prefs(c).getInt(KEY_CROSSFADE, 0).coerceIn(0, CrossfadePref.MAX)
 
@@ -187,6 +217,22 @@ fun setLyricTranslateLang(c: Context, code: String) =
 object LiquidGlassPref {
     private const val KEY = "immersive_liquid_glass"
     var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, true))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
+/**
+ * "Shuffle and repeat in the player" (Settings > Display, Immersive look): on, the player's
+ * bottom capsule holds shuffle, repeat and devices (2.2); off, only devices, as in 2.1.0 (the
+ * queue panel keeps shuffle and repeat). Off by default: the owner's call, and asked on Discord.
+ */
+object PlayerModesPref {
+    private const val KEY = "immersive_player_modes"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, false))
         private set
 
     fun set(c: Context, value: Boolean) {

@@ -179,7 +179,6 @@ object BasicHttp {
         var contentType: String? = null
         request.headers.forEach { (k, v) ->
             if (k.lowercase() in FORBIDDEN_HEADERS) return@forEach
-            if (k.equals("User-Agent", true)) return@forEach
             if (k.equals("Content-Type", true)) contentType = v
             headers.set(k, v)
         }

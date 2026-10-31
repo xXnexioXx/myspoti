@@ -27,7 +27,6 @@ import app.myspoti.engine.R
 import com.music.spotui.data.entity.SongsModel
 import com.music.spotui.di.SongPlayer
 import com.music.spotui.ui.navigation.PlayerSheet
-import com.music.spotui.ui.navigation.albumRoute
 import com.music.spotui.ui.screens.SmartShuffle
 import com.music.spotui.ui.screens.nowPlayingSong
 import com.music.spotui.ui.viewmodel.PlayerViewModel
@@ -213,10 +212,7 @@ fun rememberImmersivePlayer(navController: NavController): ImmersivePlayerBridge
                 if (on) Toast.makeText(context, context.getString(R.string.immersive_player_added_to_liked), Toast.LENGTH_SHORT).show()
             },
             openAlbum = {
-                val albumId = SongPlayer.nowPlaying.value.albumUri.substringAfterLast(":")
-                if (albumId.isNotBlank()) {
-                    navController.navigate(albumRoute(vm.currentSongAlbum.value, vm.currentSongSinger.value, albumId))
-                }
+                com.music.spotui.ui.screens.openNowPlayingAlbum(vm, vm.currentSongSinger.value, smartScope) { navController.navigate(it) }
             },
             openArtist = {
                 vm.goToArtist(SongPlayer.currentTrackId, vm.currentSongSinger.value) { route -> navController.navigate(route) }

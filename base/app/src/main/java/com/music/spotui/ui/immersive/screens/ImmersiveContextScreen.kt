@@ -408,22 +408,16 @@ private fun ImmersiveContextContent(navController: NavController, vm: ContextVie
             if (isThisContext) vm.playSmart(p, p.tracks.firstOrNull { it.id == currentSongId })
         }
     }
-    // What the Shuffle pill does: start the list shuffled, or, while it plays, turn shuffle on
-    // or off. Reported (3 people): a tap on the lit pill stepped to smart shuffle, which deals
-    // the queue again and starts the song over, so shuffle never seemed to turn off. Smart
-    // shuffle has its own button under the pill (as the Classic page's shuffle icon, off is
-    // one tap away from either).
+    // What the Shuffle pill does: start the list shuffled from a random song, and every tap again
+    // jumps to another random one, as the official app's big shuffle button did (asked on
+    // Discord: in 2.2.0 a tap while the list played only turned shuffle on or off). Turning
+    // shuffle off is the player's shuffle button; smart shuffle has its own button under the pill.
     fun onShuffle() {
         if (p.tracks.isEmpty()) return
-        when {
-            !isThisContext && smart -> vm.playSmart(p, null)
-            !isThisContext -> {
-                playerVm.updateShuffleState(true)
-                vm.play(p, p.tracks.random(), sort)
-            }
-            smart -> { SmartShuffle.on.value = null; playerVm.updateShuffleState(false) }
-            else -> playerVm.updateShuffleState(!shuffle)
-        }
+        if (smart) return vm.playSmart(p, null)
+        playerVm.updateShuffleState(true)
+        val others = if (isThisContext) p.tracks.filter { it.id != currentSongId } else p.tracks
+        vm.play(p, others.ifEmpty { p.tracks }.random(), sort)
     }
 
     val listState = rememberLazyListState()
@@ -770,7 +764,7 @@ private fun ContextHeader(
                     text = stringResource(R.string.immersive_shell_shuffle),
                     icon = if (shuffled && smart) Icons.Rounded.AutoAwesome else Icons.Rounded.Shuffle,
                     onClick = onShuffle,
-                    // Lit while this list plays shuffled (or smart-shuffled): a tap then turns it off.
+                    // Lit while this list plays shuffled (or smart-shuffled): a tap then plays another random song.
                     filled = shuffled,
                     modifier = Modifier.weight(1f),
                 )

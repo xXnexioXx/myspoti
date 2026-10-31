@@ -263,6 +263,13 @@ private fun PlaybackPage(navController: NavController, open: (SettingsPage) -> U
                     detail = stringResource(R.string.settings_connect_mirror_detail),
                 )
             }
+            // Songs marked "Not interested": skipped by lists, listed here to be shown again.
+            row {
+                ImmersiveGroupRow(
+                    stringResource(R.string.hidden_songs_title), detail = stringResource(R.string.hidden_songs_detail),
+                    chevron = true, onClick = { navController.navigate(Routes.HiddenSongs.route) },
+                )
+            }
         }
         sourcesGroup(app.myspoti.extensions.Action.AUDIO_SOURCE, navController)
         immersiveGroup("visuals") {
@@ -479,6 +486,16 @@ private fun DisplayPage(open: (SettingsPage) -> Unit, back: () -> Unit) {
             row {
                 ImmersiveSwitchRow(stringResource(R.string.settings_music_video_title), checked = com.music.spotui.data.preferences.MusicVideoPref.on,
                     onChecked = { com.music.spotui.data.preferences.MusicVideoPref.set(ctx, it) }, detail = stringResource(R.string.settings_music_video_detail))
+            }
+            row {
+                ImmersiveSwitchRow(stringResource(R.string.settings_hide_dj_title), checked = com.music.spotui.data.preferences.HideDjPref.on,
+                    onChecked = { com.music.spotui.data.preferences.HideDjPref.set(ctx, it) }, detail = stringResource(R.string.settings_hide_dj_detail))
+            }
+            if (look == com.music.spotui.data.preferences.Look.IMMERSIVE) {
+                row {
+                    ImmersiveSwitchRow(stringResource(R.string.settings_player_modes_title), checked = com.music.spotui.data.preferences.PlayerModesPref.on,
+                        onChecked = { com.music.spotui.data.preferences.PlayerModesPref.set(ctx, it) }, detail = stringResource(R.string.settings_player_modes_detail))
+                }
             }
         }
         immersiveGroup("layout") {

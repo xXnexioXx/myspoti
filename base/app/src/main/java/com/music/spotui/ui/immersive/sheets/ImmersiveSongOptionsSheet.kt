@@ -22,11 +22,16 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Radio
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.SortByAlpha
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.ThumbDownOffAlt
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -70,6 +75,8 @@ fun ImmersiveSongOptionsSheet(
     onOpenQueue: (() -> Unit)? = null,
     onRemoveFromPlaylist: (() -> Unit)? = null,
     currentPlaylistId: String? = null,
+    /** The player's lyrics panel is open: the translation row works on the lyrics it shows. */
+    lyricsOpen: Boolean = false,
 ) {
     val playerViewModel: com.music.spotui.ui.viewmodel.PlayerViewModel =
         androidx.lifecycle.viewmodel.compose.viewModel()
@@ -80,6 +87,8 @@ fun ImmersiveSongOptionsSheet(
     var showCredits by remember { mutableStateOf(false) }
     var showSpeed by remember { mutableStateOf(false) }
     var showMeaning by remember { mutableStateOf(false) }
+    var showSources by remember { mutableStateOf(false) }
+    if (showSources) { com.music.spotui.ui.components.LyricsSourceSheet(onDismiss = { showSources = false; onDismiss() }); return }
     if (showCredits) { CreditsSheet(song = song, onDismiss = { showCredits = false; onDismiss() }); return }
     if (showMeaning) {
         ImmersiveMeaningSheet(song.spotifyTrackId, song.title, song.singer, null, coverUrl = song.coverUri) { showMeaning = false; onDismiss() }
@@ -149,7 +158,7 @@ fun ImmersiveSongOptionsSheet(
                     com.music.spotui.data.offline.PodcastDownloader.remove(downloadKey)
                     true
                 } else com.music.spotui.data.offline.OfflineCollections.removeSong(downloadKey)
-                toast(context.getString(if (gone) R.string.toast_undownload else R.string.download_kept_by_list))
+                toast(if (gone) context.getString(R.string.toast_undownload) else com.music.spotui.data.offline.OfflineCollections.keptMessage(context, downloadKey))
                 onDismiss()
             }
             offline == com.music.spotui.data.offline.OfflineStatus.Queued ||
@@ -193,6 +202,56 @@ fun ImmersiveSongOptionsSheet(
         ImmersiveSheetRow(Icons.Rounded.Info, stringResource(R.string.track_credits), enabled = hasId) { showCredits = true }
         if (nowPlaying && hasId && !song.url.startsWith("episode:")) {
             ImmersiveSheetRow(Icons.Rounded.Lightbulb, stringResource(R.string.lyrics_meaning_title)) { showMeaning = true }
+        }
+        if (nowPlaying && lyricsOpen) {
+            // The lyrics panel's translation, the Classic look's: same model, shown under each line.
+            val lyricsVm: com.music.spotui.ui.viewmodel.LyricsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+            val lyricsState = lyricsVm.state.collectAsState().value
+            val lyrics = lyricsState as? com.music.spotui.ui.viewmodel.LyricsViewModel.State.Loaded
+            val target = com.music.spotui.data.preferences.getLyricTranslateLang(context)
+                .ifBlank { java.util.Locale.getDefault().language.ifBlank { "en" } }
+            val sameLanguage = lyrics?.sourceLanguage?.substringBefore('-')
+                ?.equals(target.substringBefore('-'), ignoreCase = true) == true
+            // Picks lines of the lyrics shown to send as text (a long press on a line does the same).
+            if (lyrics != null) {
+                ImmersiveSheetRow(Icons.Rounded.Share, stringResource(R.string.lyrics_share)) {
+                    lyricsVm.startSelecting()
+                    onDismiss()
+                }
+            }
+            if (lyrics != null && !sameLanguage) {
+                ImmersiveSheetRow(
+                    Icons.Rounded.Translate,
+                    stringResource(if (lyrics.showTranslation) R.string.lyrics_fullscreen_translate_button_enabled_readout_value else R.string.lyrics_fullscreen_context_menu_main_page_translate_lyrics_action),
+                ) {
+                    lyricsVm.toggleTranslation(target)
+                    onDismiss()
+                }
+            }
+            // The lines in Latin letters under them, when the lyrics carry them; lit while it is on.
+            if (lyrics != null && lyrics.lyrics.hasRomanization) {
+                val on = com.music.spotui.data.preferences.LyricsRomanizationPref.on
+                ImmersiveSheetRow(
+                    Icons.Rounded.SortByAlpha, stringResource(R.string.lyrics_romanization),
+                    tint = if (on) LocalImmersiveSheetTint.current.accent else null,
+                ) {
+                    com.music.spotui.data.preferences.LyricsRomanizationPref.set(context, !on)
+                    onDismiss()
+                }
+            }
+            // Ask another provider for the lyrics (also when none were found).
+            if (lyricsState !is com.music.spotui.ui.viewmodel.LyricsViewModel.State.Loading) {
+                ImmersiveSheetRow(Icons.Rounded.SwapHoriz, stringResource(R.string.lyrics_other_source)) { showSources = true }
+            }
+        }
+
+        // "Not interested": kept on this phone only; the song leaves the queue and lists skip it.
+        if (hasId && episodeKey == null) {
+            val hidden = com.music.spotui.data.preferences.HiddenSongs.isHidden(song.spotifyTrackId)
+            ImmersiveSheetRow(Icons.Rounded.ThumbDownOffAlt, stringResource(if (hidden) R.string.show_song_again else R.string.hide_song)) {
+                if (hidden) com.music.spotui.data.preferences.HiddenSongs.show(context, song.spotifyTrackId) else SongPlayer.hideSong(song)
+                onDismiss()
+            }
         }
 
         val trackUri = "spotify:track:${song.spotifyTrackId}"

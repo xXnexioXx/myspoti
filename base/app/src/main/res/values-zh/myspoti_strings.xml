@@ -34,6 +34,14 @@
     <string name="lyrics_extra_title">更多歌词来源</string>
     <string name="lyrics_extra_summary">Spotify 没有歌词时使用 NetEase 和 Genius</string>
     <string name="lyrics_reload">重新加载歌词</string>
+    <string name="lyrics_select_hint">点按歌词行以选择要分享的内容</string>
+    <string name="lyrics_select_max">最多可分享 %d 行</string>
+    <string name="lyrics_romanization">显示罗马音</string>
+    <string name="lyrics_other_source">尝试其他来源</string>
+    <string name="lyrics_source_shown">当前使用</string>
+    <string name="lyrics_source_words">逐字同步</string>
+    <string name="lyrics_source_aside">暂时无响应</string>
+    <string name="lyrics_source_nothing">%1$s 没有这首歌的歌词</string>
     <string name="lyrics_fullscreen">全屏打开歌词</string>
     <string name="browse_all">浏览全部</string>
     <string name="home_error">无法加载首页。\n请检查网络连接后重试。</string>
@@ -88,6 +96,7 @@
     <string name="local_playlist_empty">点按“本地文件”中的 + 按钮来添加歌曲。</string>
     <string name="playlist_change_refused">Spotify 拒绝了对此播放列表的更改</string>
     <string name="download_kept_by_list">仍保留下载：已下载的播放列表包含它</string>
+    <string name="download_kept_by_named">仍保留下载：已下载的“%1$s”包含它</string>
     <string name="support_title">支持 Myspoti</string>
     <string name="support_body">Myspoti 免费、无广告，由我在业余时间制作。如果你喜欢它，一点小小的捐助能帮助它继续下去。</string>
     <string name="support_action">在 Ko-fi 上支持</string>
@@ -549,6 +558,10 @@
     <string name="duplicate_dont_add">不添加</string>
     <string name="settings_music_video_title">音乐视频</string>
     <string name="settings_music_video_detail">播放器中的视频按钮，以及自动开始的片段。关闭后：仅音频和 Canvas。</string>
+    <string name="settings_hide_dj_title">隐藏 DJ</string>
+    <string name="settings_hide_dj_detail">从首页移除 Spotify 的 DJ</string>
+    <string name="settings_player_modes_title">播放器中的随机和重复</string>
+    <string name="settings_player_modes_detail">关闭后，播放器的胶囊只保留设备按钮，与 2.1.0 相同</string>
     <string name="downloads_need_source">下载需要一个来源扩展。请在“设置”&gt;“扩展”中安装一个。</string>
     <string name="downloads_source_row_title">下载来源</string>
     <string name="downloads_source_row_on">由扩展提供文件。点按以管理扩展。</string>
@@ -590,4 +603,10 @@
     <string name="show_filter_all_played">所有单集都已收听。</string>
     <string name="show_filter_hide_played">隐藏已收听</string>
     <string name="show_filter_unplayed_first">未收听的优先</string>
+    <string name="hide_song">不感兴趣</string>
+    <string name="show_song_again">重新显示</string>
+    <string name="hidden_song_toast">已隐藏“%1$s”。它不会再自动播放。</string>
+    <string name="hidden_songs_title">已隐藏的歌曲</string>
+    <string name="hidden_songs_detail">标记为“不感兴趣”的歌曲会在列表和电台中被跳过</string>
+    <string name="hidden_songs_empty">还没有已隐藏的歌曲。请在歌曲菜单中选择“不感兴趣”。</string>
 </resources>

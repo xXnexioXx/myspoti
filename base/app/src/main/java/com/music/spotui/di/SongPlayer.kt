@@ -73,6 +73,8 @@ object SongPlayer {
     private const val PLAY_CHECK_MS = 4_000L
     /** A resume of an episode that the page did not take is asked for again after that. */
     private const val EPISODE_RESUME_CHECK_MS = 2_500L
+    /** A timed sleep timer lowers the volume over its last seconds. */
+    private const val SLEEP_FADE_MS = 15_000L
     /** "Next" taps closer than this are sent as one jump. */
     private const val SKIP_BURST_MS = 350L
     /** Skip commands are at least this far apart; taps in between add up (see [next]). */
@@ -456,7 +458,7 @@ object SongPlayer {
         _queue.value = EngineQueue(); apiQueue = null; _nowPlaying.value = NowPlaying()
         lastTrackPrefs().edit().clear().apply(); savedLast = ""; resumeWhenReady = false
         savedSource = com.music.spotui.data.preferences.LastSession.SOURCE_SPOTIFY; savedAtMs = 0L; restoredLocal = false
-        _activeDevice.value = null; _sleepEndsAt.value = null; sleepTrackId = null; spotifyFallbackId = null
+        _activeDevice.value = null; _sleepEndsAt.value = null; sleepFade?.cancel(); main.removeCallbacks(sleepFadeRunnable); sleepTrackId = null; spotifyFallbackId = null
         _video.value = VideoState(); videoFullscreen.value = false
         boundState?.let { state ->
             state.updateQueue(emptyList())
@@ -547,6 +549,46 @@ object SongPlayer {
             playing = isPlaying() && !ad)
     }
 
+    /** The hidden songs ("Not interested") skipped in a row; one met twice means the list holds nothing else. */
+    private val hiddenSkipped = mutableSetOf<String>()
+    /** The hidden song the user asked for by hand: it plays, it is not skipped. */
+    private var playedByHand = ""
+
+    /**
+     * A hidden song the player moved on to by itself (the list, the radio, the queue, a skip) is
+     * skipped. Songs picked by hand play; a run of skips ends at the first song met twice, or at
+     * [HIDDEN_SKIPS_MAX], and that song then plays.
+     */
+    private fun skipHidden(id: String, uri: String) {
+        val byHand = uri == playedByHand
+        if (!byHand) playedByHand = ""
+        if (byHand || !com.music.spotui.data.preferences.HiddenSongs.isHidden(id)) { hiddenSkipped.clear(); return }
+        if (!hiddenSkipped.add(id) || hiddenSkipped.size > HIDDEN_SKIPS_MAX) {
+            app.myspoti.host.android.Logbook.log("hidden: only hidden songs left, $id plays")
+            hiddenSkipped.clear(); playedByHand = uri
+            return
+        }
+        app.myspoti.host.android.Logbook.log("hidden: $id skipped (not interested)")
+        main.post { if (_nowPlaying.value.uri == uri && !LocalPlayer.active.value) next(by = "hidden song") }
+    }
+
+    private const val HIDDEN_SKIPS_MAX = 30
+
+    /**
+     * "Not interested": the song is kept in a list on this phone (nothing goes to Spotify), taken
+     * out of the queue, and skipped if it plays now. From then on lists skip it ([skipHidden]).
+     */
+    fun hideSong(song: SongsModel) {
+        val id = song.spotifyTrackId
+        if (id.isBlank()) return
+        com.music.spotui.data.preferences.HiddenSongs.hide(Graph.app, song)
+        Haptics.confirm()
+        _queue.value.let { it.queued + it.nextUp }.filter { it.provider != LOCAL && it.uri == SPOTIFY_TRACK_PREFIX + id }.forEach(::removeFromQueue)
+        LocalPlayer.upcoming().filter { LocalPlayer.spotifyIdOf(it.second) == id }.map { it.first }.sortedDescending().forEach(LocalPlayer::remove)
+        val playingNow = if (LocalPlayer.active.value) LocalPlayer.current()?.let(LocalPlayer::spotifyIdOf) == id else trackIdOf(_nowPlaying.value.uri) == id
+        if (playingNow) next(by = "not interested")
+    }
+
     /** The autoplay item already paused on, so it is paused once, not on every state. */
     private var autoplayHandledUri = ""
 
@@ -615,6 +657,7 @@ object SongPlayer {
             autoplayHandledUri = uri
             if (!s.isPaused) pauseSilently()
         }
+        if (item != null && trackChanged && playing && !adState.value && uri.startsWith(SPOTIFY_TRACK_PREFIX)) skipHidden(id, uri)
         currentContextUri = s.contextUri.orEmpty()
         if (item != null) { checkEndOfTrackTimer(id); currentTrackId = id }
         _nowPlaying.value = NowPlaying(
@@ -1056,6 +1099,7 @@ object SongPlayer {
             if (com.music.spotui.ui.screens.SmartShuffle.on.value != ctx) { plainOrder = ctx to AppShuffle.unshuffled(ctx, sent); smartPlayed = null }
             else if (sent != null) smartPlayed = ctx
         }
+        playedByHand = itemUri
         markPending(if (episodeId != null) "" else trackId, itemUri)
         transport { isLatest ->
             playChecked(itemUri, isLatest) {
@@ -1338,11 +1382,12 @@ object SongPlayer {
         Haptics.click(); cancelBurst(); pauseSilently()
     }
 
-    private fun pauseSilently() {
+    /** [send] false: the engine has paused already (the sleep timer's fade). */
+    private fun pauseSilently(send: Boolean = true) {
         if (LocalPlayer.active.value) { LocalPlayer.pause(); return }
         intendPaused()
         positionMs = getCurrentPosition(); positionAt = SystemClock.elapsedRealtime(); playing = false
-        transport(pullBack = false) { api.player.pause() }
+        if (send) transport(pullBack = false) { api.player.pause() }
     }
 
     fun stop() = pause()
@@ -2222,13 +2267,21 @@ object SongPlayer {
     // ── Sleep timer ──
     private val _sleepEndsAt = mutableStateOf<Long?>(null)   // elapsedRealtime, or -1 = end of track
     val sleepEndsAt: State<Long?> get() = _sleepEndsAt
-    private val sleepRunnable = Runnable { _sleepEndsAt.value = null; pauseSilently() }
+    private val sleepRunnable = Runnable {
+        _sleepEndsAt.value = null
+        // The fade ends in the pause itself.
+        if (sleepFade?.isActive != true) pauseSilently()
+    }
+    private val sleepFadeRunnable = Runnable { startSleepFade() }
+    private var sleepFade: kotlinx.coroutines.Job? = null
     private var sleepTrackId: String? = null
 
     /** [minutes] null = off, 0 = at the end of the current track. */
     fun setSleepTimer(minutes: Int?) {
         main.removeCallbacks(sleepRunnable)
+        main.removeCallbacks(sleepFadeRunnable)
         main.removeCallbacks(endOfTrackWatch)
+        sleepFade?.cancel(); sleepFade = null   // a fade under way ends with the volume back, the song going on
         sleepTrackId = null
         when {
             minutes == null -> _sleepEndsAt.value = null
@@ -2241,7 +2294,47 @@ object SongPlayer {
             else -> {
                 _sleepEndsAt.value = SystemClock.elapsedRealtime() + minutes * 60_000L
                 main.postDelayed(sleepRunnable, minutes * 60_000L)
+                main.postDelayed(sleepFadeRunnable, (minutes * 60_000L - SLEEP_FADE_MS).coerceAtLeast(0L))
             }
+        }
+    }
+
+    /**
+     * The last [SLEEP_FADE_MS] of a timed sleep timer: the volume goes down along the ear's curve
+     * and the song is paused at the end of the timer, the volume back for the next play. Spotify
+     * songs use the pause's own ramp ([app.myspoti.api.Player.pauseSlowly]), the others the player's volume.
+     */
+    private fun startSleepFade() {
+        if (!isPlaying()) return
+        sleepFade?.cancel()
+        sleepFade = scope.launch {
+            if (LocalPlayer.active.value) {
+                fadeLocalOut(SLEEP_FADE_MS)
+                return@launch
+            }
+            runCatching { api.player.pauseSlowly(SLEEP_FADE_MS) }.onFailure { if (it is kotlinx.coroutines.CancellationException) throw it }
+            if (playing) { _sleepEndsAt.value = null; pauseSilently(send = false) }
+        }
+    }
+
+    private suspend fun fadeLocalOut(ms: Long) {
+        val cast = com.music.spotui.cast.CastPlayback.active
+        val base = if (cast) com.music.spotui.cast.CastPlayback.volume.floatValue else 1f
+        fun set(gain: Float) = if (cast) com.music.spotui.cast.CastPlayback.setVolume(base * gain) else LocalPlayer.setGain(gain)
+        val startedAt = SystemClock.elapsedRealtime()
+        try {
+            while (true) {
+                if (!isPlaying()) return   // paused meanwhile: only the volume to put back
+                val t = ((SystemClock.elapsedRealtime() - startedAt).toFloat() / ms).coerceIn(0f, 1f)
+                if (t >= 1f) break
+                set(Math.pow(10.0, -2.0 * t).toFloat())   // 1 down to -40 dB
+                kotlinx.coroutines.delay(if (cast) 1_000L else 250L)
+            }
+            _sleepEndsAt.value = null
+            pauseSilently()
+            kotlinx.coroutines.delay(300)   // the tail of the buffer is not heard at the old level
+        } finally {
+            withContext(kotlinx.coroutines.NonCancellable) { set(1f) }
         }
     }
 
@@ -2378,6 +2471,7 @@ object SongPlayer {
     fun skipTo(item: QueueItem) {
         if (item.provider == LOCAL) { item.uid.toIntOrNull()?.let(LocalPlayer::skipTo); return }
         cancelBurst()
+        playedByHand = item.uri
         val id = trackIdOf(item.uri)
         if (id.isNotBlank()) markPending(id)
         boundState?.updateSongState(item.song.coverUri, item.song.title, item.song.singer, true, item.song.id, 0, item.song.album)

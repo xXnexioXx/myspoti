@@ -34,6 +34,14 @@
     <string name="lyrics_extra_title">Más fuentes de letras</string>
     <string name="lyrics_extra_summary">NetEase y Genius, cuando Spotify no tiene la letra</string>
     <string name="lyrics_reload">Recargar la letra</string>
+    <string name="lyrics_select_hint">Toca las líneas para elegir lo que quieres compartir</string>
+    <string name="lyrics_select_max">Puedes compartir hasta %d líneas</string>
+    <string name="lyrics_romanization">Mostrar romanización</string>
+    <string name="lyrics_other_source">Probar otra fuente</string>
+    <string name="lyrics_source_shown">Se muestra ahora</string>
+    <string name="lyrics_source_words">Palabra por palabra</string>
+    <string name="lyrics_source_aside">No responde por ahora</string>
+    <string name="lyrics_source_nothing">%1$s no tiene la letra de esta canción</string>
     <string name="lyrics_fullscreen">Abrir la letra a pantalla completa</string>
     <string name="browse_all">Ver todo</string>
     <string name="home_error">No se pudo cargar Inicio.\nComprueba tu conexión e inténtalo de nuevo.</string>
@@ -81,6 +89,7 @@
     <string name="local_playlist_empty">Añade canciones desde Archivos locales con su botón +.</string>
     <string name="playlist_change_refused">Spotify ha rechazado el cambio en esta playlist</string>
     <string name="download_kept_by_list">Sigue descargada: una playlist descargada la incluye</string>
+    <string name="download_kept_by_named">Sigue descargada: «%1$s» está descargado y la incluye</string>
     <string name="support_title">Apoya Myspoti</string>
     <string name="support_body">Myspoti es gratis, sin anuncios, y lo desarrollo en mi tiempo libre. Si te gusta, una pequeña donación ayuda a que siga adelante.</string>
     <string name="support_action">Apoyar en Ko-fi</string>
@@ -536,6 +545,10 @@
     <string name="duplicate_dont_add">No añadir</string>
     <string name="settings_music_video_title">Vídeos musicales</string>
     <string name="settings_music_video_detail">El botón de vídeo del reproductor y los clips que se inician solos. Desactivado: solo audio y Canvas.</string>
+    <string name="settings_hide_dj_title">Ocultar el DJ</string>
+    <string name="settings_hide_dj_detail">Quita el DJ de Spotify de Inicio</string>
+    <string name="settings_player_modes_title">Aleatorio y repetir en el reproductor</string>
+    <string name="settings_player_modes_detail">Desactivado, la cápsula del reproductor solo tiene el botón de dispositivos, como en 2.1.0</string>
     <string name="downloads_need_source">Las descargas necesitan una extensión de origen. Instala una en Ajustes, Extensiones.</string>
     <string name="downloads_source_row_title">Origen de descargas</string>
     <string name="downloads_source_row_on">Una extensión proporciona los archivos. Toca para gestionar las extensiones.</string>
@@ -590,4 +603,10 @@
     <string name="show_filter_all_played">Todos los episodios están escuchados.</string>
     <string name="show_filter_hide_played">Ocultar escuchados</string>
     <string name="show_filter_unplayed_first">Sin escuchar primero</string>
+    <string name="hide_song">No me interesa</string>
+    <string name="show_song_again">Mostrar de nuevo</string>
+    <string name="hidden_song_toast">%1$s oculta. No sonará sola.</string>
+    <string name="hidden_songs_title">Canciones ocultas</string>
+    <string name="hidden_songs_detail">Las canciones marcadas como No me interesa se saltan en listas y radios</string>
+    <string name="hidden_songs_empty">Aún no hay canciones ocultas. Elige No me interesa en el menú de una canción.</string>
 </resources>

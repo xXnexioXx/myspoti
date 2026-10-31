@@ -117,6 +117,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     // The real org.json in unit tests (android.jar only has stubs).
     testImplementation("org.json:json:20240303")
+    // A real XML pull parser in unit tests (the TTML lyrics parser; the tests skip themselves without it).
+    testImplementation("net.sf.kxml:kxml2:2.3.0")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     implementation(libs.androidx.core.ktx)

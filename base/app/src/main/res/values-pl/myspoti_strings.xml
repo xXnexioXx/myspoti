@@ -34,6 +34,14 @@
     <string name="lyrics_extra_title">Więcej źródeł tekstów</string>
     <string name="lyrics_extra_summary">NetEase i Genius, gdy Spotify nie ma tekstu</string>
     <string name="lyrics_reload">Wczytaj tekst ponownie</string>
+    <string name="lyrics_select_hint">Stuknij wersy, aby wybrać, co udostępnić</string>
+    <string name="lyrics_select_max">Możesz udostępnić maksymalnie %d wersów</string>
+    <string name="lyrics_romanization">Pokaż romanizację</string>
+    <string name="lyrics_other_source">Spróbuj innego źródła</string>
+    <string name="lyrics_source_shown">Wyświetlane teraz</string>
+    <string name="lyrics_source_words">Słowo po słowie</string>
+    <string name="lyrics_source_aside">Chwilowo nie odpowiada</string>
+    <string name="lyrics_source_nothing">%1$s nie ma tekstu tego utworu</string>
     <string name="lyrics_fullscreen">Otwórz tekst na pełnym ekranie</string>
     <string name="browse_all">Przeglądaj wszystko</string>
     <string name="home_error">Nie udało się wczytać strony głównej.\nSprawdź połączenie i spróbuj ponownie.</string>
@@ -91,6 +99,7 @@
     <string name="local_playlist_empty">Dodawaj utwory z plików lokalnych przyciskiem +.</string>
     <string name="playlist_change_refused">Spotify odrzuciło zmianę w tej playliście</string>
     <string name="download_kept_by_list">Nadal pobrane: trzyma je pobrana playlista</string>
+    <string name="download_kept_by_named">Nadal pobrane: «%1$s» jest pobrane i zawiera ten utwór</string>
     <string name="support_title">Wesprzyj Myspoti</string>
     <string name="support_body">Myspoti jest darmowe, bez reklam i powstaje w moim wolnym czasie. Jeśli Ci się podoba, niewielka darowizna pomoże je rozwijać.</string>
     <string name="support_action">Wesprzyj na Ko-fi</string>
@@ -558,6 +567,10 @@
     <string name="duplicate_dont_add">Nie dodawaj</string>
     <string name="settings_music_video_title">Teledyski</string>
     <string name="settings_music_video_detail">Przycisk wideo w odtwarzaczu i klipy, które włączają się same. Wyłączone: tylko dźwięk i Canvas.</string>
+    <string name="settings_hide_dj_title">Ukryj DJ-a</string>
+    <string name="settings_hide_dj_detail">Usuwa DJ-a Spotify ze strony głównej</string>
+    <string name="settings_player_modes_title">Losowo i powtarzanie w odtwarzaczu</string>
+    <string name="settings_player_modes_detail">Wyłączone, kapsuła odtwarzacza ma tylko przycisk urządzeń, jak w 2.1.0</string>
     <string name="downloads_need_source">Pobieranie wymaga rozszerzenia źródłowego. Zainstaluj je w Ustawieniach, Rozszerzenia.</string>
     <string name="downloads_source_row_title">Źródło pobierania</string>
     <string name="downloads_source_row_on">Pliki dostarcza rozszerzenie. Dotknij, aby zarządzać rozszerzeniami.</string>
@@ -605,4 +618,10 @@
     <string name="show_filter_all_played">Wszystkie odcinki zostały odsłuchane.</string>
     <string name="show_filter_hide_played">Ukryj odsłuchane</string>
     <string name="show_filter_unplayed_first">Najpierw nieodsłuchane</string>
+    <string name="hide_song">Nie interesuje mnie</string>
+    <string name="show_song_again">Pokaż ponownie</string>
+    <string name="hidden_song_toast">Ukryto: %1$s. Nie zagra już samo.</string>
+    <string name="hidden_songs_title">Ukryte utwory</string>
+    <string name="hidden_songs_detail">Utwory oznaczone jako Nie interesuje mnie są pomijane na listach i w radiach</string>
+    <string name="hidden_songs_empty">Brak ukrytych utworów. Wybierz Nie interesuje mnie w menu utworu.</string>
 </resources>

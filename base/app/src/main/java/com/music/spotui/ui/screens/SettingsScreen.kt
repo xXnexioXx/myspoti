@@ -152,6 +152,14 @@ fun SettingsScreen(navController: NavController) {
                     checked = com.music.spotui.data.preferences.ConnectMirrorPref.on,
                     onChecked = { com.music.spotui.data.preferences.ConnectMirrorPref.set(ctx, it) },
                 )
+            // Songs marked "Not interested": skipped by lists, listed here to be shown again.
+            Column(
+                Modifier.fillMaxWidth().clickable { navController.navigate(com.music.spotui.ui.navigation.Routes.HiddenSongs.route) }
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+            ) {
+                Text(stringResource(R.string.hidden_songs_title), color = AppText, fontSize = 16.sp)
+                Text(stringResource(R.string.hidden_songs_detail), color = AppMuted, fontSize = 12.sp)
+            }
             Divider()
             SourcesBlock(app.myspoti.extensions.Action.AUDIO_SOURCE, navController)
 
@@ -239,6 +247,12 @@ fun SettingsScreen(navController: NavController) {
                 detail = stringResource(R.string.settings_solid_nav_detail),
                 checked = com.music.spotui.data.preferences.SolidNavBar.on,
                 onChecked = { com.music.spotui.data.preferences.SolidNavBar.set(ctx, it) },
+            )
+            OptionRow(
+                label = stringResource(R.string.settings_hide_dj_title),
+                detail = stringResource(R.string.settings_hide_dj_detail),
+                checked = com.music.spotui.data.preferences.HideDjPref.on,
+                onChecked = { com.music.spotui.data.preferences.HideDjPref.set(ctx, it) },
             )
             AccentRow(com.music.spotui.data.preferences.Look.CLASSIC)
             LookRow()

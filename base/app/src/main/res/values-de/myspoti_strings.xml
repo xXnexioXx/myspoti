@@ -34,6 +34,14 @@
     <string name="lyrics_extra_title">Weitere Songtext-Quellen</string>
     <string name="lyrics_extra_summary">NetEase und Genius, wenn Spotify keinen Songtext hat</string>
     <string name="lyrics_reload">Songtext neu laden</string>
+    <string name="lyrics_select_hint">Tippe auf Zeilen, um auszuwählen, was du teilen möchtest</string>
+    <string name="lyrics_select_max">Du kannst bis zu %d Zeilen teilen</string>
+    <string name="lyrics_romanization">Romanisierung anzeigen</string>
+    <string name="lyrics_other_source">Andere Quelle versuchen</string>
+    <string name="lyrics_source_shown">Wird angezeigt</string>
+    <string name="lyrics_source_words">Wort für Wort</string>
+    <string name="lyrics_source_aside">Antwortet gerade nicht</string>
+    <string name="lyrics_source_nothing">%1$s hat keinen Songtext zu diesem Lied</string>
     <string name="lyrics_fullscreen">Songtext im Vollbild öffnen</string>
     <string name="browse_all">Alle ansehen</string>
     <string name="home_error">Start konnte nicht geladen werden.\nPrüfe deine Verbindung und versuche es erneut.</string>
@@ -81,6 +89,7 @@
     <string name="local_playlist_empty">Füge Songs aus Lokale Dateien mit ihrem +-Button hinzu.</string>
     <string name="playlist_change_refused">Spotify hat die Änderung an dieser Playlist abgelehnt</string>
     <string name="download_kept_by_list">Bleibt heruntergeladen: Eine heruntergeladene Playlist enthält ihn</string>
+    <string name="download_kept_by_named">Bleibt heruntergeladen: „%1$s“ ist heruntergeladen und enthält ihn</string>
     <string name="support_title">Myspoti unterstützen</string>
     <string name="support_body">Myspoti ist kostenlos, werbefrei und wird in meiner Freizeit entwickelt. Wenn es dir gefällt, hilft eine kleine Spende, es am Laufen zu halten.</string>
     <string name="support_action">Auf Ko-fi unterstützen</string>
@@ -536,6 +545,10 @@
     <string name="duplicate_dont_add">Nicht hinzufügen</string>
     <string name="settings_music_video_title">Musikvideos</string>
     <string name="settings_music_video_detail">Die Videotaste im Player und Clips, die von selbst starten. Aus: nur Audio und Canvas.</string>
+    <string name="settings_hide_dj_title">DJ ausblenden</string>
+    <string name="settings_hide_dj_detail">Entfernt den Spotify-DJ von der Startseite</string>
+    <string name="settings_player_modes_title">Zufall und Wiederholen im Player</string>
+    <string name="settings_player_modes_detail">Aus, die Kapsel des Players enthält nur die Geräte-Taste, wie in 2.1.0</string>
     <string name="downloads_need_source">Downloads brauchen eine Quell-Erweiterung. Installiere eine unter Einstellungen, Erweiterungen.</string>
     <string name="downloads_source_row_title">Download-Quelle</string>
     <string name="downloads_source_row_on">Eine Erweiterung liefert die Dateien. Tippen, um Erweiterungen zu verwalten.</string>
@@ -590,4 +603,10 @@
     <string name="show_filter_all_played">Alle Folgen sind gehört.</string>
     <string name="show_filter_hide_played">Gehörte ausblenden</string>
     <string name="show_filter_unplayed_first">Ungehörte zuerst</string>
+    <string name="hide_song">Kein Interesse</string>
+    <string name="show_song_again">Wieder anzeigen</string>
+    <string name="hidden_song_toast">%1$s ausgeblendet. Der Song wird nicht mehr von selbst gespielt.</string>
+    <string name="hidden_songs_title">Ausgeblendete Songs</string>
+    <string name="hidden_songs_detail">Songs mit „Kein Interesse“ werden in Listen und Radios übersprungen</string>
+    <string name="hidden_songs_empty">Noch keine ausgeblendeten Songs. Wähle „Kein Interesse“ im Menü eines Songs.</string>
 </resources>

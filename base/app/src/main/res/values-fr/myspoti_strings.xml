@@ -34,6 +34,14 @@
     <string name="lyrics_extra_title">Plus de sources de paroles</string>
     <string name="lyrics_extra_summary">NetEase et Genius, quand Spotify n\'a pas les paroles</string>
     <string name="lyrics_reload">Recharger les paroles</string>
+    <string name="lyrics_select_hint">Touchez des lignes pour choisir ce que vous partagez</string>
+    <string name="lyrics_select_max">Vous pouvez partager jusqu\'à %d lignes</string>
+    <string name="lyrics_romanization">Afficher la romanisation</string>
+    <string name="lyrics_other_source">Essayer une autre source</string>
+    <string name="lyrics_source_shown">Affichée</string>
+    <string name="lyrics_source_words">Mot par mot</string>
+    <string name="lyrics_source_aside">Ne répond pas pour le moment</string>
+    <string name="lyrics_source_nothing">%1$s n\'a pas les paroles de cette chanson</string>
     <string name="lyrics_fullscreen">Ouvrir les paroles en plein écran</string>
     <string name="browse_all">Parcourir tout</string>
     <string name="home_error">Impossible de charger l\'accueil.\nVérifiez votre connexion et réessayez.</string>
@@ -94,6 +102,7 @@
     <string name="local_playlist_empty">Ajoutez des titres depuis Fichiers locaux avec leur bouton +.</string>
     <string name="playlist_change_refused">Spotify a refusé la modification de cette playlist</string>
     <string name="download_kept_by_list">Reste téléchargé : une playlist téléchargée le contient</string>
+    <string name="download_kept_by_named">Reste téléchargé : « %1$s » est téléchargé et le contient</string>
     <string name="support_title">Soutenir Myspoti</string>
     <string name="support_body">Myspoti est gratuit, sans publicité, et développé sur mon temps libre. Si vous l\'appréciez, un petit don aide à le faire avancer.</string>
     <string name="support_action">Soutenir sur Ko-fi</string>
@@ -541,6 +550,10 @@
     <string name="duplicate_dont_add">Ne pas ajouter</string>
     <string name="settings_music_video_title">Clips vidéo</string>
     <string name="settings_music_video_detail">Le bouton vidéo du lecteur et les clips qui démarrent seuls. Désactivé : audio et Canvas uniquement.</string>
+    <string name="settings_hide_dj_title">Masquer le DJ</string>
+    <string name="settings_hide_dj_detail">Retire le DJ de Spotify de l\'accueil</string>
+    <string name="settings_player_modes_title">Aléatoire et répétition dans le lecteur</string>
+    <string name="settings_player_modes_detail">Désactivé, la capsule du lecteur ne garde que le bouton des appareils, comme en 2.1.0</string>
     <string name="downloads_need_source">Les téléchargements ont besoin d\'une extension source. Installez-en une dans Réglages, Extensions.</string>
     <string name="downloads_source_row_title">Source des téléchargements</string>
     <string name="downloads_source_row_on">Une extension fournit les fichiers. Touchez pour gérer les extensions.</string>
@@ -595,4 +608,10 @@
     <string name="show_filter_all_played">Tous les épisodes sont écoutés.</string>
     <string name="show_filter_hide_played">Masquer les écoutés</string>
     <string name="show_filter_unplayed_first">Non écoutés d\'abord</string>
+    <string name="hide_song">Pas intéressé</string>
+    <string name="show_song_again">Afficher à nouveau</string>
+    <string name="hidden_song_toast">%1$s masqué. Il ne se lancera plus tout seul.</string>
+    <string name="hidden_songs_title">Titres masqués</string>
+    <string name="hidden_songs_detail">Les titres marqués « Pas intéressé » sont passés dans les listes et les radios</string>
+    <string name="hidden_songs_empty">Aucun titre masqué. Choisissez « Pas intéressé » dans le menu d\'un titre.</string>
 </resources>

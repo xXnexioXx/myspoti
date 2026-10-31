@@ -119,6 +119,7 @@ object LocalPlayer {
                     // A song to play again that the player went past by itself: put back, never followed.
                     if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO && wentPastRepeat(p, p.previousMediaItemIndex)) return
                     if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO || reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) startsAtZero(p)
+                    if (skipHidden(p, reason)) return
                     prefetchNext(p); continueIfLast(p)
                 }
 
@@ -400,6 +401,8 @@ object LocalPlayer {
         if (p.playbackState == Player.STATE_IDLE && p.mediaItemCount > 0) { log("resume after an error: preparing again"); p.prepare() }
         p.play()
     }
+    /** The sleep timer's fade: the player's volume (a crossfade owns it while it runs, the fade then goes on after it). */
+    fun setGain(gain: Float) { if (outgoing == null) exo?.volume = gain }
     fun pause() { if (CastPlayback.active) CastPlayback.pause() else exo?.pause() }
     fun next() {
         // In the first half of a crossfade the main player is on the next song already, while the
@@ -771,6 +774,24 @@ object LocalPlayer {
         log("${current()?.title} started at $at ms, not at its start: moved to 0 ms")
         p.seekTo(0L)
     }
+    /** The hidden songs ("Not interested") skipped in a row; a pick by hand starts no run. */
+    private var hiddenRun = 0
+
+    /**
+     * A hidden song the queue comes to by itself (or right after another one skipped) is skipped;
+     * a queue of only hidden songs is gone through once, then the last one plays. True: skipped.
+     */
+    private fun skipHidden(p: ExoPlayer, reason: Int): Boolean {
+        val t = current()
+        val hidden = t != null && com.music.spotui.data.preferences.HiddenSongs.isHidden(spotifyIdOf(t))
+        val ours = reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO || (hiddenRun > 0 && reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK)
+        if (!hidden || !ours || hiddenRun >= tracks.size || !p.hasNextMediaItem()) { hiddenRun = 0; return false }
+        hiddenRun++
+        log("skipped ${t?.title}: hidden (not interested)")
+        next()
+        return true
+    }
+
     /** The Spotify id of [t]: a downloaded song's, or the song an extension streams; "" for the phone's own files. */
     fun spotifyIdOf(t: LocalTrack): String =
         com.music.spotui.data.offline.OfflineStore.byLocalId(t.id)?.trackId
