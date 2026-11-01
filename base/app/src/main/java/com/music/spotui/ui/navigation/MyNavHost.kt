@@ -136,6 +136,16 @@ fun MyNavHost(
             if (isImmersive()) com.music.spotui.ui.immersive.pages.ImmersiveLocalFilesScreen(navHostController) else com.music.spotui.ui.screens.LocalFilesScreen(navHostController)
         }
 
+        // Live Radio: one plain screen for both looks (see com.music.spotui.radio). Plays
+        // through LocalPlayer, so it drives playerState exactly as a Local Files track does.
+        page(Routes.LiveRadio.route){
+            LaunchedEffect(playerState) {
+                bottomBarState.value = true
+                bottomBarPlayerState.value = playerState != ""
+            }
+            com.music.spotui.radio.ui.LiveRadioScreen(navHostController)
+        }
+
         page(Routes.Downloads.route){
             LaunchedEffect(playerState) {
                 bottomBarState.value = true

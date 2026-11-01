@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="live_radio_title">Radio dal vivo</string>
+    <string name="live_radio_subtitle">Stazioni radio internet, dal catalogo gratuito radio-browser.info</string>
+    <string name="live_radio_search_hint">Cerca stazioni</string>
+    <string name="live_radio_popular">Stazioni popolari</string>
+    <string name="live_radio_search_results">Risultati di ricerca</string>
+    <string name="live_radio_favorites">Preferiti</string>
+    <string name="live_radio_favorite">Aggiungi ai preferiti</string>
+    <string name="live_radio_unfavorite">Rimuovi dai preferiti</string>
+    <string name="live_radio_no_results">Nessuna stazione trovata</string>
+    <string name="live_radio_error">Impossibile raggiungere il catalogo radio. Controlla la connessione e riprova.</string>
+    <string name="live_radio_connecting">Connessione…</string>
+    <string name="live_radio_live_label">In diretta</string>
+    <string name="live_radio_stop">Interrompi</string>
+    <string name="live_radio_notification_channel">Riproduzione Radio dal vivo</string>
+    <string name="live_radio_settings_title">Radio dal vivo</string>
+    <string name="live_radio_settings_detail">Aggiunge una cartella Radio dal vivo a La tua libreria, sotto File locali</string>
+</resources>

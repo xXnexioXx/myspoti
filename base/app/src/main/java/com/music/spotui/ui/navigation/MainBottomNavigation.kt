@@ -9,7 +9,6 @@ import androidx.compose.ui.res.stringResource
 import app.myspoti.engine.R
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -137,6 +136,7 @@ fun MainBottomNavigation(navController: NavHostController, bottomBarState: Mutab
                         exit = slideOutVertically(targetOffsetY = { it }),
                         content = {
                             // Large windows: a capped, centred capsule, not a bar across a desktop window.
+                            // (Live Radio plays through LocalPlayer, so it shows here like any Local Files track.)
                             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                                 Box(if (com.music.spotui.ui.components.windowSize().large) Modifier.widthIn(max = com.music.spotui.ui.components.WindowSize.MaxMiniPlayerWidth) else Modifier) {
                                     MiniPlayer(navController)
@@ -144,7 +144,6 @@ fun MainBottomNavigation(navController: NavHostController, bottomBarState: Mutab
                             }
                         }
                     )
-
 
 
                     Spacer(modifier = Modifier.height(4.dp))
