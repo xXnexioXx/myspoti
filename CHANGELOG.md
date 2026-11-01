@@ -15,6 +15,7 @@ Each release on GitHub shows its section below. The app shows it too when it off
 - 📺 **Chromecast** plays Spotify songs too, through Spotify's own receiver.
 - 🏠 **Liked Songs** first in Home's shortcuts; switches in Settings, Display to hide the player's lyrics preview, its source line or its capsule; the keyboard closes when you tap a search result; a tap on an installed extension in the store opens its full page.
 - 🛠️ **Fixes**: no run of skips or the wrong song after an ad, a pause during an ad stays a pause, a tap on the title opens the album for every song, playback on a locked Samsung explained in Settings, and the issues found by a code audit (downloads never removed when the app reads a backup index, safer file writes, stale page answers ignored, masked secrets in the diagnostic, a hardened Cast server and updater).
+- 📦 **One APK per phone architecture** (arm64-v8a, armeabi-v7a), lighter to download: the in-app update takes yours, and Obtainium users set the new APK filter from the README.
 - 🌍 **Brazilian Portuguese**, and translations of everything new.
 
 ## 2.2.0

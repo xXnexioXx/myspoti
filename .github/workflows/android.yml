@@ -1,4 +1,4 @@
-# Builds and tests every push / pull request; a "v*" tag publishes a signed APK
+# Builds and tests every push / pull request; a "v*" tag publishes signed APKs (arm64-v8a, armeabi-v7a)
 # as a GitHub release (the app's update check reads those releases).
 name: Android
 
@@ -110,13 +110,18 @@ jobs:
           MYSPOTI_KEY_PASSWORD: ${{ contains(github.ref_name, '-') && secrets.MYSPOTI_KEY_PASSWORD || secrets.MYSPOTI_STABLE_KEY_PASSWORD }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          # myspoti-beta-2.2.1-beta.1.apk / myspoti-stable-2.2.1.apk: Obtainium filters on the channel.
+          # One APK per ABI, same versionCode (a phone installs only its own; the app's update check
+          # picks it, UpdateChecker.apkAsset): myspoti-beta-2.2.1-beta.1-arm64-v8a.apk,
+          # myspoti-stable-2.2.1-armeabi-v7a.apk... Obtainium filters on the channel and the ABI.
           CHANNEL=stable; case "$VERSION" in *-*) CHANNEL=beta ;; esac
-          ./gradlew assembleRelease \
-            -PappVersionName="$VERSION" \
-            -PappVersionCode="$((1000 + GITHUB_RUN_NUMBER))" \
-            -PupdateRepo="$GITHUB_REPOSITORY"
-          mv app/build/outputs/apk/release/app-release.apk "app/build/outputs/apk/release/myspoti-$CHANNEL-$VERSION.apk"
+          for ABI in arm64-v8a armeabi-v7a; do
+            ./gradlew assembleRelease \
+              -Pabis="$ABI" \
+              -PappVersionName="$VERSION" \
+              -PappVersionCode="$((1000 + GITHUB_RUN_NUMBER))" \
+              -PupdateRepo="$GITHUB_REPOSITORY"
+            mv app/build/outputs/apk/release/app-release.apk "app/build/outputs/apk/release/myspoti-$CHANNEL-$VERSION-$ABI.apk"
+          done
 
       # This version's section of CHANGELOG.md becomes the release description.
       - name: Release notes

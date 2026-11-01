@@ -44,9 +44,11 @@ Under the hood, the official Spotify Web Player plays the music, hidden inside t
 
 New versions are offered inside the app: one tap downloads and installs them.
 
-Obtainium (add `https://github.com/kota-zo/myspoti`; the stable app and the beta app are two apps and each release carries one APK named for its channel):
-- **Stable** (`app.myspoti.stable`): leave "Include prereleases" off and set the APK filter to `^myspoti-stable-.*\.apk$`.
-- **Beta** (`app.myspoti`): turn "Include prereleases" on and set the APK filter to `^myspoti-beta-.*\.apk$`.
+Each release carries one APK per architecture: `arm64-v8a` for almost every phone from the last ten years, `armeabi-v7a` for older or entry-level 32-bit phones (an app such as CPU-Z or Device Info shows which one yours is; when in doubt, take `arm64-v8a`, and if it refuses to install, `armeabi-v7a`). The in-app update picks the right one by itself.
+
+Obtainium (add `https://github.com/kota-zo/myspoti`; the stable app and the beta app are two apps and each release carries their APKs named for the channel and the architecture):
+- **Stable** (`app.myspoti.stable`): leave "Include prereleases" off and set the APK filter to `^myspoti-stable-.*-arm64-v8a\.apk$` (or `-armeabi-v7a` on a 32-bit phone).
+- **Beta** (`app.myspoti`): turn "Include prereleases" on and set the APK filter to `^myspoti-beta-.*-arm64-v8a\.apk$` (or `-armeabi-v7a` on a 32-bit phone).
 - Betas are named `<next version>-beta.<n>` (`2.2.1-beta.1`, then `2.2.1-beta.2`...), marked prerelease on GitHub, and always newer than the last stable.
 
 ## What you get
