@@ -365,9 +365,10 @@ object LocalPlayer {
 
     /**
      * [startMs]: where the song at [index] starts (a resume). [continues]: the extensions play the
-     * queue, it goes on after its last song as Spotify's does (see continueIfLast).
+     * queue, it goes on after its last song as Spotify's does (see continueIfLast). [paused]: the song
+     * is put there paused (another source picked for it while it was paused), the user's play starts it.
      */
-    fun play(list: List<LocalTrack>, index: Int, shuffle: Boolean = false, context: String? = null, contextUri: String = "", startMs: Long = 0L, continues: Boolean = false) {
+    fun play(list: List<LocalTrack>, index: Int, shuffle: Boolean = false, context: String? = null, contextUri: String = "", startMs: Long = 0L, continues: Boolean = false, paused: Boolean = false) {
         if (list.isEmpty()) return
         // Another song picked: repeat once was for the song left.
         val shown = SongPlayer.nowPlaying.value.uri.substringAfterLast(':')
@@ -395,10 +396,12 @@ object LocalPlayer {
         replaying = null
         repeat = SongPlayer.repeatMode.value
         applyRepeat(p)
+        // Paused before it loads: a player left playing by a song before never starts this one.
+        if (paused) p.pause()
         p.setMediaItems(all.map(::item), index.coerceIn(0, list.lastIndex), startMs.coerceAtLeast(0L))
         p.prepare()
         if (shuffle) setShuffle(true)
-        p.play()
+        if (!paused) p.play()
         continueIfLast(p)
     }
 

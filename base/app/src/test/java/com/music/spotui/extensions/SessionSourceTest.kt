@@ -1,7 +1,9 @@
 package com.music.spotui.extensions
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** The audio source picked in the player for the session: first, then the user's order; gone with the source. */
@@ -53,5 +55,17 @@ class SessionSourceTest {
         assertEquals(listOf(c, a, SPOTIFY_SOURCE), SessionSource.choices(saved, c, { it != b }))
         // The pick turned off meanwhile: the user's order, without it.
         assertEquals(listOf(a, SPOTIFY_SOURCE, c), SessionSource.choices(saved, b, { it != b }))
+    }
+
+    @Test fun spotifyPickedWhilePausedPlaysTheSongThereAtTheNextPlayOnly() {
+        // Still on that song, Spotify still first: the next play plays it on Spotify.
+        assertTrue(SessionSource.spotifyDue("4uLU6hMCjMI75M1A2tKUQC", "4uLU6hMCjMI75M1A2tKUQC", SPOTIFY_SOURCE))
+        // Nothing picked while paused, or a song with no Spotify id.
+        assertFalse(SessionSource.spotifyDue(null, "4uLU6hMCjMI75M1A2tKUQC", SPOTIFY_SOURCE))
+        assertFalse(SessionSource.spotifyDue("", "", SPOTIFY_SOURCE))
+        // Another song meanwhile (a next, a pick): it plays where it is.
+        assertFalse(SessionSource.spotifyDue("4uLU6hMCjMI75M1A2tKUQC", "7ouMYWpwJ422jRcDASZB7P", SPOTIFY_SOURCE))
+        // "Back to my order" meanwhile, an extension first again: the song stays on it.
+        assertFalse(SessionSource.spotifyDue("4uLU6hMCjMI75M1A2tKUQC", "4uLU6hMCjMI75M1A2tKUQC", a))
     }
 }
