@@ -95,10 +95,12 @@ fun SettingsScreen(navController: NavController) {
         Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()) {
             // The first source of each order, when it is an extension announcing settings in that tab.
             val registry by com.music.spotui.extensions.Extensions.registry.collectAsStateWithLifecycle()
+            // A source picked in the player for this session leads too ([com.music.spotui.extensions.SessionSource]).
+            val session by com.music.spotui.extensions.Extensions.sessionSource.collectAsStateWithLifecycle()
             if (tab == 0) {
             Section(R.string.settings_section_playback)
             // An extension above Spotify: its settings, and Spotify's quality (kept, still used for what Spotify plays) leaves.
-            val ext = remember(registry) { com.music.spotui.extensions.Extensions.sectionPlacement(app.myspoti.extensions.SettingSection.PLAYBACK) }
+            val ext = remember(registry, session) { com.music.spotui.extensions.Extensions.sectionPlacement(app.myspoti.extensions.SettingSection.PLAYBACK) }
             ext?.let { ExtensionSectionSettings(it) }
             if (ext?.hidesAppQuality != true) {
                 StreamingQualityPicker(title = R.string.quality_streaming_wifi_title)

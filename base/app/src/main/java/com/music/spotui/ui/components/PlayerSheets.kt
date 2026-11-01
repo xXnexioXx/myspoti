@@ -26,6 +26,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.zIndex
 import kotlin.math.roundToInt
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -139,11 +140,13 @@ fun playingSourceLabel(): String {
     val uri = SongPlayer.nowPlaying.value.uri
     val answers = com.music.spotui.extensions.ExtensionAudio.answers.intValue
     val downloaded = stringResource(R.string.player_source_downloaded)
+    // A source picked in the quality sheet for this session: said, discreetly, at the line's end.
+    val temporary = com.music.spotui.extensions.Extensions.sessionSource.collectAsState().value?.let { stringResource(R.string.source_pick_tag) }
     if (SongPlayer.routing) return ""
-    if (!com.music.spotui.di.LocalPlayer.active.value) return spotifyQualityLabel(uri)
-    return remember(uri, answers, downloaded) {
+    val label = if (!com.music.spotui.di.LocalPlayer.active.value) spotifyQualityLabel(uri) else remember(uri, answers, downloaded) {
         com.music.spotui.di.LocalPlayer.current()?.let { com.music.spotui.extensions.ExtensionAudio.sourceLabel(it, downloaded) }.orEmpty()
     }
+    return if (temporary == null || label.isBlank() || uri.startsWith("spotify:episode:")) label else "$label · $temporary"
 }
 
 /**
@@ -316,7 +319,9 @@ internal fun streamingLabel(q: com.music.spotui.data.preferences.StreamingQualit
 @Composable
 fun QualitySheet(onDismiss: () -> Unit) {
     val local = com.music.spotui.di.LocalPlayer.active.value
-    val now by androidx.compose.runtime.produceState<String?>(null) {
+    // Read again when another source plays the song (picked below, see SourcePicker).
+    val answers = com.music.spotui.extensions.ExtensionAudio.answers.intValue
+    val now by androidx.compose.runtime.produceState<String?>(null, local, answers) {
         value = if (local) {
             val t = com.music.spotui.di.LocalPlayer.current()
             val file = t?.let { com.music.spotui.data.offline.OfflineStore.byLocalId(it.id) }
@@ -331,7 +336,7 @@ fun QualitySheet(onDismiss: () -> Unit) {
         }
     }
     com.music.spotui.ui.components.LookSheet(onDismissRequest = onDismiss, containerColor = SheetColor) {
-        Column(Modifier.fillMaxWidth().navigationBarsPadding().padding(bottom = 16.dp)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(androidx.compose.foundation.rememberScrollState()).navigationBarsPadding().padding(bottom = 16.dp)) {
             Text(stringResource(R.string.quality_sheet_title), color = AppText, fontSize = 20.sp, fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
             val text = now
@@ -352,6 +357,8 @@ fun QualitySheet(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth().clickable { why = true }.padding(horizontal = 20.dp, vertical = 12.dp))
                 if (why) WhySourceSheet(extId, detectedLabel(com.music.spotui.di.LocalPlayer.audioFormat())) { why = false }
             }
+            // Another audio source for this song and the next ones, until the app restarts.
+            SourcePicker(Modifier.padding(top = 12.dp))
             // The level of the network in use now (Wi-Fi and mobile data each keep their own).
             if (!local) StreamingQualityPicker(Modifier.padding(top = 12.dp), cellular = com.music.spotui.data.DataSaver.metered,
                 title = if (com.music.spotui.data.DataSaver.metered) R.string.quality_streaming_cell_title else R.string.quality_streaming_wifi_title)

@@ -261,6 +261,25 @@ object LocalPlayer {
         prefetchNext(p)
     }
 
+    /**
+     * The song playing opened again where it is: its audio is read anew from the answer kept for it
+     * (another source was picked for it in the player, see SongPlayer.switchSource). The queue, the
+     * shuffle, the repeat and play or pause stay. False: nothing an extension streams plays here.
+     */
+    fun reopen(): Boolean {
+        val p = exo ?: return false
+        if (CastPlayback.active || !active.value) return false
+        if (p.currentMediaItem?.localConfiguration?.uri?.scheme != com.music.spotui.extensions.ExtensionAudio.SCHEME) return false
+        if (outgoing != null) endFade()
+        val at = p.currentPosition
+        log("${current()?.title}: another source picked, opened again at $at ms")
+        errors.played()
+        p.stop()
+        p.seekTo(p.currentMediaItemIndex, at)
+        p.prepare()
+        return true
+    }
+
     /** The downloads deleted during this session, by file: the song each one is (see [downloadsDeleted]). */
     private val deletedDownloads = HashMap<String, com.music.spotui.data.entity.SongsModel>()
 

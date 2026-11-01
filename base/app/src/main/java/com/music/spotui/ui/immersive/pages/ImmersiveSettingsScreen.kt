@@ -214,7 +214,9 @@ private fun PlaybackPage(navController: NavController, open: (SettingsPage) -> U
     // The first source of the audio order, when it is an extension announcing settings here:
     // they show, and Spotify's quality (kept, still used for what Spotify plays) leaves the screen.
     val registry by com.music.spotui.extensions.Extensions.registry.collectAsStateWithLifecycle()
-    val ext = remember(registry) { com.music.spotui.extensions.Extensions.sectionPlacement(app.myspoti.extensions.SettingSection.PLAYBACK) }
+    // A source picked in the player for this session leads too ([com.music.spotui.extensions.SessionSource]).
+    val session by com.music.spotui.extensions.Extensions.sessionSource.collectAsStateWithLifecycle()
+    val ext = remember(registry, session) { com.music.spotui.extensions.Extensions.sectionPlacement(app.myspoti.extensions.SettingSection.PLAYBACK) }
     val extHeader = ext?.let { stringResource(R.string.ext_section_settings, it.name) }
     ImmersivePage(title = stringResource(R.string.settings_section_playback), onBack = back) {
         if (ext != null && extHeader != null) extensionSectionGroup(ext, extHeader)

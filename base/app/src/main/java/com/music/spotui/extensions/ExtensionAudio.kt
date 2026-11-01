@@ -79,6 +79,9 @@ object ExtensionAudio {
         answers.intValue++
     }
 
+    /** [stream], from the source picked for it in the player (SongPlayer.switchSource), is the song [trackId]'s audio from now on. */
+    fun use(trackId: String, stream: AudioStream) = keep(trackId, stream)
+
     private val warming = ConcurrentHashMap.newKeySet<String>()
 
     /**

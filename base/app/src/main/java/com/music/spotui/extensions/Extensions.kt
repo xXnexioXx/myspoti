@@ -507,13 +507,59 @@ object Extensions {
      */
     fun sourceLine(action: Action): List<String> = line(_registry.value, action)
 
-    private fun line(r: Registry, action: Action): List<String> {
+    /** The order the user set for the source [action] (Settings), without this session's [sessionSource]. */
+    fun savedSourceLine(action: Action): List<String> = savedLine(_registry.value, action)
+
+    private fun savedLine(r: Registry, action: Action): List<String> {
         val ids = r.extensions.filter { action in manifest(it.id)?.actionSet().orEmpty() }.map { it.id }
         return r.bySourceOrder(action.key, Area.AUDIO.key, if (action == Action.AUDIO_SOURCE) ids + SPOTIFY_SOURCE else ids) { it }
     }
 
+    /** The order the source [action] asks in now: the user's, with the audio source picked for this session first ([SessionSource]). */
+    private fun line(r: Registry, action: Action): List<String> {
+        val saved = savedLine(r, action)
+        if (action != Action.AUDIO_SOURCE) return saved
+        return SessionSource.effective(saved, SessionSource.valid(_sessionSource.value, saved) { r.find(it)?.enabled == true })
+    }
+
     /** Moves [id] (an extension, or [SPOTIFY_SOURCE]) up (negative [delta]) or down in the order the source [action] asks in. */
-    fun moveSource(action: Action, id: String, delta: Int) = update { r -> r.move(action.key, line(r, action), id, delta) }
+    fun moveSource(action: Action, id: String, delta: Int) = update { r -> r.move(action.key, savedLine(r, action), id, delta) }
+
+    private val _sessionSource = MutableStateFlow<String?>(null)
+
+    /**
+     * The audio source the user put first from the player for this session ([SessionSource]), or
+     * null: the order of Settings. In memory only, never saved: gone when the app restarts.
+     */
+    val sessionSource: StateFlow<String?> = _sessionSource.asStateFlow()
+
+    /** The audio sources the player's quality sheet offers (Spotify and the extensions on), in the order they are asked now. */
+    fun audioChoices(): List<String> = _registry.value.let { r ->
+        SessionSource.choices(savedLine(r, Action.AUDIO_SOURCE), _sessionSource.value) { r.find(it)?.enabled == true }
+    }
+
+    /**
+     * Puts [id] (an extension, or [SPOTIFY_SOURCE]) first of the audio order for this session; null,
+     * or the source the user's order asks first already: back to that order. The songs after the one
+     * playing are asked again in the new order (as for a change in Settings); the one playing is the
+     * caller's (SongPlayer.switchSource).
+     */
+    fun setSessionSource(id: String?) {
+        val r = _registry.value
+        val lead = id?.let { SessionSource.pick(it, savedLine(r, Action.AUDIO_SOURCE)) { x -> r.find(x)?.enabled == true } }
+        if (lead == _sessionSource.value) return
+        _sessionSource.value = lead
+        Logbook.log("audio: ${lead?.let { "$it first for this session" } ?: "back to the order of Settings"}")
+        refreshProvided()
+    }
+
+    /** The session's source still leads after [r] changed; turned off, removed or no longer a source, it leaves it. */
+    private fun keepSessionSource(r: Registry) {
+        val lead = _sessionSource.value ?: return
+        if (SessionSource.valid(lead, savedLine(r, Action.AUDIO_SOURCE)) { r.find(it)?.enabled == true } != null) return
+        _sessionSource.value = null
+        Logbook.log("audio: $lead no longer a source, back to the order of Settings")
+    }
 
     /** Makes [id] the one acting for the exclusive [action]; the others stay installed, idle. */
     fun setActive(action: Action, id: String) {
@@ -808,6 +854,36 @@ object Extensions {
         val own = qualityLine(c.first, app.myspoti.extensions.SettingSection.PLAYBACK)
         attempts.update(attempt) { it.copy(asked = all, chosen = c.first, announced = a.qualityLabel(), sourceQuality = own) }
         return a.copy(providerId = c.first)
+    }
+
+    /**
+     * [track]'s audio from the audio source [id] alone, whatever the order: the one picked for it in
+     * the player's quality sheet (SongPlayer.switchSource), asked while the song goes on where it
+     * plays; one [PlayAttempt] of its own. Null: it does not have it, cannot answer now (set aside,
+     * busy) or is not a running audio source.
+     */
+    suspend fun audioFrom(id: String, track: TrackInfo): AudioStream? {
+        if (!isReady) return null
+        val rt = runtimes[id]?.takeIf { _registry.value.find(id)?.enabled == true && it.provides(Hook.AUDIO_SOURCE) && !health.inactive(id) } ?: return null
+        val attempt = attempts.start(track.id, track.title)
+        val picked = "picked in the player for this session"
+        cooldown.reason(id)?.let { why ->
+            attempts.update(attempt) { it.copy(asked = listOf(PlayAttempt.Ask(id, Outcome.Skipped().key, 0, "set aside: $why")), fallback = "the song goes on where it played") }
+            return null
+        }
+        val a = ask(id, rt, Hook.AUDIO_SOURCE, AudioQuery.toJson(withIsrc(track), false), AUDIO_MS, AudioStream::parse)
+        val asked = listOf(PlayAttempt.Ask(id, a.outcome.key, a.ms, detail = listOfNotNull(picked, a.outcome.detail).joinToString("; ")))
+        val found = a.value ?: run {
+            Logbook.log("audio: $id had no ${track.title} (${a.ms} ms), it goes on where it played")
+            attempts.update(attempt) { it.copy(asked = asked, fallback = "the song goes on where it played") }
+            return null
+        }
+        misses.forget(track.id)
+        log(id, "audio for ${track.title} (${a.ms} ms, picked in the player)")
+        did(Area.AUDIO, id, "Audio of ${track.title} from ${rt.manifest.name}")
+        val own = qualityLine(id, app.myspoti.extensions.SettingSection.PLAYBACK)
+        attempts.update(attempt) { it.copy(asked = asked, chosen = id, announced = found.qualityLabel(), sourceQuality = own) }
+        return found.copy(providerId = id)
     }
 
     /** The last [PlayAttempt]s through the extensions (20), for "Why this source?" and the diagnostic report. */
@@ -1327,6 +1403,7 @@ object Extensions {
             val r = change(_registry.value)
             _registry.value = r
             runCatching { Registry.write(File(dir, "registry.json"), r) }.onFailure { Logbook.log("ext: registry not saved: ${it.message}") }
+            keepSessionSource(r)
         }
         // Turned on or off, the order of the sources, the active one: who gives what may have changed.
         refreshProvided()

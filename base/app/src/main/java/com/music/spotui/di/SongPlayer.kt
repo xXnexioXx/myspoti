@@ -1176,10 +1176,13 @@ object SongPlayer {
      * plays it from [positionMs], in the list it came from, and goes on with that list (as a miss
      * at the pick does). False: it cannot (no Spotify id, data saver), the caller skips it.
      */
-    fun playUnavailableOnSpotify(t: com.music.spotui.data.local.LocalTrack, positionMs: Long): Boolean {
+    fun playUnavailableOnSpotify(t: com.music.spotui.data.local.LocalTrack, positionMs: Long): Boolean =
+        playLocalOnSpotify(t, positionMs, "not available from extensions")
+
+    private fun playLocalOnSpotify(t: com.music.spotui.data.local.LocalTrack, positionMs: Long, why: String): Boolean {
         val id = streamedTrackId(t)
         if (id.isBlank() || com.music.spotui.data.DataSaver.active) return false
-        app.myspoti.host.android.Logbook.log("local: ${t.title} not available from extensions, Spotify plays it")
+        app.myspoti.host.android.Logbook.log("local: ${t.title} $why, Spotify plays it")
         spotifyPlayed.add(id)
         spotifyFallbackId = id
         // The local queue after it, for the extensions to go on with once Spotify has played it.
@@ -1187,6 +1190,72 @@ object SongPlayer {
         playSong(buildSpotifyPlayQuery(id, t.title, t.artist), contextUri = LocalPlayer.contextUri.ifBlank { null },
             positionMs = positionMs.takeIf { it > 0 }, askExtensions = false)
         return true
+    }
+
+    /** What picking an audio source in the quality sheet did to the song playing ([switchSource]). */
+    enum class SourceSwitch {
+        /** The song plays from it, from where it was (or already did). */
+        PLAYING,
+        /** It does not have the song (or cannot answer now): the song goes on where it played, the order is the one before. */
+        MISSING,
+        /** The song goes on as it plays (its download, another device, a cast, the song changed): the songs after it come from it. */
+        NEXT_SONG,
+    }
+
+    /**
+     * The audio source [id] (an extension, or [com.music.spotui.extensions.SPOTIFY_SOURCE]) picked
+     * in the quality sheet: first of the order for this session (Extensions.setSessionSource, never
+     * saved) and the song playing plays from it, from where it is. An extension is asked for the
+     * song alone first, nothing stopping meanwhile: without it ([SourceSwitch.MISSING]) the song
+     * goes on and the order stays as it was. Spotify picked while an extension streams: Spotify
+     * plays the song from there, in its list. [done] on the main thread.
+     */
+    fun switchSource(id: String, done: (SourceSwitch) -> Unit) {
+        val ext = com.music.spotui.extensions.Extensions
+        val local = LocalPlayer.active.value
+        val t = if (local) LocalPlayer.current() else null
+        val streamed = t?.let(::streamedTrackId).orEmpty()
+        val trackId = if (local) streamed else trackIdOf(_nowPlaying.value.uri)
+        val elsewhere = _activeDevice.value != null || routing || com.music.spotui.data.DataSaver.active || com.music.spotui.cast.CastPlayback.active
+        if (id == com.music.spotui.extensions.SPOTIFY_SOURCE) {
+            ext.setSessionSource(id)
+            done(when {
+                !local -> SourceSwitch.PLAYING
+                t == null || streamed.isBlank() || elsewhere -> SourceSwitch.NEXT_SONG
+                playLocalOnSpotify(t, LocalPlayer.position(), "picked in the player") -> SourceSwitch.PLAYING
+                else -> SourceSwitch.NEXT_SONG
+            })
+            return
+        }
+        if (local && streamed.isNotBlank() && com.music.spotui.extensions.ExtensionAudio.providerOf(streamed) == id) { ext.setSessionSource(id); done(SourceSwitch.PLAYING); return }
+        val song = when {
+            trackId.isBlank() || elsewhere -> null
+            t != null -> localSong(t)
+            else -> _queue.value.current?.takeIf { it.spotifyTrackId == trackId }
+        }
+        if (song == null) { ext.setSessionSource(id); done(SourceSwitch.NEXT_SONG); return }
+        app.myspoti.host.android.Logbook.log("audio: ${song.title} asked to $id, picked in the player")
+        scope.launch {
+            val stream = runCatching {
+                ext.audioFrom(id, ext.trackInfo(trackId, song.title, song.singer, song.album, song.durationMs.toLong(), song.coverUri))
+            }.getOrNull()
+            main.post {
+                if (stream == null) { done(SourceSwitch.MISSING); return@post }
+                ext.setSessionSource(id)
+                // Another song meanwhile: it plays as it was asked; the songs after it follow the new order.
+                val nowLocal = LocalPlayer.active.value
+                val nowId = if (nowLocal) LocalPlayer.current()?.let(::streamedTrackId).orEmpty() else trackIdOf(_nowPlaying.value.uri)
+                if (nowId != trackId || routing) { done(SourceSwitch.NEXT_SONG); return@post }
+                com.music.spotui.extensions.ExtensionAudio.use(trackId, stream)
+                if (nowLocal) { done(if (LocalPlayer.reopen()) SourceSwitch.PLAYING else SourceSwitch.NEXT_SONG); return@post }
+                // Spotify played it: the extension plays it from there, the engine's queue after it, as a resume does.
+                val np = _nowPlaying.value
+                val q = _queue.value
+                val songs = (listOfNotNull(q.current) + (q.queued + q.nextUp).map { it.song }).takeIf { l -> l.any { it.spotifyTrackId == trackId } }
+                playSong(np.uri, contextUri = np.contextUri.ifBlank { null }, positionMs = getCurrentPosition(), songs = songs)
+                done(SourceSwitch.PLAYING)
+            }
+        }
     }
 
     /**
@@ -1218,7 +1287,8 @@ object SongPlayer {
         spotifyPlayed.clear()
         if (!any) return
         val local = LocalPlayer.active.value
-        com.music.spotui.extensions.ExtensionAudio.forgetAllBut(if (local) LocalPlayer.current()?.let(LocalPlayer::spotifyIdOf) else null)
+        // The song playing, or the one being asked (a source picked for it in the player), keeps its answer.
+        com.music.spotui.extensions.ExtensionAudio.forgetAllBut(if (local) LocalPlayer.current()?.let(LocalPlayer::spotifyIdOf) else routingState.value)
         if (local) { LocalPlayer.sourcesChanged(); return }
         if (added.isEmpty() || _activeDevice.value != null || routing || com.music.spotui.data.DataSaver.active) return
         val id = trackIdOf(_nowPlaying.value.uri).ifBlank { return }
