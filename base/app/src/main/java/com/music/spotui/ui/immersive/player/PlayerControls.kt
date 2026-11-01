@@ -478,6 +478,7 @@ internal fun PlayerActionRow(
     onOpenDevices: () -> Unit,
 ) {
     val modes = com.music.spotui.data.preferences.PlayerModesPref.on
+    val capsule = com.music.spotui.data.preferences.PlayerCapsulePref.on
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val widestRow = BOTTOM_ACTION_SIZE * 2 + pillWidth(if (modes) 3 else 2)
         val edgeInset = ((maxWidth - widestRow) / 4).coerceAtLeast(0.dp)
@@ -509,8 +510,8 @@ internal fun PlayerActionRow(
                 )
             }
             // Laid out across the whole row and placed by hand: centred at 0, flush with the
-            // lyrics glyph's left edge at 1.
-            Box(
+            // lyrics glyph's left edge at 1. Not there at all with "Capsule in the player" off.
+            if (capsule) Box(
                 Modifier.layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints.copy(minWidth = 0))
                     layout(constraints.maxWidth, placeable.height) {

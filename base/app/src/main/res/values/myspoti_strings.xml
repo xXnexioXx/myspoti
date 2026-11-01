@@ -574,6 +574,12 @@
     <string name="settings_hide_dj_detail">Removes Spotify\'s DJ from Home</string>
     <string name="settings_player_modes_title">Shuffle and repeat in the player</string>
     <string name="settings_player_modes_detail">Off, the player\'s capsule holds only the devices button, as in 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Lyrics preview in the player</string>
+    <string name="settings_player_lyrics_card_detail">The lyrics card under the player. Off, a flick up on the cover still opens the lyrics.</string>
+    <string name="settings_player_source_title">Source and quality in the player</string>
+    <string name="settings_player_source_detail">The line that says what plays and how. Off, Sound quality and Stats for nerds are in the player\'s menu.</string>
+    <string name="settings_player_capsule_title">Capsule in the player</string>
+    <string name="settings_player_capsule_detail">The buttons at the bottom of the player. Off, Listen on is in the player\'s menu.</string>
     <string name="downloads_need_source">Downloads need a source extension. Install one in Settings, Extensions.</string>
     <string name="downloads_source_row_title">Download source</string>
     <string name="downloads_source_row_on">An extension gives the files. Tap to manage extensions.</string>

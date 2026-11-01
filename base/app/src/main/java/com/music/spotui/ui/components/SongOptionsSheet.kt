@@ -112,8 +112,13 @@ fun SongOptionsSheet(
     var showCredits by remember { mutableStateOf(false) }
     var showSpeed by remember { mutableStateOf(false) }
     var showNerd by remember { mutableStateOf(false) }
+    var showQuality by remember { mutableStateOf(false) }
     if (showNerd) {
         StatsForNerdsSheet(onDismiss = { showNerd = false; onDismiss() })
+        return
+    }
+    if (showQuality) {
+        QualitySheet(onDismiss = { showQuality = false; onDismiss() })
         return
     }
     if (showCredits) {
@@ -341,6 +346,10 @@ fun SongOptionsSheet(
                     stringResource(R.string.context_menu_sleep_timer),
                     tint = if (active) MenuGreen else MenuIconColor,
                 ) { showSleep = true }
+                // The source line of the player is turned off: its sheet is here instead.
+                if (!com.music.spotui.data.preferences.PlayerSourceLinePref.on) {
+                    MenuRow(Icons.Outlined.GraphicEq, stringResource(R.string.quality_sheet_title)) { showQuality = true }
+                }
                 MenuRow(Icons.Outlined.Analytics, stringResource(R.string.nerd_title)) { showNerd = true }
             }
             // Entries from extensions (menu.items), after the app's own; each names its extension.

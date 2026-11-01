@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DeleteOutline
+import androidx.compose.material.icons.rounded.Devices
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material.icons.rounded.Translate
@@ -91,6 +92,10 @@ fun ImmersiveSongOptionsSheet(
     var showMeaning by remember { mutableStateOf(false) }
     var showSources by remember { mutableStateOf(false) }
     var showNerd by remember { mutableStateOf(false) }
+    var showQuality by remember { mutableStateOf(false) }
+    var showDevices by remember { mutableStateOf(false) }
+    if (showQuality) { com.music.spotui.ui.components.QualitySheet(onDismiss = { showQuality = false; onDismiss() }); return }
+    if (showDevices) { com.music.spotui.ui.components.DevicesSheet(onDismiss = { showDevices = false; onDismiss() }); return }
     if (showNerd) { com.music.spotui.ui.components.StatsForNerdsSheet(onDismiss = { showNerd = false; onDismiss() }); return }
     if (showSources) { com.music.spotui.ui.components.LyricsSourceSheet(onDismiss = { showSources = false; onDismiss() }); return }
     if (showCredits) { CreditsSheet(song = song, onDismiss = { showCredits = false; onDismiss() }); return }
@@ -321,6 +326,13 @@ fun ImmersiveSongOptionsSheet(
                 stringResource(R.string.context_menu_sleep_timer),
                 tint = if (SongPlayer.sleepEndsAt.value != null) LocalImmersiveSheetTint.current.accent else null,
             ) { showSleep = true }
+            // The player's source line and capsule are turned off: their sheets are here instead.
+            if (!com.music.spotui.data.preferences.PlayerSourceLinePref.on) {
+                ImmersiveSheetRow(Icons.Rounded.GraphicEq, stringResource(R.string.quality_sheet_title)) { showQuality = true }
+            }
+            if (!com.music.spotui.data.preferences.PlayerCapsulePref.on) {
+                ImmersiveSheetRow(Icons.Rounded.Devices, stringResource(R.string.listen_on)) { showDevices = true }
+            }
             ImmersiveSheetRow(Icons.Rounded.Analytics, stringResource(R.string.nerd_title)) { showNerd = true }
         }
         // Entries from extensions (menu.items), after the app's own; each names its extension.

@@ -244,6 +244,53 @@ object LiquidGlassPref {
 }
 
 /**
+ * "Lyrics preview in the player" (Settings > Display, Classic look): the lyrics card under the
+ * player. On by default; off, the lyrics still open with a flick up on the cover.
+ */
+object PlayerLyricsCardPref {
+    private const val KEY = "player_lyrics_card"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, true))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
+/**
+ * "Source and quality in the player" (Settings > Display, both looks): the line that says what
+ * plays and how (under the title in the Immersive look, under the device in the Classic one). On
+ * by default; off, the player's menu has the Sound quality row (and Stats for nerds) instead.
+ */
+object PlayerSourceLinePref {
+    private const val KEY = "player_source_line"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, true))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
+/**
+ * "Capsule in the player" (Settings > Display, Immersive look): the capsule at the bottom of the
+ * player (devices, with shuffle and repeat when [PlayerModesPref] is on). On by default; off, the
+ * player's menu has a Listen on row for the devices.
+ */
+object PlayerCapsulePref {
+    private const val KEY = "immersive_player_capsule"
+    var on by androidx.compose.runtime.mutableStateOf(prefs(com.music.spotui.di.Graph.app).getBoolean(KEY, true))
+        private set
+
+    fun set(c: Context, value: Boolean) {
+        on = value
+        prefs(c).edit().putBoolean(KEY, value).apply()
+    }
+}
+
+/**
  * "Shuffle and repeat in the player" (Settings > Display, Immersive look): on, the player's
  * bottom capsule holds shuffle, repeat and devices (2.2); off, only devices, as in 2.1.0 (the
  * queue panel keeps shuffle and repeat). Off by default: the owner's call, and asked on Discord.
