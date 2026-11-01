@@ -562,6 +562,12 @@
     <string name="settings_hide_dj_detail">从首页移除 Spotify 的 DJ</string>
     <string name="settings_player_modes_title">播放器中的随机和重复</string>
     <string name="settings_player_modes_detail">关闭后，播放器的胶囊只保留设备按钮，与 2.1.0 相同</string>
+    <string name="settings_player_lyrics_card_title">播放器中的歌词预览</string>
+    <string name="settings_player_lyrics_card_detail">播放器下方的歌词卡片。关闭后，在封面上向上滑动仍可打开歌词。</string>
+    <string name="settings_player_source_title">播放器中的来源和音质</string>
+    <string name="settings_player_source_detail">说明正在播放什么以及如何播放的那一行。关闭后，“音质”和 Stats for nerds 在播放器菜单中。</string>
+    <string name="settings_player_capsule_title">播放器中的胶囊按钮</string>
+    <string name="settings_player_capsule_detail">播放器底部的按钮。关闭后，“在…上收听”在播放器菜单中。</string>
     <string name="downloads_need_source">下载需要一个来源扩展。请在“设置”&gt;“扩展”中安装一个。</string>
     <string name="downloads_source_row_title">下载来源</string>
     <string name="downloads_source_row_on">由扩展提供文件。点按以管理扩展。</string>

@@ -554,6 +554,12 @@
     <string name="settings_hide_dj_detail">Retire le DJ de Spotify de l\'accueil</string>
     <string name="settings_player_modes_title">Aléatoire et répétition dans le lecteur</string>
     <string name="settings_player_modes_detail">Désactivé, la capsule du lecteur ne garde que le bouton des appareils, comme en 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Aperçu des paroles dans le lecteur</string>
+    <string name="settings_player_lyrics_card_detail">La carte de paroles sous le lecteur. Désactivé, un glissement vers le haut sur la pochette ouvre toujours les paroles.</string>
+    <string name="settings_player_source_title">Source et qualité dans le lecteur</string>
+    <string name="settings_player_source_detail">La ligne qui dit ce qui joue et comment. Désactivée, Qualité du son et Stats for nerds sont dans le menu du lecteur.</string>
+    <string name="settings_player_capsule_title">Capsule dans le lecteur</string>
+    <string name="settings_player_capsule_detail">Les boutons en bas du lecteur. Désactivée, Écouter sur est dans le menu du lecteur.</string>
     <string name="downloads_need_source">Les téléchargements ont besoin d\'une extension source. Installez-en une dans Réglages, Extensions.</string>
     <string name="downloads_source_row_title">Source des téléchargements</string>
     <string name="downloads_source_row_on">Une extension fournit les fichiers. Touchez pour gérer les extensions.</string>

@@ -571,6 +571,12 @@
     <string name="settings_hide_dj_detail">Убирает DJ Spotify с главной</string>
     <string name="settings_player_modes_title">Перемешивание и повтор в плеере</string>
     <string name="settings_player_modes_detail">Выкл. — в капсуле плеера только кнопка устройств, как в 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Превью текста в плеере</string>
+    <string name="settings_player_lyrics_card_detail">Карточка с текстом под плеером. Если выключено, свайп вверх по обложке всё равно открывает текст.</string>
+    <string name="settings_player_source_title">Источник и качество в плеере</string>
+    <string name="settings_player_source_detail">Строка о том, что и как играет. Если выключено, «Качество звука» и Stats for nerds — в меню плеера.</string>
+    <string name="settings_player_capsule_title">Капсула в плеере</string>
+    <string name="settings_player_capsule_detail">Кнопки внизу плеера. Если выключено, «Слушать на» — в меню плеера.</string>
     <string name="downloads_need_source">Для загрузок нужно расширение-источник. Установите его в разделе «Настройки», «Расширения».</string>
     <string name="downloads_source_row_title">Источник загрузок</string>
     <string name="downloads_source_row_on">Файлы предоставляет расширение. Нажмите, чтобы управлять расширениями.</string>

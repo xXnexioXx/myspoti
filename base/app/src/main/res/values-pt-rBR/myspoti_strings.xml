@@ -560,6 +560,12 @@
     <string name="duplicate_dont_add">Não adicionar</string>
     <string name="settings_music_video_title">Videoclipes</string>
     <string name="settings_music_video_detail">O botão de vídeo no player e os clipes que começam sozinhos. Desativado: apenas áudio e Canvas.</string>
+    <string name="settings_player_lyrics_card_title">Prévia da letra no player</string>
+    <string name="settings_player_lyrics_card_detail">O card da letra embaixo do player. Desativado, deslizar para cima na capa continua abrindo a letra.</string>
+    <string name="settings_player_source_title">Fonte e qualidade no player</string>
+    <string name="settings_player_source_detail">A linha que diz o que está tocando e como. Desativada, Qualidade do som e Stats for nerds ficam no menu do player.</string>
+    <string name="settings_player_capsule_title">Cápsula no player</string>
+    <string name="settings_player_capsule_detail">Os botões na parte de baixo do player. Desativada, Ouvir em fica no menu do player.</string>
     <string name="downloads_need_source">Os downloads precisam de uma extensão de fonte. Instale uma em Configurações, Extensões.</string>
     <string name="downloads_source_row_title">Fonte de downloads</string>
     <string name="downloads_source_row_on">Uma extensão fornece os arquivos. Toque para gerenciar as extensões.</string>

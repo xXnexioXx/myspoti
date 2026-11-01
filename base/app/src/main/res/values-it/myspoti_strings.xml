@@ -549,6 +549,12 @@
     <string name="settings_hide_dj_detail">Toglie il DJ di Spotify dalla Home</string>
     <string name="settings_player_modes_title">Casuale e ripeti nel lettore</string>
     <string name="settings_player_modes_detail">Disattivato, la capsula del lettore ha solo il pulsante dei dispositivi, come nella 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Anteprima del testo nel lettore</string>
+    <string name="settings_player_lyrics_card_detail">La scheda del testo sotto il lettore. Disattivata, uno scorrimento verso l\'alto sulla copertina apre comunque il testo.</string>
+    <string name="settings_player_source_title">Fonte e qualità nel lettore</string>
+    <string name="settings_player_source_detail">La riga che dice cosa suona e come. Disattivata, Qualità audio e Stats for nerds sono nel menu del lettore.</string>
+    <string name="settings_player_capsule_title">Capsula nel lettore</string>
+    <string name="settings_player_capsule_detail">I pulsanti in fondo al lettore. Disattivata, Ascolta su è nel menu del lettore.</string>
     <string name="downloads_need_source">I download richiedono un\'estensione sorgente. Installane una in Impostazioni, Estensioni.</string>
     <string name="downloads_source_row_title">Sorgente dei download</string>
     <string name="downloads_source_row_on">Un\'estensione fornisce i file. Tocca per gestire le estensioni.</string>

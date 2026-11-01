@@ -549,6 +549,12 @@
     <string name="settings_hide_dj_detail">Entfernt den Spotify-DJ von der Startseite</string>
     <string name="settings_player_modes_title">Zufall und Wiederholen im Player</string>
     <string name="settings_player_modes_detail">Aus, die Kapsel des Players enthält nur die Geräte-Taste, wie in 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Songtext-Vorschau im Player</string>
+    <string name="settings_player_lyrics_card_detail">Die Songtext-Karte unter dem Player. Aus: Ein Wischen nach oben auf dem Cover öffnet den Songtext weiterhin.</string>
+    <string name="settings_player_source_title">Quelle und Qualität im Player</string>
+    <string name="settings_player_source_detail">Die Zeile, die sagt, was wie läuft. Aus: Klangqualität und Stats for nerds stehen im Menü des Players.</string>
+    <string name="settings_player_capsule_title">Kapsel im Player</string>
+    <string name="settings_player_capsule_detail">Die Tasten unten im Player. Aus: „Hören auf“ steht im Menü des Players.</string>
     <string name="downloads_need_source">Downloads brauchen eine Quell-Erweiterung. Installiere eine unter Einstellungen, Erweiterungen.</string>
     <string name="downloads_source_row_title">Download-Quelle</string>
     <string name="downloads_source_row_on">Eine Erweiterung liefert die Dateien. Tippen, um Erweiterungen zu verwalten.</string>

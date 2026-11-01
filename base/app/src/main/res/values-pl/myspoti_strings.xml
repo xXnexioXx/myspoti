@@ -571,6 +571,12 @@
     <string name="settings_hide_dj_detail">Usuwa DJ-a Spotify ze strony głównej</string>
     <string name="settings_player_modes_title">Losowo i powtarzanie w odtwarzaczu</string>
     <string name="settings_player_modes_detail">Wyłączone, kapsuła odtwarzacza ma tylko przycisk urządzeń, jak w 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Podgląd tekstu w odtwarzaczu</string>
+    <string name="settings_player_lyrics_card_detail">Karta z tekstem pod odtwarzaczem. Wyłączona: przesunięcie w górę na okładce nadal otwiera tekst.</string>
+    <string name="settings_player_source_title">Źródło i jakość w odtwarzaczu</string>
+    <string name="settings_player_source_detail">Wiersz mówiący, co gra i jak. Wyłączony: Jakość dźwięku i Stats for nerds są w menu odtwarzacza.</string>
+    <string name="settings_player_capsule_title">Kapsuła w odtwarzaczu</string>
+    <string name="settings_player_capsule_detail">Przyciski na dole odtwarzacza. Wyłączona: Słuchaj na jest w menu odtwarzacza.</string>
     <string name="downloads_need_source">Pobieranie wymaga rozszerzenia źródłowego. Zainstaluj je w Ustawieniach, Rozszerzenia.</string>
     <string name="downloads_source_row_title">Źródło pobierania</string>
     <string name="downloads_source_row_on">Pliki dostarcza rozszerzenie. Dotknij, aby zarządzać rozszerzeniami.</string>

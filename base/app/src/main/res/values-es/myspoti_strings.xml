@@ -549,6 +549,12 @@
     <string name="settings_hide_dj_detail">Quita el DJ de Spotify de Inicio</string>
     <string name="settings_player_modes_title">Aleatorio y repetir en el reproductor</string>
     <string name="settings_player_modes_detail">Desactivado, la cápsula del reproductor solo tiene el botón de dispositivos, como en 2.1.0</string>
+    <string name="settings_player_lyrics_card_title">Vista previa de la letra en el reproductor</string>
+    <string name="settings_player_lyrics_card_detail">La tarjeta de letra bajo el reproductor. Desactivada, deslizar hacia arriba en la portada sigue abriendo la letra.</string>
+    <string name="settings_player_source_title">Fuente y calidad en el reproductor</string>
+    <string name="settings_player_source_detail">La línea que dice qué suena y cómo. Desactivada, Calidad de sonido y Stats for nerds están en el menú del reproductor.</string>
+    <string name="settings_player_capsule_title">Cápsula en el reproductor</string>
+    <string name="settings_player_capsule_detail">Los botones de la parte inferior del reproductor. Desactivada, Escuchar en está en el menú del reproductor.</string>
     <string name="downloads_need_source">Las descargas necesitan una extensión de origen. Instala una en Ajustes, Extensiones.</string>
     <string name="downloads_source_row_title">Origen de descargas</string>
     <string name="downloads_source_row_on">Una extensión proporciona los archivos. Toca para gestionar las extensiones.</string>
