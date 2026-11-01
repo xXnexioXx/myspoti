@@ -2,7 +2,7 @@
 
 Every change, release by release. The short version is in [CHANGELOG.md](../CHANGELOG.md), which the app and the GitHub releases show.
 
-## Unreleased
+## 2.3.0
 
 - **Repeat**: four modes again (off, all, the song for good, the song once), on Spotify, extension, downloaded and device songs; the mode chosen on an extension song is kept.
 - **Myspoti shuffle** (opt-in): the whole list drawn once (Fisher-Yates, every page loaded first), the tapped song first, the order sent to the page with Spotify's shuffle off; songs tapped or queued go next; a free account that imposes Spotify's shuffle keeps it, with a notice.

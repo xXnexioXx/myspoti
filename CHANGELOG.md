@@ -2,7 +2,7 @@
 
 Each release on GitHub shows its section below. The app shows it too when it offers the update. Every detail: [docs/CHANGELOG-full.md](docs/CHANGELOG-full.md).
 
-## Unreleased
+## 2.3.0
 
 - 🔁 **Repeat the song for good** is back, with Repeat once as a fourth mode.
 - 🔀 **Myspoti shuffle** (Settings, Playback, off by default): every song of the list once, in a really random order, before any comes back.
