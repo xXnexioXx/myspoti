@@ -105,6 +105,7 @@ import com.music.spotui.di.SongPlayer
 import com.music.spotui.ui.components.DownloadAsk
 import com.music.spotui.ui.components.FastScrollbar
 import com.music.spotui.ui.components.matchesFind
+import com.music.spotui.ui.components.withRowKeys
 import com.music.spotui.ui.immersive.Immersive
 import com.music.spotui.ui.immersive.components.ImmersiveButton
 import com.music.spotui.ui.immersive.components.ImmersiveCircleButton
@@ -372,23 +373,16 @@ private fun ImmersiveContextContent(navController: NavController, vm: ContextVie
             if (isLiked) p.tracks.filter { SongPlayer.library["spotify:track:${it.spotifyTrackId}"] != false } else p.tracks
         }
     }
-    val rows by remember(p, find, sort) {
+    // The rows and their keys in one derived state: the list re-reads its rows outside composition
+    // (a search letter, the "×" of the search), and keys remembered apart from them were one list
+    // behind (a list that grows on the "×" ran out of keys: a crash).
+    val shown by remember(p, find, sort) {
         derivedStateOf {
             val found = if (findable) all.filter { matchesFind(find, it.title, it.singer, it.album) } else all
-            if (findable) sort.apply(found) else found
+            withRowKeys(if (findable) sort.apply(found) else found) { it.id.toString() }
         }
     }
-    // Unique and stable for a given list: a playlist can hold the same song twice (the id alone
-    // is not unique) and the index changes at every sort (which would lose every item).
-    val keys = remember(rows) {
-        val seen = HashMap<String, Int>()
-        rows.map { s ->
-            val id = s.id.toString()
-            val n = (seen[id] ?: 0) + 1
-            seen[id] = n
-            if (n == 1) id else "$id#$n"
-        }
-    }
+    val rows = shown.first
 
     // What the Play pill does: pause / resume this list, else start it (smart shuffle if it is on).
     fun onPlay() = when {
@@ -497,7 +491,7 @@ private fun ImmersiveContextContent(navController: NavController, vm: ContextVie
                 ImmersiveMessageState(stringResource(R.string.assisted_curation_search_empty_view_no_result_title, find.trim()))
             }
             val numbered = p.type == "album"
-            itemsIndexed(rows, key = { i, _ -> keys[i] }) { index, song ->
+            itemsIndexed(shown.first, key = { i, _ -> shown.second[i] }) { index, song ->
                 Column {
                     ImmersiveSwipeToQueue(song) {
                         ImmersiveSongRow(

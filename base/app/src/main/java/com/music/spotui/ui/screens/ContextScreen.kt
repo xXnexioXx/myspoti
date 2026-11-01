@@ -680,14 +680,7 @@ private fun ContextContent(navController: NavController, vm: ContextViewModel, p
     val shown by remember(p, find, sort) {
         derivedStateOf {
             val found = if (findable) all.filter { com.music.spotui.ui.components.matchesFind(find, it.title, it.singer, it.album) } else all
-            val list = if (findable) sort.apply(found) else found
-            val seen = HashMap<String, Int>()
-            list to list.map { s ->
-                val id = s.id.toString()
-                val n = (seen[id] ?: 0) + 1
-                seen[id] = n
-                if (n == 1) id else "$id#$n"
-            }
+            com.music.spotui.ui.components.withRowKeys(if (findable) sort.apply(found) else found) { it.id.toString() }
         }
     }
     val rows = shown.first
