@@ -54,7 +54,8 @@ Obtainium (add `https://github.com/kota-zo/myspoti`; the stable app and the beta
 **Listening**
 - No ads (see above).
 - Home, search, Browse, New releases, Your Library with folders, artist, album, playlist and profile pages, with Spotify's own content.
-- Pick any song: shuffle, Smart Shuffle, the queue (drag to reorder), repeat, crossfade, sleep timer.
+- Pick any song: shuffle (Spotify's, or Myspoti's own that plays every song once before any repeats), Smart Shuffle, the queue (drag to reorder), repeat (all, the song for good, the song once), crossfade, sleep timer.
+- For extension, downloaded and device songs: a 10-band **equalizer** with presets, playback speed and skip silence; **Stats for nerds** shows the codec, sample rate, bit depth, bitrate and output of what plays.
 - Podcasts and audiobooks, with their own player (speed, ±15 s, mark as played).
 - Spotify Connect, Jam, Bluetooth with your headphones' name, lock screen, notification, widget and Android Auto.
 
@@ -78,11 +79,12 @@ Obtainium (add `https://github.com/kota-zo/myspoti`; the stable app and the beta
 - Scripts written by other people, in a sandbox: lyrics from other sources, where a song's audio or download comes from, Home sections, menu entries, tools that use your Spotify account.
 - Installing shows what an extension will do (each action with its author's reason, the critical ones marked) and asks for one tick: you install it on your own responsibility. An extension gets every action it lists, or is not installed; an update that asks for more waits for your OK and shows only what changes.
 - With an audio-source extension on, every song you play (from a list, search, an artist, Recents, a link or shuffle) is asked there first, and plays on Spotify when it has nothing.
+- An extension can bring its own settings to Settings, Playback or Downloads (its quality, per network if it likes): the first source of the order shows its own, and an extension above Spotify replaces Spotify's quality settings there.
 - For authors: [the extensions API](docs/extensions/API.md), and a desktop runner to test without a phone.
 
 **And also**
 - Your recap: your top songs, artists and albums, kept on your phone.
-- 10 languages: English, French, German, Spanish, Italian, Portuguese, Greek, Russian, Polish and Chinese (Simplified).
+- 11 languages: English, French, German, Spanish, Italian, Portuguese, Brazilian Portuguese, Greek, Russian, Polish and Chinese (Simplified).
 - Data saver, battery saver, AMOLED black, accent colour.
 
 ## New since 1.1

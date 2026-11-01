@@ -2,6 +2,19 @@
 
 Each release on GitHub shows its section below. The app shows it too when it offers the update. Every detail: [docs/CHANGELOG-full.md](docs/CHANGELOG-full.md).
 
+## Unreleased
+
+- 🔁 **Repeat the song for good** is back, with Repeat once as a fourth mode.
+- 🔀 **Myspoti shuffle** (Settings, Playback, off by default): every song of the list once, in a really random order, before any comes back.
+- 🎚️ **Equalizer**, playback speed and skip silence for extension, downloaded and device songs, and **Stats for nerds** in the player's menu.
+- 🧩 **Extensions bring their own settings** to Playback and Downloads: the first source of the order shows its own (its quality, per network), and an extension above Spotify replaces Spotify's quality settings there.
+- 📚 **Library**: a By me filter, a Podcasts filter with every show you follow, and New episodes of them.
+- 🎤 **Lyric translation** in the Immersive player; the liked star and the download mark on Immersive song rows.
+- ⬇️ **Downloads and Spotify**: a downloaded song also plays muted on Spotify when you are online, so it counts and your devices see it (Settings, Playback); likes made offline are kept per account and sent as soon as Spotify answers; deleting downloads while they play no longer stops playback.
+- 📺 **Chromecast** plays Spotify songs too, through Spotify's own receiver.
+- 🛠️ **Fixes**: no run of skips or the wrong song after an ad, a pause during an ad stays a pause, a tap on the title opens the album for every song, playback on a locked Samsung explained in Settings, and the issues found by a code audit (downloads never removed when the app reads a backup index, safer file writes, stale page answers ignored, masked secrets in the diagnostic, a hardened Cast server and updater).
+- 🌍 **Brazilian Portuguese**, and translations of everything new.
+
 ## 2.2.0
 
 - 📺 **Chromecast** for extension, downloaded and device songs, without Google Play Services: Cast devices show up in the device picker and the song streams from your phone over your network.
