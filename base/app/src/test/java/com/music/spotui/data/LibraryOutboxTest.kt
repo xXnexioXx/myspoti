@@ -148,6 +148,29 @@ class LibraryOutboxTest {
         assertEquals(2, rig.sent.size)
     }
 
+    @Test fun aSessionLostWithoutSignOutSendsNothingOfTheAccountBeforeToTheNextOne() = test { rig ->
+        // Offline: A likes, nothing goes. A's session is lost (no sign-out): its id is no longer known.
+        rig.fail = { java.io.IOException("offline") }
+        rig.sync.put("spotify:track:a-like", true)
+        settle()
+        rig.sync.signedOut()
+        rig.account = null
+        rig.fail = { null }
+        // B's session is ready before its id is read: nothing of A's goes to it.
+        rig.sync.request()
+        settle()
+        assertEquals(emptyList<Any>(), rig.sent)
+        // B's id read: still nothing of A's, B's own like goes to B.
+        rig.account = "b"
+        rig.sync.request()
+        settle()
+        assertEquals(emptyList<Any>(), rig.sent)
+        rig.sync.put("spotify:track:b-like", true)
+        settle()
+        assertEquals(listOf(Triple("b", "spotify:track:b-like", true)), rig.sent)
+        assertEquals(1, LibraryOutbox.Book(rig.saved.last()).keptForOthers)
+    }
+
     @Test fun roundsAskedTogetherSendEachChangeOnce() = test { rig ->
         rig.hold = CompletableDeferred()
         rig.sync.put("spotify:track:a", true)

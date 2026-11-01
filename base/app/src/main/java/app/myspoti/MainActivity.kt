@@ -354,6 +354,9 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
+        // Whose session this is, read now when not known (a session lost before may have been
+        // another account's): the likes kept for later and the downloads go by it.
+        com.music.spotui.data.api.ProfileCache.ensure(applicationContext)
         // The player reports ready on every page load: only a change is a session being established.
         if (!signedIn || showingLogin || connecting) {
             Logbook.log("session established: player shown")
@@ -481,7 +484,11 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             combine(api.ready, MyspotiRuntime.loginRequired) { ready, login -> ready to login }.collect { (ready, login) ->
                 when {
-                    login && !showingLogin && signedIn -> showLogin()
+                    login && !showingLogin && signedIn -> {
+                        // The session expired: whoever signs in on that page may be another account.
+                        com.music.spotui.di.SessionActions.sessionLost()
+                        showLogin()
+                    }
                     ready && !login -> {
                         val user = runCatching { MyspotiRuntime.isSignedIn() }.getOrDefault(false)
                         if (user) {
@@ -495,6 +502,7 @@ class MainActivity : AppCompatActivity() {
                             prefs.edit().putBoolean("LoggedIn", false).apply()
                             signedIn = false
                             connecting = false
+                            com.music.spotui.di.SessionActions.sessionLost()
                             showLogin()
                         }
                     }
