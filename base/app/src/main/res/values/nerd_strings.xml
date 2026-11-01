@@ -11,6 +11,7 @@
     <string name="nerd_source_file">File on this phone</string>
     <string name="nerd_delivery">Delivery</string>
     <string name="nerd_announced">Announced by the source</string>
+    <string name="nerd_ext_quality">Extension\'s quality setting</string>
     <string name="nerd_codec">Codec</string>
     <string name="nerd_container">Container</string>
     <string name="nerd_sample_rate">Sample rate</string>

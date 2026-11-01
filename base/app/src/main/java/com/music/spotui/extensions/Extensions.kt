@@ -408,13 +408,44 @@ object Extensions {
 
     fun settingValues(id: String): Map<String, String> = settingsOf(id).all()
 
-    /** [json]: the value as JSON text, null to go back to the manifest's default. */
+    /**
+     * [json]: the value as JSON text, null to go back to the manifest's default. [key] may be a
+     * per-network setting's mobile data value ([app.myspoti.extensions.Setting.cellKey]): the
+     * extension hears of its own key.
+     */
     fun setSetting(id: String, key: String, json: String?) {
         val s = settingsOf(id)
         if (json == null) s.remove(key) else s.set(key, json)
+        val base = app.myspoti.extensions.Setting.baseKey(key)
         // Typing changes a text field at each key: the extension hears of it once the user pauses.
-        settingJobs.remove("$id\u0000$key")?.cancel()
-        settingJobs["$id\u0000$key"] = scope.launch { kotlinx.coroutines.delay(SETTING_PAUSE_MS); sendSetting(id, key, pressed = false) }
+        settingJobs.remove("$id\u0000$base")?.cancel()
+        settingJobs["$id\u0000$base"] = scope.launch { kotlinx.coroutines.delay(SETTING_PAUSE_MS); sendSetting(id, base, pressed = false) }
+    }
+
+    /**
+     * The phone went from Wi-Fi to mobile data or back ([com.music.spotui.data.DataSaver.metered]):
+     * each extension hears `{ key, network: true }` for its per-network settings whose value it
+     * reads changed with it.
+     */
+    fun networkChanged() {
+        _registry.value.extensions.filter { it.enabled }.forEach { e ->
+            val keys = manifest(e.id)?.networkKeys(settingsOf(e.id)::get).orEmpty()
+            if (keys.isNotEmpty()) scope.launch { keys.forEach { sendSetting(e.id, it, pressed = false, network = true) } }
+        }
+    }
+
+    /**
+     * The extension settings shown in [section] of Settings, and whether the app's own quality
+     * gives way to them ([SectionSettings]); null: the section is as it always was.
+     */
+    fun sectionPlacement(section: app.myspoti.extensions.SettingSection): SectionPlacement? = _registry.value.let { r ->
+        SectionSettings.place(section, line(r, section.action), { r.find(it)?.enabled == true }, ::manifest)
+    }
+
+    /** What [id]'s own quality setting for [section] is now ("Quality: FLAC"), or null without one. */
+    fun qualityLine(id: String?, section: app.myspoti.extensions.SettingSection): String? {
+        val m = id?.let(::manifest) ?: return null
+        return runCatching { SectionSettings.qualityLine(m, section, settingsOf(id)::get, com.music.spotui.data.DataSaver.metered) }.getOrNull()
     }
 
     /** A button setting was pressed: the extension does what it says (pair again…). */
@@ -425,11 +456,12 @@ object Extensions {
 
     private val settingJobs = ConcurrentHashMap<String, kotlinx.coroutines.Job>()
 
-    private suspend fun sendSetting(id: String, key: String, pressed: Boolean) {
+    private suspend fun sendSetting(id: String, key: String, pressed: Boolean, network: Boolean = false) {
         val rt = runtimes[id]?.takeIf { it.listens(ExtensionRuntime.EVENT_SETTING) } ?: return
         val json = kotlinx.serialization.json.buildJsonObject {
             put("key", kotlinx.serialization.json.JsonPrimitive(key))
             if (pressed) put("pressed", kotlinx.serialization.json.JsonPrimitive(true))
+            if (network) put("network", kotlinx.serialization.json.JsonPrimitive(true))
         }.toString()
         runCatching { runInterruptible { rt.emit(ExtensionRuntime.EVENT_SETTING, json, SETTING_MS) } }.onSuccess { recheckAfterEvent(id, rt) }.onFailure { failed(id, it.toString()) }
     }
@@ -773,7 +805,8 @@ object Extensions {
         val (c, a) = found
         log(c.first, "audio for ${track.title} ($ms ms)")
         did(Area.AUDIO, c.first, "Audio of ${track.title} from ${c.second.manifest.name}")
-        attempts.update(attempt) { it.copy(asked = all, chosen = c.first, announced = a.qualityLabel()) }
+        val own = qualityLine(c.first, app.myspoti.extensions.SettingSection.PLAYBACK)
+        attempts.update(attempt) { it.copy(asked = all, chosen = c.first, announced = a.qualityLabel(), sourceQuality = own) }
         return a.copy(providerId = c.first)
     }
 
@@ -1330,6 +1363,8 @@ object Extensions {
         override fun storage(extensionId: String): Storage = storeOf(extensionId)
 
         override fun setting(extensionId: String, key: String): String? = settingsOf(extensionId).get(key)
+
+        override fun metered(): Boolean = com.music.spotui.data.DataSaver.metered
 
         override fun nowPlaying(): String? = currentTrack()?.toJson()
 

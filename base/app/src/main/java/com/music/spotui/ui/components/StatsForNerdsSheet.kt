@@ -103,6 +103,8 @@ internal object NerdStats {
         val stream = id?.let(ExtensionAudio::streamOf)
         row(R.string.nerd_delivery, id?.let(ExtensionAudio::deliveryOf))
         row(R.string.nerd_announced, id?.let(ExtensionAudio::qualityOf))
+        // The extension's own quality setting (manifest role quality) when it played or fetched the song.
+        row(R.string.nerd_ext_quality, id?.let { Extensions.attempts.latest(it)?.sourceQuality } ?: download?.extensionQuality)
         val f = LocalPlayer.audioFormat()
         if (f == null) {
             if (!CastPlayback.active) row(R.string.nerd_codec, c.getString(R.string.nerd_format_unknown))

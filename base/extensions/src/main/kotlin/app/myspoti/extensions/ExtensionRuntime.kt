@@ -338,7 +338,9 @@ class ExtensionRuntime(
         def("storageRemove", 1) { a -> need(Action.STORAGE); host.storage(id).remove(str(a, 0)); null }
         def("setting", 1) { a ->
             val key = str(a, 0)
-            host.setting(id, key) ?: manifest.settings.firstOrNull { it.key == key }?.default?.toString()
+            val s = manifest.settings.firstOrNull { it.key == key }
+            // A per-network setting: the value of the network the phone is on (one value, as any get).
+            if (s == null) host.setting(id, key) else s.value({ host.setting(id, it) }, s.splitsByNetwork && host.metered())
         }
         def("nowPlaying", 0) { need(Action.PLAYBACK_EVENTS); host.nowPlaying() }
         def("control", 2) { a ->
@@ -670,7 +672,10 @@ class ExtensionRuntime(
         const val EVENT_AUTH = "auth"
         /** The network is there after [Host.whenOnline]: the time to send what waited. */
         const val EVENT_ONLINE = "online"
-        /** One of its settings changed (`{ key }`), or a button setting was pressed (`{ key, pressed: true }`). */
+        /**
+         * One of its settings changed (`{ key }`), a button setting was pressed (`{ key, pressed: true }`),
+         * or the network changed the value of a per-network setting (`{ key, network: true }`).
+         */
         const val EVENT_SETTING = "setting"
         /** Each event, and the action an extension needs to receive it. */
         val EVENTS: Map<String, Action> = mapOf(

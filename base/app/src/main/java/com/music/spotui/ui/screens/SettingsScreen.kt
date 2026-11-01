@@ -93,10 +93,17 @@ fun SettingsScreen(navController: NavController) {
             }
         }
         Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).navigationBarsPadding()) {
+            // The first source of each order, when it is an extension announcing settings in that tab.
+            val registry by com.music.spotui.extensions.Extensions.registry.collectAsStateWithLifecycle()
             if (tab == 0) {
             Section(R.string.settings_section_playback)
-            StreamingQualityPicker(title = R.string.quality_streaming_wifi_title)
-            StreamingQualityPicker(cellular = true, title = R.string.quality_streaming_cell_title)
+            // An extension above Spotify: its settings, and Spotify's quality (kept, still used for what Spotify plays) leaves.
+            val ext = remember(registry) { com.music.spotui.extensions.Extensions.sectionPlacement(app.myspoti.extensions.SettingSection.PLAYBACK) }
+            ext?.let { ExtensionSectionSettings(it) }
+            if (ext?.hidesAppQuality != true) {
+                StreamingQualityPicker(title = R.string.quality_streaming_wifi_title)
+                StreamingQualityPicker(cellular = true, title = R.string.quality_streaming_cell_title)
+            }
             var canvasWifiOnly by remember { mutableStateOf(com.music.spotui.data.preferences.isCanvasWifiOnly(ctx)) }
             OptionRow(
                 label = stringResource(R.string.canvas_wifi_only),
@@ -216,7 +223,10 @@ fun SettingsScreen(navController: NavController) {
             }
             if (tab == 1) {
             Section(R.string.settings_section_downloads)
-            DownloadQualityPicker()
+            // Its role quality takes the place of the app's (kept, and still passed to every extension as `quality`).
+            val ext = remember(registry) { com.music.spotui.extensions.Extensions.sectionPlacement(app.myspoti.extensions.SettingSection.DOWNLOADS) }
+            if (ext?.hidesAppQuality != true) DownloadQualityPicker()
+            ext?.let { ExtensionSectionSettings(it) }
             // Where downloads come from: the download-source extensions, in the order they are asked.
             if (com.music.spotui.extensions.Extensions.sources(app.myspoti.extensions.Action.DOWNLOAD_SOURCE).isNotEmpty())
                 SourcesBlock(app.myspoti.extensions.Action.DOWNLOAD_SOURCE, navController)

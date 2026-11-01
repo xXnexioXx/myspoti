@@ -24,6 +24,9 @@ interface Host {
     /** The user's value for one of the extension's settings, as JSON text, or null when unset. */
     fun setting(extensionId: String, key: String): String?
 
+    /** The phone is on mobile data (a metered network), as the app's own streaming quality reads it: a per-network setting then gives its mobile value. */
+    fun metered(): Boolean = false
+
     /** The song playing now, as the hooks receive a track (JSON), or null. */
     fun nowPlaying(): String? = null
 

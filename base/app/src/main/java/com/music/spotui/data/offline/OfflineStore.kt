@@ -39,6 +39,11 @@ data class OfflineTrack(
      * podcast episode, or a download made before this field existed.
      */
     val providerId: String? = null,
+    /**
+     * The download-source extension's own quality setting when the file was fetched
+     * ("Quality: FLAC", manifest `role: quality`), for Stats for nerds; null without one.
+     */
+    val extensionQuality: String? = null,
 ) {
     val isEpisode: Boolean get() = kind == KIND_PODCAST
 
@@ -48,6 +53,7 @@ data class OfflineTrack(
         .put("file", file).put("cover", cover).put("source", source).put("verified", verified)
         .put("bytes", bytes).put("added", addedAt).put("kind", kind)
         .apply { providerId?.let { put("providerId", it) } }
+        .apply { extensionQuality?.let { put("extQuality", it) } }
 
     companion object {
         const val KIND_MUSIC = "MUSIC"
@@ -63,6 +69,7 @@ data class OfflineTrack(
             kind = o.optString("kind").ifBlank { KIND_MUSIC },
             // Absent in an index written before it was kept: unknown.
             providerId = o.optString("providerId").ifBlank { null },
+            extensionQuality = o.optString("extQuality").ifBlank { null },
         )
     }
 }

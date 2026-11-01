@@ -337,6 +337,7 @@ object OfflineDownloader {
                     albumId = meta.albumId, durationMs = meta.durationMs, coverUrl = meta.coverUrl,
                     file = out.name, cover = cover, source = file.provider, verified = file.isrcMatched,
                     bytes = out.length(), addedAt = System.currentTimeMillis(), providerId = file.extensionId,
+                    extensionQuality = com.music.spotui.extensions.Extensions.qualityLine(file.extensionId, app.myspoti.extensions.SettingSection.DOWNLOADS),
                 )
             }
         } finally {
