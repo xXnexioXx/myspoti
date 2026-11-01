@@ -10,6 +10,7 @@
     <string name="nerd_source_file">Arquivo neste celular</string>
     <string name="nerd_delivery">Entrega</string>
     <string name="nerd_announced">Informado pela fonte</string>
+    <string name="nerd_ext_quality">Configuração de qualidade da extensão</string>
     <string name="nerd_codec">Codec</string>
     <string name="nerd_container">Contêiner</string>
     <string name="nerd_sample_rate">Taxa de amostragem</string>

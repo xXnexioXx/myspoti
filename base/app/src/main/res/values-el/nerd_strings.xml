@@ -10,6 +10,7 @@
     <string name="nerd_source_file">Αρχείο σε αυτό το τηλέφωνο</string>
     <string name="nerd_delivery">Παράδοση</string>
     <string name="nerd_announced">Δηλώνεται από την πηγή</string>
+    <string name="nerd_ext_quality">Ρύθμιση ποιότητας της επέκτασης</string>
     <string name="nerd_codec">Κωδικοποιητής</string>
     <string name="nerd_container">Κοντέινερ</string>
     <string name="nerd_sample_rate">Ρυθμός δειγματοληψίας</string>

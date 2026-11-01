@@ -10,6 +10,7 @@
     <string name="nerd_source_file">Archivo en este teléfono</string>
     <string name="nerd_delivery">Entrega</string>
     <string name="nerd_announced">Anunciado por la fuente</string>
+    <string name="nerd_ext_quality">Ajuste de calidad de la extensión</string>
     <string name="nerd_codec">Códec</string>
     <string name="nerd_container">Contenedor</string>
     <string name="nerd_sample_rate">Frecuencia de muestreo</string>

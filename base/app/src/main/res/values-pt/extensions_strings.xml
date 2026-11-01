@@ -218,6 +218,10 @@
     <string name="extension_sign_in_later">Agora não</string>
     <string name="extension_sign_in_needed">%1$s: entre para continuar usando a fonte dela</string>
     <string name="outcome_bug">erro da extensão</string>
+    <string name="ext_section_settings">Definições de %1$s</string>
+    <string name="ext_setting_wifi">%1$s · Wi-Fi</string>
+    <string name="ext_setting_cell">%1$s · Dados móveis</string>
+    <string name="why_source_ext_quality">A sua definição: %1$s (%2$s)</string>
     <string name="outcome_found">encontrada</string>
     <string name="outcome_network">erro de rede ou tempo esgotado</string>
     <string name="outcome_not_found">não encontrada</string>

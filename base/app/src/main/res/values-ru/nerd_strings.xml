@@ -10,6 +10,7 @@
     <string name="nerd_source_file">Файл на этом телефоне</string>
     <string name="nerd_delivery">Доставка</string>
     <string name="nerd_announced">Сообщено источником</string>
+    <string name="nerd_ext_quality">Настройка качества расширения</string>
     <string name="nerd_codec">Кодек</string>
     <string name="nerd_container">Контейнер</string>
     <string name="nerd_sample_rate">Частота дискретизации</string>

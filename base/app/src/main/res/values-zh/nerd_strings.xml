@@ -10,6 +10,7 @@
     <string name="nerd_source_file">此手机上的文件</string>
     <string name="nerd_delivery">传送方式</string>
     <string name="nerd_announced">来源声明</string>
+    <string name="nerd_ext_quality">扩展的音质设置</string>
     <string name="nerd_codec">编解码器</string>
     <string name="nerd_container">容器</string>
     <string name="nerd_sample_rate">采样率</string>
