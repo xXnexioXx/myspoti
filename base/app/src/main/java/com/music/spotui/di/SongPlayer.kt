@@ -2225,16 +2225,24 @@ object SongPlayer {
     fun startLibraryOutbox(context: Context) {
         com.music.spotui.data.LibraryOutbox.init(context, scope,
             sender = { uri, on -> libraryLock.withLock { writeLibrary(uri, on) }; if (uri.startsWith(SPOTIFY_TRACK_PREFIX)) likedChanges.value++ },
-            // The engine is started after the app's graph: wait for it, then for Spotify to answer.
-            ready = { awaitEngine(); api.ready.first { it } },
+            // The engine is started after the app's graph: wait for it, then for Spotify to answer,
+            // then for the session's account (unknown after a session lost: it may be another one).
+            ready = { awaitEngine(); api.ready.first { it }; com.music.spotui.data.api.ProfileCache.awaitId(context, ACCOUNT_WAIT_MS) },
             account = { com.music.spotui.data.api.ProfileCache.id },
             onAvailable = { scope.launch { kotlinx.coroutines.delay(3_000); com.music.spotui.data.LibraryOutbox.request() } },
         )
-        // The Web Player ready again (a reload, a new sign-in): what waits is sent (nothing is asked when nothing waits).
-        scope.launch { awaitEngine(); api.ready.collect { if (it) com.music.spotui.data.LibraryOutbox.request() } }
+        // The Web Player ready again (a reload, a new sign-in): what waits is sent (nothing is asked when nothing waits),
+        // once the session's account is read: after a session lost, what waits for it is told from what is not its own.
+        scope.launch {
+            awaitEngine()
+            api.ready.collect { if (it) { com.music.spotui.data.api.ProfileCache.awaitId(context, ACCOUNT_WAIT_MS); com.music.spotui.data.LibraryOutbox.request() } }
+        }
     }
 
     private suspend fun awaitEngine() { while (!MyspotiRuntime.isStarted) kotlinx.coroutines.delay(1_000) }
+
+    /** The library changes kept for later wait that long for the account's id (see ProfileCache.awaitId). */
+    private const val ACCOUNT_WAIT_MS = 10_000L
 
     // ── Music video: Spotify's own clips are not played by this engine; the YouTube
     // clips (MusicVideoController) are. These keep the player screen's contract. ──
