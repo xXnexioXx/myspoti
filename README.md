@@ -7,7 +7,7 @@
 **Spotify without ads, on a free account.** Your own Spotify account, playlists and Wrapped, in a native Android app that blocks the ads, with offline downloads through extensions you install.
 
 <p align="center">
-  <img src="docs/screenshots/banner.jpg" alt="Myspoti: home, player, artist and album screens" width="100%">
+  <img src="docs/screenshots/banner.jpg" alt="Myspoti in its two looks: the Immersive home and player, the Classic player and an artist page" width="100%">
 </p>
 
 <p align="center">
@@ -108,9 +108,19 @@ Every change is in the [changelog](CHANGELOG.md).
 
 ## Screenshots
 
+Two looks, switched in Settings, Display.
+
+**Immersive**
+
+| Home | Player |
+|:---:|:---:|
+| <img src="docs/screenshots/immersive-home.jpg" width="200" alt="Immersive home"> | <img src="docs/screenshots/immersive-player.jpg" width="200" alt="Immersive player"> |
+
+**Classic**
+
 | Home | Player | Artist | Album |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/home.jpg" width="200" alt="Home"> | <img src="docs/screenshots/player.jpg" width="200" alt="Player"> | <img src="docs/screenshots/artist.jpg" width="200" alt="Artist"> | <img src="docs/screenshots/album.jpg" width="200" alt="Album"> |
+| <img src="docs/screenshots/home.jpg" width="200" alt="Classic home"> | <img src="docs/screenshots/player.jpg" width="200" alt="Classic player"> | <img src="docs/screenshots/artist.jpg" width="200" alt="Artist"> | <img src="docs/screenshots/album.jpg" width="200" alt="Album"> |
 
 ## Questions
 
