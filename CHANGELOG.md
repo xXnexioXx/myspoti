@@ -8,6 +8,7 @@ Each release on GitHub shows its section below. The app shows it too when it off
 - 🔀 **Myspoti shuffle** (Settings, Playback, off by default): every song of the list once, in a really random order, before any comes back.
 - 🎚️ **Equalizer**, playback speed and skip silence for extension, downloaded and device songs, and **Stats for nerds** in the player's menu.
 - 🧩 **Extensions bring their own settings** to Playback and Downloads: the first source of the order shows its own (its quality, per network), and an extension above Spotify replaces Spotify's quality settings there.
+- 🎛️ **Switch the source from the player**: the quality sheet lists Spotify and your audio extensions; the one you pick plays this song at the same spot and the next ones, until Myspoti restarts, with Back to my order.
 - 📚 **Library**: a By me filter, a Podcasts filter with every show you follow, and New episodes of them.
 - 🎤 **Lyric translation** in the Immersive player; the liked star and the download mark on Immersive song rows.
 - ⬇️ **Downloads and Spotify**: a downloaded song also plays muted on Spotify when you are online, so it counts and your devices see it (Settings, Playback); likes made offline are kept per account and sent as soon as Spotify answers; deleting downloads while they play no longer stops playback.
