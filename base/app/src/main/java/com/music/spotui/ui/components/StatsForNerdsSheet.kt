@@ -118,7 +118,11 @@ internal object NerdStats {
             row(R.string.nerd_bit_depth, bits(c, f.pcmEncoding) ?: stream?.bitDepth?.let { c.getString(R.string.nerd_bit_depth_announced, it) })
             row(R.string.nerd_channels, f.channelCount.takeIf { it > 0 }?.toString())
         }
-        val kbps = (f?.bitrate?.takeIf { it > 0 } ?: f?.averageBitrate?.takeIf { it > 0 })?.let { c.getString(R.string.nerd_bitrate_value, it / 1000) }
+        // A live stream has no Xing/VBRI header, so Mp3Extractor can't compute its own bitrate;
+        // fall back to the server's own "icy-br" header, exposed by media3 as IcyHeaders.
+        val icyKbps = f?.metadata?.let { md -> (0 until md.length()).firstNotNullOfOrNull { md.get(it) as? androidx.media3.extractor.metadata.icy.IcyHeaders } }
+            ?.bitrate?.takeIf { it > 0 }
+        val kbps = (f?.bitrate?.takeIf { it > 0 } ?: f?.averageBitrate?.takeIf { it > 0 } ?: icyKbps)?.let { c.getString(R.string.nerd_bitrate_value, it / 1000) }
             ?: download?.takeIf { it.bytes > 0 }?.let { d ->
                 val ms = LocalPlayer.knownLength() ?: t.durationMs
                 if (ms > 0) c.getString(R.string.nerd_bitrate_average, (d.bytes * 8 / ms).toInt()) else null
